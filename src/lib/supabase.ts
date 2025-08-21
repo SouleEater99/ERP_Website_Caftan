@@ -62,10 +62,17 @@ export interface Stock {
   material: string
   unit: string
   current_stock: number
-  used: number
-  remaining: number
   reorder_threshold: number
   last_updated: string
+}
+
+export interface StockMovement {
+  id: string
+  stock_id: string
+  type: 'in' | 'out'
+  quantity: number
+  note?: string | null
+  created_at: string
 }
 
 export interface Rate {

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseMutationOpti
 import { supabase } from '../lib/supabase'
 import { useMonitoring } from '../lib/monitoring'
 import { useAuthStore } from '../stores/authStore'
+import { getStockStatus } from '../utils/stockUtils'
 
 // Enhanced Supabase query hook with monitoring and error handling
 export const useSupabaseQuery = <T = any>(
@@ -393,17 +394,13 @@ export const useDashboardStats = () => {
         })
       }
 
-      // Calculate efficiency based on completed vs total tasks
-      const totalTasks = (activeOrders?.length || 0) + (completedTasks?.length || 0)
-      const efficiency = totalTasks > 0 ? Math.round((completedTasks?.length || 0) / totalTasks * 100) : 0
-
+      // Remove efficiency calculation
       const result = {
         totalWorkers: users?.length || 0,
         activeOrders: activeOrders?.length || 0,
         completedTasks: completedTasks?.length || 0,
         pendingApprovals: pendingApprovals?.length || 0,
-        totalEarnings: Math.round(totalEarnings * 100) / 100,
-        efficiency
+        totalEarnings: Math.round(totalEarnings * 100) / 100
       }
 
       console.log('📊 Final dashboard stats:', result)
@@ -449,27 +446,32 @@ export const useLowStockItems = () => {
     async () => {
       console.log(' Fetching low stock items...')
       
-      // Fix the query - use proper column comparison
-      const { data, error } = await supabase
+      // Get all stock items and filter on client side
+      const { data: allStock, error: stockError } = await supabase
         .from('stock')
         .select('*')
-        .filter('current_stock', 'lte', 'reorder_threshold')
-        .order('current_stock', { ascending: true })
-        .limit(3)
       
-      console.log(' Stock query result:', { data, error })
+      console.log(' Stock query result:', { data: allStock, error: stockError })
       
-      if (error) {
-        console.error('Stock query error:', error)
-        throw error
+      if (stockError) {
+        console.error('Stock query error:', stockError)
+        throw stockError
       }
-
-      return (data || []).map(item => ({
-        material: item.material,
-        current: item.current_stock,
-        threshold: item.reorder_threshold,
-        unit: item.unit
-      }))
+      
+      // Calculate remaining dynamically and filter low stock items
+      const lowStockItems = (allStock || [])
+        .map(item => ({
+          material: item.material,
+          current: item.current_stock,
+          threshold: item.reorder_threshold,
+          unit: item.unit,
+          remaining: Number(item.current_stock) - Number(item.reorder_threshold)
+        }))
+        .filter(item => item.remaining <= 0)
+        .sort((a, b) => a.remaining - b.remaining)
+        .slice(0, 3)
+      
+      return lowStockItems
     }
   )
 }

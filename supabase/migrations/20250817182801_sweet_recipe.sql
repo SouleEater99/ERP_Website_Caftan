@@ -38,8 +38,6 @@
       - `material` (text, unique)
       - `unit` (text)
       - `current_stock` (decimal, default 0)
-      - `used` (decimal, default 0)
-      - `remaining` (decimal, default 0)
       - `reorder_threshold` (decimal, default 10)
       - `last_updated` (timestamp)
     
@@ -153,8 +151,6 @@ CREATE TABLE IF NOT EXISTS stock (
   material text UNIQUE NOT NULL,
   unit text NOT NULL,
   current_stock decimal DEFAULT 0 CHECK (current_stock >= 0),
-  used decimal DEFAULT 0 CHECK (used >= 0),
-  remaining decimal DEFAULT 0 CHECK (remaining >= 0),
   reorder_threshold decimal DEFAULT 10 CHECK (reorder_threshold >= 0),
   last_updated timestamptz DEFAULT now()
 );
@@ -241,12 +237,12 @@ INSERT INTO users (email, name, role, worker_id) VALUES
   ('worker@textile.com', 'Worker One', 'worker', 'W001'),
   ('worker2@textile.com', 'Worker Two', 'worker', 'W002');
 
-INSERT INTO stock (material, unit, current_stock, used, remaining, reorder_threshold) VALUES
-  ('Cotton Fabric', 'meters', 1000, 0, 1000, 50),
-  ('Polyester Thread', 'spools', 200, 0, 200, 20),
-  ('Buttons', 'pieces', 5000, 0, 5000, 100),
-  ('Zippers', 'pieces', 500, 0, 500, 25),
-  ('Elastic Band', 'meters', 300, 0, 300, 15);
+INSERT INTO stock (material, unit, current_stock, reorder_threshold) VALUES
+  ('Cotton Fabric', 'meters', 1000, 50),
+  ('Polyester Thread', 'spools', 200, 20),
+  ('Buttons', 'pieces', 5000, 100),
+  ('Zippers', 'pieces', 500, 25),
+  ('Elastic Band', 'meters', 300, 15);
 
 INSERT INTO bom (product, material, qty_per_unit, unit, waste_percent, deduct_at_stage) VALUES
   ('T-Shirt', 'Cotton Fabric', 2.5, 'meters', 5, 'cutting'),
@@ -279,3 +275,53 @@ INSERT INTO rates (product, task, rate_per_unit) VALUES
   ('Shirt', 'cutting', 0.60),
   ('Shirt', 'sewing', 2.00),
   ('Shirt', 'finishing', 1.00);
+
+-- supabase/migrations/20250821_stock_refactor.sql
+-- 1) Simplify stock table: drop 'used' and 'remaining'
+ALTER TABLE stock
+  DROP COLUMN IF EXISTS used,
+  DROP COLUMN IF EXISTS remaining;
+
+-- Ensure stock table columns and defaults (id/material unique/unit/current_stock/reorder_threshold/last_updated)
+ALTER TABLE stock
+  ALTER COLUMN current_stock SET DEFAULT 0,
+  ALTER COLUMN reorder_threshold SET DEFAULT 10;
+
+-- Optional: ensure material unique constraint exists
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'stock_material_key'
+  ) THEN
+    ALTER TABLE stock ADD CONSTRAINT stock_material_key UNIQUE (material);
+  END IF;
+END$$;
+
+-- 2) Create stock_movements table
+CREATE TABLE IF NOT EXISTS stock_movements (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  stock_id uuid NOT NULL REFERENCES stock(id) ON DELETE CASCADE,
+  type text NOT NULL CHECK (type IN ('in','out')),
+  quantity decimal NOT NULL CHECK (quantity >= 0),
+  note text,
+  created_at timestamp NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS stock_movements_stock_id_idx ON stock_movements(stock_id);
+CREATE INDEX IF NOT EXISTS stock_movements_type_idx ON stock_movements(type);
+CREATE INDEX IF NOT EXISTS stock_movements_created_at_idx ON stock_movements(created_at);
+
+-- 3) Update 'last_updated' automatically on stock changes (optional but useful)
+CREATE OR REPLACE FUNCTION set_stock_last_updated()
+RETURNS trigger AS $$
+BEGIN
+  NEW.last_updated := now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_stock_last_updated ON stock;
+CREATE TRIGGER trg_stock_last_updated
+BEFORE UPDATE ON stock
+FOR EACH ROW EXECUTE FUNCTION set_stock_last_updated();

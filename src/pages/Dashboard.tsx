@@ -91,8 +91,7 @@ const Dashboard = () => {
     activeOrders: 0,
     completedTasks: 0,
     pendingApprovals: 0,
-    totalEarnings: 0,
-    efficiency: 0
+    totalEarnings: 0
   };
 
   const activities = recentActivities || [];
@@ -170,20 +169,12 @@ const Dashboard = () => {
           delay={400}
         />
         <StatCard
-          title="Total Earnings"
+          title="Workers Pay"
           value={`$${dashboardStats.totalEarnings.toLocaleString()}`}
           icon={DollarSign}
           color="bg-gradient-to-r from-purple-500 to-pink-600"
           trend="+25%"
           delay={500}
-        />
-        <StatCard
-          title={t('efficiency')}
-          value={`${dashboardStats.efficiency}%`}
-          icon={TrendingUp}
-          color="bg-gradient-to-r from-violet-500 to-purple-600"
-          trend="+8%"
-          delay={600}
         />
       </div>
 
