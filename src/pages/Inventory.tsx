@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import { Plus, Minus, AlertTriangle } from 'lucide-react'
-import { getStockStatus } from '../utils/stockUtils'
 
 const Inventory: React.FC = () => {
   const { t } = useTranslation()
@@ -26,33 +25,41 @@ const Inventory: React.FC = () => {
   const { data: usedSummary } = useQuery({
     queryKey: ['stock', 'usedSummary'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('stock_movements')
-        .select('stock_id, quantity, type')
-      if (error) throw error
-      const totals = new Map<string, number>()
-      for (const m of data || []) {
-        if (m.type === 'out') {
-          totals.set(m.stock_id, (totals.get(m.stock_id) || 0) + Number(m.quantity))
+      try {
+        const { data, error } = await supabase
+          .from('stock_movements')
+          .select('stock_id, quantity, type')
+        
+        if (error) {
+          console.error('Error fetching movements:', error)
+          // If table doesn't exist, return empty map
+          if (error.code === '42P01') { // table doesn't exist
+            console.warn('stock_movements table does not exist yet')
+            return new Map<string, number>()
+          }
+          throw error
         }
+        
+        const totals = new Map<string, number>()
+        for (const m of data || []) {
+          if (m.type === 'out') {
+            totals.set(m.stock_id, (totals.get(m.stock_id) || 0) + Number(m.quantity))
+          }
+        }
+        return totals
+      } catch (error) {
+        console.error('Error in movements query:', error)
+        return new Map<string, number>()
       }
-      return totals
     }
   })
 
   // 3) Add stock (movement + update current_stock)
   const addStockMutation = useMutation({
     mutationFn: async ({ stockId, quantity, note }: { stockId: string, quantity: number, note?: string }) => {
-      const { error: insErr } = await supabase
-        .from('stock_movements')
-        .insert({ stock_id: stockId, type: 'in', quantity, note: note || null })
-      if (insErr) throw insErr
+      console.log('Adding stock:', { stockId, quantity, note })
 
-      const { error: updErr } = await supabase
-        .from('stock')
-        .update({ current_stock: supabase.sql`current_stock + ${quantity}` })
-        .eq('id', stockId)
-      if (updErr) throw updErr
+      await supabase.rpc('adjust_stock', { p_stock_id: stockId, p_qty: quantity, p_type: 'in', p_note: note || null })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stock'] })
@@ -63,16 +70,9 @@ const Inventory: React.FC = () => {
   // 4) Consume stock (movement + update current_stock)
   const consumeStockMutation = useMutation({
     mutationFn: async ({ stockId, quantity, note }: { stockId: string, quantity: number, note?: string }) => {
-      const { error: insErr } = await supabase
-        .from('stock_movements')
-        .insert({ stock_id: stockId, type: 'out', quantity, note: note || null })
-      if (insErr) throw insErr
+      console.log('Consuming stock:', { stockId, quantity, note })
 
-      const { error: updErr } = await supabase
-        .from('stock')
-        .update({ current_stock: supabase.sql`current_stock - ${quantity}` })
-        .eq('id', stockId)
-      if (updErr) throw updErr
+      await supabase.rpc('adjust_stock', { p_stock_id: stockId, p_qty: quantity, p_type: 'out', p_note: note || null })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stock'] })
@@ -83,6 +83,7 @@ const Inventory: React.FC = () => {
   const handleAddStock = (id: string) => {
     const quantity = prompt('Enter quantity to add:')
     if (quantity && !isNaN(Number(quantity))) {
+      console.log('Handling add stock for ID:', id, 'quantity:', quantity)
       addStockMutation.mutate({ stockId: id, quantity: Number(quantity) })
     }
   }
@@ -90,6 +91,7 @@ const Inventory: React.FC = () => {
   const handleConsumeStock = (id: string) => {
     const quantity = prompt('Enter quantity to consume:')
     if (quantity && !isNaN(Number(quantity))) {
+      console.log('Handling consume stock for ID:', id, 'quantity:', quantity)
       consumeStockMutation.mutate({ stockId: id, quantity: Number(quantity) })
     }
   }
@@ -98,8 +100,10 @@ const Inventory: React.FC = () => {
     return <div className="text-center py-8">{t('loading')}</div>
   }
 
+  // Calculate remaining dynamically and filter low stock items
   const rows = (stock || []).map(item => {
-    const { remaining, isLow } = getStockStatus(item.current_stock, item.reorder_threshold)
+    const remaining = Number(item.current_stock) - Number(item.reorder_threshold)
+    const isLow = remaining <= 0
     const totalUsed = usedSummary?.get(item.id) || 0
     return { ...item, remaining, isLow, totalUsed }
   })
@@ -110,6 +114,19 @@ const Inventory: React.FC = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold text-gray-900">{t('inventory')}</h1>
+      </div>
+
+      {/* Debug Info */}
+      <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+        <h3 className="text-sm font-medium text-blue-800 mb-2">Debug Info</h3>
+        <div className="text-sm text-blue-700">
+          <p>Stock items loaded: {stock?.length || 0}</p>
+          <p>Movements loaded: {usedSummary ? 'Yes' : 'No'}</p>
+          <p>Add mutation state: {addStockMutation.isPending ? 'Pending' : addStockMutation.isError ? 'Error' : 'Idle'}</p>
+          <p>Consume mutation state: {consumeStockMutation.isPending ? 'Pending' : consumeStockMutation.isError ? 'Error' : 'Idle'}</p>
+          {addStockMutation.error && <p>Add error: {addStockMutation.error.message}</p>}
+          {consumeStockMutation.error && <p>Consume error: {consumeStockMutation.error.message}</p>}
+        </div>
       </div>
 
       {/* Low Stock Alerts */}
@@ -180,17 +197,19 @@ const Inventory: React.FC = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                   <button
                     onClick={() => handleAddStock(item.id)}
-                    className="inline-flex items-center px-3 py-1 rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200"
+                    disabled={addStockMutation.isPending}
+                    className="inline-flex items-center px-3 py-1 rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 disabled:opacity-50"
                   >
                     <Plus className="h-4 w-4 mr-1" />
-                    {t('addStock')}
+                    {addStockMutation.isPending ? 'Adding...' : t('addStock')}
                   </button>
                   <button
                     onClick={() => handleConsumeStock(item.id)}
-                    className="inline-flex items-center px-3 py-1 rounded-md text-red-700 bg-red-100 hover:bg-red-200"
+                    disabled={consumeStockMutation.isPending}
+                    className="inline-flex items-center px-3 py-1 rounded-md text-red-700 bg-red-100 hover:bg-red-200 disabled:opacity-50"
                   >
                     <Minus className="h-4 w-4 mr-1" />
-                    Consume
+                    {consumeStockMutation.isPending ? 'Consuming...' : 'Consume'}
                   </button>
                 </td>
               </tr>
