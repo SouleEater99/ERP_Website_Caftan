@@ -112,18 +112,17 @@ i18n
           // Payroll
           worker: 'العامل',
           period: 'الفترة',
-          earnings: 'المكاسب',
+          paymentSchedule: 'جدول الدفع',
+          allSchedules: 'جميع الجداول',
+          biWeekly: 'كل أسبوعين',
+          quarterly: 'ربع سنوي',
+          daily: 'يومي',
+          weekly: 'أسبوعي',
+          monthly: 'شهري',
+          earnings: 'الأرباح',
           status: 'الحالة',
           paid: 'مدفوع',
           pending: 'معلق',
-          payrollManagement: 'إدارة كشوف الرواتب',
-          totalPayroll: 'إجمالي الرواتب',
-          paidAmount: 'المبلغ المدفوع',
-          pendingAmount: 'المبلغ المعلق',
-          workerName: 'اسم العامل',
-          paymentPeriod: 'فترة الدفع',
-          totalEarnings: 'إجمالي المكاسب',
-          paymentStatus: 'حالة الدفع',
           
           // Management
           management: 'الإدارة',
@@ -226,7 +225,43 @@ i18n
           jalabiya: 'جلابية',
           thobe: 'ثوب',
           abaya: 'عباية',
-          dress: 'فستان'
+          dress: 'فستان',
+          
+          // Payroll (Arabic)
+          worker: 'العامل',
+          period: 'الفترة',
+          paymentSchedule: 'جدول الدفع',
+          allSchedules: 'جميع الجداول',
+          biWeekly: 'كل أسبوعين',
+          quarterly: 'ربع سنوي',
+          daily: 'يومي',
+          weekly: 'أسبوعي',
+          monthly: 'شهري',
+          earnings: 'الأرباح',
+          status: 'الحالة',
+          paid: 'مدفوع',
+          pending: 'معلق',
+
+          // New Payment Schedule Translations
+          workerPaymentSchedules: 'جداول دفع العمال',
+          paymentDay: 'يوم الدفع',
+          nextPayment: 'الدفع التالي',
+          lastPayment: 'آخر دفع',
+          dueForPayment: 'مستحق للدفع',
+
+          // New payroll generation keys
+          payrollGenerated: 'تم إنشاء كشف الرواتب لـ {success} من أصل {total} عامل',
+          errorGeneratingPayroll: 'خطأ في إنشاء كشف الرواتب',
+          noWorkersDueForPayment: 'لا يوجد عمال مستحقون للدفع حالياً',
+          generatingPayroll: 'جاري إنشاء كشف الرواتب...',
+          generatePayrollForDueWorkers: 'إنشاء كشف الرواتب للعمال المستحقين',
+
+          // New payroll period keys
+          periodAlreadyExists: 'الفترة "{period}" موجودة بالفعل',
+          newPeriodCreated: 'تم إنشاء فترة جديدة: {period}',
+          errorCreatingPeriod: 'خطأ في إنشاء الفترة الجديدة',
+          creatingPeriod: 'جاري إنشاء الفترة الجديدة...',
+          createNewPeriod: 'إنشاء فترة جديدة (الحالية: {current})',
         }
       },
       en: {
@@ -297,11 +332,18 @@ i18n
           // Payroll
           worker: 'Worker',
           period: 'Period',
+          paymentSchedule: 'Payment Schedule',
+          allSchedules: 'All Schedules',
+          biWeekly: 'Bi-Weekly',
+          quarterly: 'Quarterly',
+          daily: 'Daily',
+          weekly: 'Weekly',
+          monthly: 'Monthly',
           earnings: 'Earnings',
           status: 'Status',
           paid: 'Paid',
           pending: 'Pending',
-          
+
           // Common
           actions: 'Actions',
           edit: 'Edit',
@@ -324,7 +366,28 @@ i18n
           jalabiya: 'Jalabiya',
           thobe: 'Thobe',
           abaya: 'Abaya',
-          dress: 'Dress'
+          dress: 'Dress',
+
+          // New Payment Schedule Translations
+          workerPaymentSchedules: 'Worker Payment Schedules',
+          paymentDay: 'Payment Day',
+          nextPayment: 'Next Payment',
+          lastPayment: 'Last Payment',
+          dueForPayment: 'Due for Payment',
+
+          // New payroll generation keys
+          payrollGenerated: 'Payroll generated for {success} out of {total} workers',
+          errorGeneratingPayroll: 'Error generating payroll',
+          noWorkersDueForPayment: 'No workers are due for payment currently',
+          generatingPayroll: 'Generating payroll...',
+          generatePayrollForDueWorkers: 'Generate Payroll for Due Workers',
+
+          // New payroll period keys
+          periodAlreadyExists: 'Period "{period}" already exists',
+          newPeriodCreated: 'New period created: {period}',
+          errorCreatingPeriod: 'Error creating new period',
+          creatingPeriod: 'Creating new period...',
+          createNewPeriod: 'Create New Period (Current: {current})',
         }
       }
     },

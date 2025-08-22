@@ -107,6 +107,18 @@ export interface Location {
   created_at: string
   updated_at: string
 }
+
+export interface PayrollPeriod {
+  id: string;
+  period_name: string;
+  start_date: string;
+  end_date: string;
+  status: 'active' | 'closed' | 'pending';
+  created_at: string;
+  closed_at?: string;
+  notes?: string;
+}
+
 // Helper functions for common operations
 export const getCurrentUser = async () => {
   const { data: { user }, error } = await supabase.auth.getUser()
