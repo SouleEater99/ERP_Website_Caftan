@@ -1,70 +1,5 @@
-/*
-  # Textile Production Management System Schema
-
-  1. New Tables
-    - `users`
-      - `id` (uuid, primary key)
-      - `email` (text, unique)
-      - `name` (text)
-      - `role` (text, worker/supervisor/admin)
-      - `worker_id` (text, optional)
-      - `created_at` (timestamp)
-    
-    - `work_logs`
-      - `id` (uuid, primary key)
-      - `worker_id` (uuid, foreign key)
-      - `worker_name` (text)
-      - `product` (text)
-      - `product_id` (text, optional)
-      - `task` (text)
-      - `quantity` (integer)
-      - `completed` (boolean)
-      - `notes` (text, optional)
-      - `approved` (boolean, default false)
-      - `created_at` (timestamp)
-    
-    - `bom` (Bill of Materials)
-      - `id` (uuid, primary key)
-      - `product` (text)
-      - `material` (text)
-      - `qty_per_unit` (decimal)
-      - `unit` (text)
-      - `waste_percent` (decimal, default 0)
-      - `deduct_at_stage` (text)
-      - `created_at` (timestamp)
-    
-    - `stock`
-      - `id` (uuid, primary key)
-      - `material` (text, unique)
-      - `unit` (text)
-      - `current_stock` (decimal, default 0)
-      - `reorder_threshold` (decimal, default 10)
-      - `last_updated` (timestamp)
-    
-    - `rates`
-      - `id` (uuid, primary key)
-      - `product` (text)
-      - `task` (text)
-      - `rate_per_unit` (decimal)
-      - `created_at` (timestamp)
-    
-    - `payroll`
-      - `id` (uuid, primary key)
-      - `worker_id` (uuid)
-      - `worker_name` (text)
-      - `period_start` (date)
-      - `period_end` (date)
-      - `total_earnings` (decimal, default 0)
-      - `paid_status` (boolean, default false)
-      - `created_at` (timestamp)
-
-  2. Security
-    - Enable RLS on all tables
-    - Add policies for role-based access
-    - Workers can only see their own data
-    - Supervisors can view production data
-    - Admins have full access
-*/
+-- Complete Database Schema Migration
+-- This includes all tables that actually exist in your Supabase database
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
@@ -75,16 +10,6 @@ CREATE TABLE IF NOT EXISTS users (
   worker_id text,
   created_at timestamptz DEFAULT now()
 );
-
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Users can read own data"
-  ON users
-  FOR SELECT
-  TO authenticated
-  USING (auth.uid() = id OR EXISTS (
-    SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('supervisor', 'admin')
-  ));
 
 -- Work logs table
 CREATE TABLE IF NOT EXISTS work_logs (
@@ -101,22 +26,6 @@ CREATE TABLE IF NOT EXISTS work_logs (
   created_at timestamptz DEFAULT now()
 );
 
-ALTER TABLE work_logs ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Workers can insert own logs"
-  ON work_logs
-  FOR INSERT
-  TO authenticated
-  WITH CHECK (auth.uid() = worker_id);
-
-CREATE POLICY "Workers can read own logs"
-  ON work_logs
-  FOR SELECT
-  TO authenticated
-  USING (auth.uid() = worker_id OR EXISTS (
-    SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('supervisor', 'admin')
-  ));
-
 -- BOM table
 CREATE TABLE IF NOT EXISTS bom (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -129,23 +38,7 @@ CREATE TABLE IF NOT EXISTS bom (
   created_at timestamptz DEFAULT now()
 );
 
-ALTER TABLE bom ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "All authenticated users can read BOM"
-  ON bom
-  FOR SELECT
-  TO authenticated
-  USING (true);
-
-CREATE POLICY "Only admins can modify BOM"
-  ON bom
-  FOR ALL
-  TO authenticated
-  USING (EXISTS (
-    SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role = 'admin'
-  ));
-
--- Stock table
+-- Stock table (simplified - no used/remaining columns)
 CREATE TABLE IF NOT EXISTS stock (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   material text UNIQUE NOT NULL,
@@ -155,23 +48,49 @@ CREATE TABLE IF NOT EXISTS stock (
   last_updated timestamptz DEFAULT now()
 );
 
-ALTER TABLE stock ENABLE ROW LEVEL SECURITY;
+-- Stock movements table
+CREATE TABLE IF NOT EXISTS stock_movements (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  stock_id uuid NOT NULL,
+  type text NOT NULL,
+  quantity numeric NOT NULL,
+  note text NULL,
+  created_at timestamp NOT NULL DEFAULT now(),
+  CONSTRAINT stock_movements_pkey PRIMARY KEY (id),
+  CONSTRAINT stock_movements_stock_id_fkey FOREIGN KEY (stock_id) REFERENCES stock(id) ON DELETE CASCADE,
+  CONSTRAINT stock_movements_quantity_check CHECK (quantity >= 0),
+  CONSTRAINT stock_movements_type_check CHECK (type = ANY(ARRAY['in'::text, 'out'::text]))
+);
 
-CREATE POLICY "Supervisors and admins can read stock"
-  ON stock
-  FOR SELECT
-  TO authenticated
-  USING (EXISTS (
-    SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('supervisor', 'admin')
-  ));
+-- Tasks table
+CREATE TABLE IF NOT EXISTS tasks (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  code text NOT NULL,
+  name_ar text NOT NULL,
+  name_en text NOT NULL,
+  description_ar text NULL,
+  description_en text NULL,
+  icon text NULL,
+  color_gradient text NULL,
+  active boolean NULL DEFAULT true,
+  created_at timestamptz NULL DEFAULT now(),
+  CONSTRAINT tasks_pkey PRIMARY KEY (id),
+  CONSTRAINT tasks_code_key UNIQUE (code)
+);
 
-CREATE POLICY "Only admins can modify stock"
-  ON stock
-  FOR ALL
-  TO authenticated
-  USING (EXISTS (
-    SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role = 'admin'
-  ));
+-- Products table
+CREATE TABLE IF NOT EXISTS products (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  code text NOT NULL,
+  name_ar text NOT NULL,
+  name_en text NOT NULL,
+  category text NOT NULL,
+  icon text NULL,
+  active boolean NULL DEFAULT true,
+  created_at timestamptz NULL DEFAULT now(),
+  CONSTRAINT products_pkey PRIMARY KEY (id),
+  CONSTRAINT products_code_key UNIQUE (code)
+);
 
 -- Rates table
 CREATE TABLE IF NOT EXISTS rates (
@@ -183,22 +102,6 @@ CREATE TABLE IF NOT EXISTS rates (
   UNIQUE(product, task)
 );
 
-ALTER TABLE rates ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "All authenticated users can read rates"
-  ON rates
-  FOR SELECT
-  TO authenticated
-  USING (true);
-
-CREATE POLICY "Only admins can modify rates"
-  ON rates
-  FOR ALL
-  TO authenticated
-  USING (EXISTS (
-    SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role = 'admin'
-  ));
-
 -- Payroll table
 CREATE TABLE IF NOT EXISTS payroll (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -206,122 +109,70 @@ CREATE TABLE IF NOT EXISTS payroll (
   worker_name text NOT NULL,
   period_start date NOT NULL,
   period_end date NOT NULL,
-  total_earnings decimal DEFAULT 0 CHECK (total_earnings >= 0),
+  total_earnings decimal NOT NULL DEFAULT 0,
   paid_status boolean DEFAULT false,
-  created_at timestamptz DEFAULT now(),
-  UNIQUE(worker_id, period_start)
+  created_at timestamptz DEFAULT now()
 );
 
-ALTER TABLE payroll ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Workers can read own payroll"
-  ON payroll
-  FOR SELECT
-  TO authenticated
-  USING (auth.uid() = worker_id OR EXISTS (
-    SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role IN ('supervisor', 'admin')
-  ));
-
-CREATE POLICY "Only admins can modify payroll"
-  ON payroll
-  FOR ALL
-  TO authenticated
-  USING (EXISTS (
-    SELECT 1 FROM users u WHERE u.id = auth.uid() AND u.role = 'admin'
-  ));
-
--- Insert demo data
-INSERT INTO users (email, name, role, worker_id) VALUES
-  ('admin@textile.com', 'Admin User', 'admin', NULL),
-  ('supervisor@textile.com', 'Supervisor User', 'supervisor', NULL),
-  ('worker@textile.com', 'Worker One', 'worker', 'W001'),
-  ('worker2@textile.com', 'Worker Two', 'worker', 'W002');
-
-INSERT INTO stock (material, unit, current_stock, reorder_threshold) VALUES
-  ('Cotton Fabric', 'meters', 1000, 50),
-  ('Polyester Thread', 'spools', 200, 20),
-  ('Buttons', 'pieces', 5000, 100),
-  ('Zippers', 'pieces', 500, 25),
-  ('Elastic Band', 'meters', 300, 15);
-
-INSERT INTO bom (product, material, qty_per_unit, unit, waste_percent, deduct_at_stage) VALUES
-  ('T-Shirt', 'Cotton Fabric', 2.5, 'meters', 5, 'cutting'),
-  ('T-Shirt', 'Polyester Thread', 0.1, 'spools', 2, 'sewing'),
-  ('Jeans', 'Cotton Fabric', 3.0, 'meters', 8, 'cutting'),
-  ('Jeans', 'Polyester Thread', 0.15, 'spools', 3, 'sewing'),
-  ('Jeans', 'Buttons', 5, 'pieces', 0, 'finishing'),
-  ('Jeans', 'Zippers', 1, 'pieces', 0, 'finishing'),
-  ('Dress', 'Cotton Fabric', 4.0, 'meters', 6, 'cutting'),
-  ('Dress', 'Polyester Thread', 0.2, 'spools', 2, 'sewing'),
-  ('Jacket', 'Cotton Fabric', 5.0, 'meters', 10, 'cutting'),
-  ('Jacket', 'Polyester Thread', 0.25, 'spools', 5, 'sewing'),
-  ('Jacket', 'Zippers', 2, 'pieces', 0, 'finishing');
-
-INSERT INTO rates (product, task, rate_per_unit) VALUES
-  ('T-Shirt', 'cutting', 0.50),
-  ('T-Shirt', 'sewing', 1.50),
-  ('T-Shirt', 'finishing', 0.75),
-  ('T-Shirt', 'embroidery', 2.00),
-  ('Jeans', 'cutting', 0.75),
-  ('Jeans', 'sewing', 2.50),
-  ('Jeans', 'finishing', 1.25),
-  ('Dress', 'cutting', 1.00),
-  ('Dress', 'sewing', 3.00),
-  ('Dress', 'finishing', 1.50),
-  ('Dress', 'embroidery', 4.00),
-  ('Jacket', 'cutting', 1.50),
-  ('Jacket', 'sewing', 4.00),
-  ('Jacket', 'finishing', 2.00),
-  ('Shirt', 'cutting', 0.60),
-  ('Shirt', 'sewing', 2.00),
-  ('Shirt', 'finishing', 1.00);
-
--- supabase/migrations/20250821_stock_refactor.sql
--- 1) Simplify stock table: drop 'used' and 'remaining'
-ALTER TABLE stock
-  DROP COLUMN IF EXISTS used,
-  DROP COLUMN IF EXISTS remaining;
-
--- Ensure stock table columns and defaults (id/material unique/unit/current_stock/reorder_threshold/last_updated)
-ALTER TABLE stock
-  ALTER COLUMN current_stock SET DEFAULT 0,
-  ALTER COLUMN reorder_threshold SET DEFAULT 10;
-
--- Optional: ensure material unique constraint exists
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint
-    WHERE conname = 'stock_material_key'
-  ) THEN
-    ALTER TABLE stock ADD CONSTRAINT stock_material_key UNIQUE (material);
-  END IF;
-END$$;
-
--- 2) Create stock_movements table
-CREATE TABLE IF NOT EXISTS stock_movements (
+-- Locations table
+CREATE TABLE IF NOT EXISTS locations (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  stock_id uuid NOT NULL REFERENCES stock(id) ON DELETE CASCADE,
-  type text NOT NULL CHECK (type IN ('in','out')),
-  quantity decimal NOT NULL CHECK (quantity >= 0),
-  note text,
-  created_at timestamp NOT NULL DEFAULT now()
+  name text NOT NULL,
+  address text NOT NULL,
+  city text NOT NULL,
+  country text NOT NULL DEFAULT 'UAE',
+  phone text,
+  email text,
+  status text NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+  worker_count integer DEFAULT 0 CHECK (worker_count >= 0),
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
 );
 
+-- Production stats table
+CREATE TABLE IF NOT EXISTS production_stats (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  date date NOT NULL,
+  completed_tasks integer NULL DEFAULT 0,
+  pending_tasks integer NULL DEFAULT 0,
+  revenue numeric NULL DEFAULT 0,
+  efficiency_rate numeric NULL DEFAULT 0,
+  active_workers integer NULL DEFAULT 0,
+  created_at timestamptz NULL DEFAULT now(),
+  CONSTRAINT production_stats_pkey PRIMARY KEY (id),
+  CONSTRAINT production_stats_date_key UNIQUE (date)
+);
+
+-- Indexes
 CREATE INDEX IF NOT EXISTS stock_movements_stock_id_idx ON stock_movements(stock_id);
 CREATE INDEX IF NOT EXISTS stock_movements_type_idx ON stock_movements(type);
 CREATE INDEX IF NOT EXISTS stock_movements_created_at_idx ON stock_movements(created_at);
+CREATE INDEX IF NOT EXISTS locations_status_idx ON locations(status);
+CREATE INDEX IF NOT EXISTS locations_city_idx ON locations(city);
+CREATE INDEX IF NOT EXISTS locations_country_idx ON locations(country);
 
--- 3) Update 'last_updated' automatically on stock changes (optional but useful)
-CREATE OR REPLACE FUNCTION set_stock_last_updated()
-RETURNS trigger AS $$
-BEGIN
-  NEW.last_updated := now();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- Enable RLS on all tables
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE work_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE bom ENABLE ROW LEVEL SECURITY;
+ALTER TABLE stock ENABLE ROW LEVEL SECURITY;
+ALTER TABLE stock_movements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payroll ENABLE ROW LEVEL SECURITY;
+ALTER TABLE locations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE production_stats ENABLE ROW LEVEL SECURITY;
 
-DROP TRIGGER IF EXISTS trg_stock_last_updated ON stock;
-CREATE TRIGGER trg_stock_last_updated
-BEFORE UPDATE ON stock
-FOR EACH ROW EXECUTE FUNCTION set_stock_last_updated();
+-- Basic RLS policies (you can customize these)
+CREATE POLICY "Enable read access for all authenticated users" ON users FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON work_logs FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON bom FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON stock FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON stock_movements FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON tasks FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON products FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON rates FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON payroll FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON locations FOR SELECT USING (true);
+CREATE POLICY "Enable read access for all authenticated users" ON production_stats FOR SELECT USING (true);
