@@ -4,14 +4,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 
 const BOM: React.FC = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   
   const queryClient = useQueryClient()
   const [form, setForm] = useState({
     product: '', material: '', qty_per_unit: '', unit: '', waste_percent: '', deduct_at_stage: ''
   })
 
-  // Products from dedicated products table
+  // Products from dedicated products table - dynamic language
   const { data: productOptions = [], isLoading: productsLoading } = useQuery({
     queryKey: ['bom', 'options', 'products'],
     queryFn: async () => {
@@ -38,7 +38,7 @@ const BOM: React.FC = () => {
     }
   })
 
-  // Tasks from dedicated tasks table
+  // Tasks from dedicated tasks table - dynamic language
   const { data: stageOptions = [], isLoading: stagesLoading } = useQuery({
     queryKey: ['bom', 'options', 'stages'],
     queryFn: async () => {
@@ -51,6 +51,17 @@ const BOM: React.FC = () => {
       return data || []
     }
   })
+
+  // Helper function to get the correct language name
+  const getLocalizedName = (item: { name_en: string; name_ar: string }) => {
+    return i18n.language === 'ar' ? item.name_ar : item.name_en
+  }
+
+  // Helper function to get the correct language name for materials (if they have translations)
+  const getMaterialName = (material: string) => {
+    // For now, materials are just text strings, but you could add translations later
+    return material
+  }
 
   const addBomMutation = useMutation({
     mutationFn: async () => {
@@ -115,37 +126,47 @@ const BOM: React.FC = () => {
         className="flex flex-wrap items-end gap-2 bg-white p-4 rounded-md border"
       >
         <div className="flex flex-col">
-          <label className="text-xs text-gray-500 mb-1">Product</label>
+          <label className="text-xs text-gray-500 mb-1">
+            {i18n.language === 'ar' ? 'المنتج' : 'Product'}
+          </label>
           <select
             className="border rounded px-2 py-1"
             value={form.product}
             onChange={e => setForm({ ...form, product: e.target.value })}
             disabled={productsLoading}
           >
-            <option value="">Select product</option>
+            <option value="">{i18n.language === 'ar' ? 'اختر المنتج' : 'Select product'}</option>
             {productOptions.map(p => (
-              <option key={p.code} value={p.name_en}>{p.name_en}</option>
+              <option key={p.code} value={p.name_en}>
+                {getLocalizedName(p)}
+              </option>
             ))}
           </select>
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs text-gray-500 mb-1">Material</label>
+          <label className="text-xs text-gray-500 mb-1">
+            {i18n.language === 'ar' ? 'المادة' : 'Material'}
+          </label>
           <select
             className="border rounded px-2 py-1"
             value={form.material}
             onChange={e => handleMaterialChange(e.target.value)}
             disabled={materialsLoading}
           >
-            <option value="">Select material</option>
+            <option value="">{i18n.language === 'ar' ? 'اختر المادة' : 'Select material'}</option>
             {materials.map(m => (
-              <option key={m.material} value={m.material}>{m.material}</option>
+              <option key={m.material} value={m.material}>
+                {getMaterialName(m.material)}
+              </option>
             ))}
           </select>
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs text-gray-500 mb-1">Qty/Unit</label>
+          <label className="text-xs text-gray-500 mb-1">
+            {i18n.language === 'ar' ? 'الكمية/الوحدة' : 'Qty/Unit'}
+          </label>
           <input
             className="border rounded px-2 py-1 w-28"
             placeholder="Qty/Unit"
@@ -157,7 +178,9 @@ const BOM: React.FC = () => {
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs text-gray-500 mb-1">Unit</label>
+          <label className="text-xs text-gray-500 mb-1">
+            {i18n.language === 'ar' ? 'الوحدة' : 'Unit'}
+          </label>
           <input
             className="border rounded px-2 py-1 w-24"
             placeholder="Unit"
@@ -167,7 +190,9 @@ const BOM: React.FC = () => {
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs text-gray-500 mb-1">Waste %</label>
+          <label className="text-xs text-gray-500 mb-1">
+            {i18n.language === 'ar' ? 'نسبة الهدر %' : 'Waste %'}
+          </label>
           <input
             className="border rounded px-2 py-1 w-24"
             placeholder="Waste %"
@@ -179,16 +204,20 @@ const BOM: React.FC = () => {
         </div>
 
         <div className="flex flex-col">
-          <label className="text-xs text-gray-500 mb-1">Stage</label>
+          <label className="text-xs text-gray-500 mb-1">
+            {i18n.language === 'ar' ? 'المرحلة' : 'Stage'}
+          </label>
           <select
             className="border rounded px-2 py-1"
             value={form.deduct_at_stage}
             onChange={e => setForm({ ...form, deduct_at_stage: e.target.value })}
             disabled={stagesLoading}
           >
-            <option value="">Select stage</option>
+            <option value="">{i18n.language === 'ar' ? 'اختر المرحلة' : 'Select stage'}</option>
             {stageOptions.map(s => (
-              <option key={s.code} value={s.name_en}>{s.name_en}</option>
+              <option key={s.code} value={s.name_en}>
+                {getLocalizedName(s)}
+              </option>
             ))}
           </select>
         </div>
@@ -198,7 +227,10 @@ const BOM: React.FC = () => {
           type="submit"
           disabled={addBomMutation.isPending}
         >
-          {addBomMutation.isPending ? 'Adding...' : 'Add Component'}
+          {addBomMutation.isPending 
+            ? (i18n.language === 'ar' ? 'جاري الإضافة...' : 'Adding...') 
+            : (i18n.language === 'ar' ? 'إضافة مكون' : 'Add Component')
+          }
         </button>
       </form>
 
