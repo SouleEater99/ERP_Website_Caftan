@@ -8,7 +8,7 @@ export interface WorkLog {
   quantity: number;
   completed: boolean;
   notes?: string;
-  approved?: boolean;
+  approved: boolean;
   created_at?: string;
 }
 

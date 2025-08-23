@@ -19,9 +19,9 @@ const workSchema = z.object({
 });
 
 const LogWorkForm: React.FC = () => {
-  const { t, i18n } = useTranslation();
   const { user } = useAuthStore();
-  const isRTL = i18n.language === 'ar';
+  const addWorkLog = useAddWorkLog();
+  const { t } = useTranslation();
   
   const {
     register,
@@ -41,46 +41,69 @@ const LogWorkForm: React.FC = () => {
   const watchedProduct = watch('product');
   const watchedQuantity = watch('quantity');
   
-  const addWorkLog = useAddWorkLog();
-
   const onSubmit = async (data: WorkForm) => {
     try {
+      console.log('Form data:', data);
+      console.log('User:', user);
+      
+      if (!user?.id || !user?.name) {
+        throw new Error('User information is missing');
+      }
+
       // Show loading state
       const loadingDiv = document.createElement('div');
-      loadingDiv.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50 animate-pulse arabic-text';
-      loadingDiv.textContent = t('loggingWork') || 'Logging work...';
+      loadingDiv.id = 'loading-message';
+      loadingDiv.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      loadingDiv.textContent = 'Submitting work log...';
       document.body.appendChild(loadingDiv);
 
-      // Submit to database
-      await addWorkLog.mutateAsync({
-        worker_id: user?.id || '',
-        worker_name: user?.name || '',
+      const result = await addWorkLog.mutateAsync({
+        worker_id: user.id, // Use the actual user ID
+        worker_name: user.name, // Use the actual user name (will be overridden by real name from DB)
         product: data.product,
+        product_id: data.product_id,
         task: data.task,
         quantity: data.quantity,
+        completed: data.completed,
         notes: data.notes
       });
 
-      // Remove loading and show success
-      document.body.removeChild(loadingDiv);
-      
+      console.log('Submission result:', result);
+
+      // Remove loading message
+      document.getElementById('loading-message')?.remove();
+
+      // Show success message
       const successDiv = document.createElement('div');
-      successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50 animate-bounce arabic-text';
-      successDiv.textContent = t('workLoggedSuccess');
+      successDiv.id = 'success-message';
+      successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      successDiv.textContent = 'Work log submitted successfully!';
       document.body.appendChild(successDiv);
-      setTimeout(() => document.body.removeChild(successDiv), 3000);
-      
+
+      // Remove success message after 3 seconds
+      setTimeout(() => {
+        document.getElementById('success-message')?.remove();
+      }, 3000);
+
+      // Reset form
       reset();
-    } catch (error) {
-      // Remove loading and show error
-      const loadingDiv = document.querySelector('.fixed.top-4.right-4.bg-blue-500');
-      if (loadingDiv) document.body.removeChild(loadingDiv);
+    } catch (error: any) {
+      console.error('Error submitting work log:', error);
       
+      // Remove loading message if it exists
+      document.getElementById('loading-message')?.remove();
+
+      // Show error message
       const errorDiv = document.createElement('div');
-      errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50 animate-bounce arabic-text';
-      errorDiv.textContent = t('workLogError') || 'Error logging work';
+      errorDiv.id = 'error-message';
+      errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      errorDiv.textContent = `Error: ${error.message || 'Failed to log work'}`;
       document.body.appendChild(errorDiv);
-      setTimeout(() => document.body.removeChild(errorDiv), 3000);
+
+      // Remove error message after 5 seconds
+      setTimeout(() => {
+        document.getElementById('error-message')?.remove();
+      }, 5000);
     }
   };
 
@@ -93,11 +116,11 @@ const LogWorkForm: React.FC = () => {
             <div className="p-3 bg-blue-100 rounded-full mr-3">
               <Scissors className="w-8 h-8 text-blue-600" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-800 arabic-text">
+            <h1 className="text-3xl font-bold text-slate-800">
               {t('logWork')}
             </h1>
           </div>
-          <p className="text-slate-600 arabic-text">
+          <p className="text-slate-600">
             {t('logWorkDescription')}
           </p>
         </div>
@@ -106,7 +129,7 @@ const LogWorkForm: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-3xl shadow-xl p-6 sm:p-8">
           {/* Product Selection */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-slate-700 mb-3 arabic-text">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               {t('selectProduct')}
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
@@ -125,7 +148,7 @@ const LogWorkForm: React.FC = () => {
                   />
                   <div className="p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-300 transition-all duration-200 text-center group-hover:scale-105">
                     <div className="text-2xl mb-2">{product.icon}</div>
-                    <div className="text-sm font-medium text-slate-700 arabic-text">
+                    <div className="text-sm font-medium text-slate-700">
                       {product.label}
                     </div>
                   </div>
@@ -133,7 +156,7 @@ const LogWorkForm: React.FC = () => {
               ))}
             </div>
             {errors.product && (
-              <p className="text-red-500 text-sm mt-2 arabic-text">
+              <p className="text-red-500 text-sm mt-2">
                 {errors.product.message}
               </p>
             )}
@@ -141,7 +164,7 @@ const LogWorkForm: React.FC = () => {
 
           {/* Task Selection */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-slate-700 mb-3 arabic-text">
+            <label className="block text-sm font-semibold text-slate-700 mb-3">
               {t('selectTask')}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -160,10 +183,10 @@ const LogWorkForm: React.FC = () => {
                   />
                   <div className={`p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-300 transition-all duration-200 text-center group-hover:scale-105 bg-gradient-to-br ${task.color} bg-opacity-10`}>
                     <div className="text-2xl mb-2">{task.icon}</div>
-                    <div className="text-sm font-bold text-slate-700 mb-1 arabic-text">
+                    <div className="text-sm font-bold text-slate-700 mb-1">
                       {t(task.label)}
                     </div>
-                    <div className="text-xs text-slate-600 arabic-text">
+                    <div className="text-xs text-slate-600">
                       {task.desc}
                     </div>
                   </div>
@@ -171,7 +194,7 @@ const LogWorkForm: React.FC = () => {
               ))}
             </div>
             {errors.task && (
-              <p className="text-red-500 text-sm mt-2 arabic-text">
+              <p className="text-red-500 text-sm mt-2">
                 {errors.task.message}
               </p>
             )}
@@ -180,7 +203,7 @@ const LogWorkForm: React.FC = () => {
           {/* Quantity and Notes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2 arabic-text">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 {t('quantity')}
               </label>
               <input
@@ -190,14 +213,14 @@ const LogWorkForm: React.FC = () => {
                 className="w-full px-4 py-3 border-2 border-slate-200 rounded-2xl focus:border-blue-500 focus:outline-none transition-colors"
               />
               {errors.quantity && (
-                <p className="text-red-500 text-sm mt-2 arabic-text">
+                <p className="text-red-500 text-sm mt-2">
                   {errors.quantity.message}
                 </p>
               )}
             </div>
             
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2 arabic-text">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
                 {t('notes')} ({t('optional')})
               </label>
               <textarea
@@ -214,7 +237,7 @@ const LogWorkForm: React.FC = () => {
             <button
               type="submit"
               disabled={addWorkLog.isPending}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed arabic-text"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {addWorkLog.isPending ? (
                 <div className="flex items-center justify-center">

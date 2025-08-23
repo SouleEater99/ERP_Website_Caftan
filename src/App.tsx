@@ -1,69 +1,51 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useAuthStore } from './shared/store/authStore'
-import ErrorBoundary from './shared/components/ErrorBoundary'
-import Layout from './shared/components/layout/Layout'
-import Login from './shared/components/Login'
-import Dashboard from './pages/Dashboard'
-import LogWork from './pages/LogWork'
-import Inventory from './pages/Inventory'
-import BOM from './pages/BOM'
-import Payroll from './pages/Payroll'
-import Reports from './pages/Reports'
-import Management from './pages/Management'
-import './i18n'
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useAuthStore } from "./shared/store/authStore";
+import ErrorBoundary from "./shared/components/ErrorBoundary";
+import Layout from "./shared/components/layout/Layout";
+import Login from "./shared/components/Login";
+import Dashboard from "./pages/Dashboard";
+import Inventory from "./pages/Inventory";
+import Payroll from "./pages/Payroll";
+import BOM from "./pages/BOM";
+import Reports from "./pages/Reports";
+import Management from "./pages/Management";
+import LogWork from "./pages/LogWork";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5,
-      refetchOnWindowFocus: false,
-      retry: (failureCount, error: any) => {
-        if (error?.code === 'PGRST301' || error?.status === 401) {
-          return false
-        }
-        return failureCount < 3
-      }
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
     },
-    mutations: {
-      retry: false
-    }
-  }
-})
+  },
+});
 
 function App() {
   const { user, loading, initialized, initialize } = useAuthStore()
-  
-  React.useEffect(() => {
+
+  useEffect(() => {
     if (!initialized) {
       initialize()
     }
   }, [initialized, initialize])
-  
-  // Show loading only if not initialized and currently loading
-  if (!initialized && loading) {
+
+  if (loading || !initialized) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-slate-600 font-medium text-sm">Initializing...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 text-lg">Loading...</p>
         </div>
       </div>
     )
   }
-  
-  // If not initialized but not loading, or no user, show login
+
   if (!user) {
-    return (
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <Login />
-        </QueryClientProvider>
-      </ErrorBoundary>
-    )
+    return <Login />
   }
-  
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -72,11 +54,12 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               
-              {/* Allow both workers and admins to access Log Work for testing */}
-              {(user.role === 'worker' || user.role === 'admin') && (
+              {/* Only workers can access Log Work */}
+              {user.role === 'worker' && (
                 <Route path="/log-work" element={<LogWork />} />
               )}
               
+              {/* Supervisors and admins can access these modules */}
               {(user.role === 'supervisor' || user.role === 'admin') && (
                 <>
                   <Route path="/inventory" element={<Inventory />} />
@@ -85,6 +68,7 @@ function App() {
                 </>
               )}
               
+              {/* Only admins can access these modules */}
               {user.role === 'admin' && (
                 <>
                   <Route path="/bom" element={<BOM />} />

@@ -59,7 +59,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   const navigation = [
     { name: t('dashboard'), href: '/', icon: Home, roles: ['worker', 'supervisor', 'admin'], gradient: 'from-orange-500 to-red-500' },
-    { name: t('logWork'), href: '/log-work', icon: ClipboardList, roles: ['worker', 'admin'], gradient: 'from-green-500 to-emerald-500' },
+    { name: t('logWork'), href: '/log-work', icon: ClipboardList, roles: ['worker'], gradient: 'from-green-500 to-emerald-500' },
     { name: t('inventory'), href: '/inventory', icon: Package, roles: ['supervisor', 'admin'], gradient: 'from-blue-500 to-cyan-500' },
     { name: t('bom'), href: '/bom', icon: FileText, roles: ['admin'], gradient: 'from-purple-500 to-pink-500' },
     { name: t('payroll'), href: '/payroll', icon: DollarSign, roles: ['supervisor', 'admin'], gradient: 'from-yellow-500 to-orange-500' },

@@ -54,14 +54,33 @@ export const useAuthStore = create<AuthState>()(
           }
 
           if (session) {
-            // Create user from auth session data to avoid RLS recursion
+            // Try to get user from users table
+            try {
+              const { data: userData, error: userError } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', session.user.id)
+                .single()
+
+              if (userData && !userError) {
+                // User exists in users table
+                set({ user: userData, session, loading: false, initialized: true })
+                return
+              }
+            } catch (userError) {
+              console.log('User not found in users table during initialization')
+            }
+
+            // If user doesn't exist in users table, create a fallback user
+            // This allows the app to work while we fix the user setup
             const fallbackUser: AppUser = {
               id: session.user.id,
-              email: session.user.email || 'admin@example.com',
-              name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'Administrator',
-              role: 'admin',
+              email: session.user.email || 'unknown@example.com',
+              name: session.user.user_metadata?.full_name || session.user.user_metadata?.name || 'User',
+              role: 'worker', // Default to worker for security
               created_at: session.user.created_at || new Date().toISOString()
             }
+            
             set({ user: fallbackUser, session, loading: false, initialized: true })
           } else {
             set({ user: null, session: null, loading: false, initialized: true })
@@ -87,7 +106,7 @@ export const useAuthStore = create<AuthState>()(
           }
 
           if (authData.user && authData.session) {
-            // Try to get user profile
+            // Try to get user profile from users table
             try {
               const { data: userData, error: userError } = await supabase
                 .from('users')
@@ -95,75 +114,52 @@ export const useAuthStore = create<AuthState>()(
                 .eq('id', authData.user.id)
                 .single()
 
-              if (userError || (userError && userError.code === '42P17')) {
-                console.warn('User profile fetch failed, using fallback:', userError?.message)
-                // Create fallback user
-                const fallbackUser: AppUser = {
-                  id: authData.user.id,
-                  email: authData.user.email || email,
-                  name: authData.user.user_metadata?.name || 'User',
-                  role: 'admin',
-                  created_at: new Date().toISOString()
-                }
-                set({ user: fallbackUser, session: authData.session, loading: false })
+              if (userData && !userError) {
+                // User exists in users table - use their actual data
+                set({ user: userData, session: authData.session, loading: false })
                 return true
               }
-
-              set({ user: userData, session: authData.session, loading: false })
-              return true
-            } catch (profileError) {
-              console.warn('Profile fetch failed, using fallback:', profileError)
-              // Create fallback user on any error
-              const fallbackUser: AppUser = {
-                id: authData.user.id,
-                email: authData.user.email || email,
-                name: authData.user.user_metadata?.name || 'User',
-                role: 'admin',
-                created_at: new Date().toISOString()
-              }
-              set({ user: fallbackUser, session: authData.session, loading: false, initialized: true })
-              return true
+            } catch (userError) {
+              console.log('User not found in users table during login')
             }
-          }
 
-          set({ loading: false })
+            // If user doesn't exist in users table, create a fallback user
+            // This allows login to work while we fix the user setup
+            const fallbackUser: AppUser = {
+              id: authData.user.id,
+              email: authData.user.email || email,
+              name: authData.user.user_metadata?.full_name || authData.user.user_metadata?.name || email.split('@')[0],
+              role: 'worker', // Default to worker for security
+              created_at: authData.user.created_at || new Date().toISOString()
+            }
+            
+            set({ user: fallbackUser, session: authData.session, loading: false })
+            return true
+          }
+          
           return false
-        } catch (error) {
-          console.error('Login error:', error)
-          set({ 
-            error: error instanceof Error ? error.message : 'Login failed', 
-            loading: false 
-          })
+        } catch (error: any) {
+          set({ error: error.message, loading: false })
           return false
         }
       },
 
       logout: async () => {
-        set({ loading: true })
         try {
           await supabase.auth.signOut()
-          set({ user: null, session: null, loading: false, initialized: true })
+          set({ user: null, session: null })
         } catch (error) {
           console.error('Logout error:', error)
-          set({ user: null, session: null, loading: false, initialized: true })
         }
       },
 
       resetPassword: async (email: string) => {
-        set({ loading: true, error: null })
         try {
           const { error } = await supabase.auth.resetPasswordForEmail(email)
-          if (error) {
-            set({ error: error.message, loading: false })
-            return false
-          }
-          set({ loading: false })
+          if (error) throw error
           return true
-        } catch (error) {
-          set({ 
-            error: error instanceof Error ? error.message : 'Password reset failed', 
-            loading: false 
-          })
+        } catch (error: any) {
+          set({ error: error.message })
           return false
         }
       },
@@ -172,16 +168,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ 
-        user: state.user,
-        session: state.session 
-      }),
-      onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.loading = false
-          state.initialized = false
-        }
-      }
+      partialize: (state) => ({ user: state.user, session: state.session })
     }
   )
 )
