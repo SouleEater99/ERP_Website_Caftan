@@ -92,7 +92,6 @@ i18n
           completedTasks: 'المهام المكتملة',
           pendingApprovals: 'الموافقات المعلقة',
           totalEarnings: 'إجمالي الأرباح',
-          efficiency: 'الكفاءة',
           
           // Inventory
           material: 'المادة',
@@ -116,9 +115,6 @@ i18n
           allSchedules: 'جميع الجداول',
           biWeekly: 'كل أسبوعين',
           quarterly: 'ربع سنوي',
-          daily: 'يومي',
-          weekly: 'أسبوعي',
-          monthly: 'شهري',
           earnings: 'الأرباح',
           status: 'الحالة',
           paid: 'مدفوع',
@@ -134,7 +130,6 @@ i18n
           systemConfiguration: 'تكوين النظام',
           totalUsers: 'إجمالي المستخدمين',
           locations: 'المواقع',
-          totalWorkers: 'إجمالي العمال',
           acrossAllLocations: 'عبر جميع المواقع',
           quickActions: 'إجراءات سريعة',
           addNewUser: 'إضافة مستخدم جديد',
@@ -182,7 +177,6 @@ i18n
           timezone: 'المنطقة الزمنية',
           gulfStandardTime: 'التوقيت القياسي للخليج',
           gmt: 'توقيت غرينتش',
-          securitySettings: 'إعدادات الأمان',
           twoFactorAuth: 'المصادقة الثنائية',
           require2FA: 'طلب المصادقة الثنائية لحسابات المدير',
           sessionTimeout: 'انتهاء مهلة الجلسة',
@@ -199,7 +193,6 @@ i18n
           notifications: 'الإشعارات',
           emailNotifications: 'إشعارات البريد الإلكتروني',
           systemAlertsReports: 'تنبيهات النظام والتقارير',
-          lowStockAlerts: 'تنبيهات نفاد المخزون',
           inventoryThresholdWarnings: 'تحذيرات عتبة المخزون',
           saveChanges: 'حفظ التغييرات',
           
@@ -213,7 +206,6 @@ i18n
           error: 'خطأ',
           success: 'نجح',
           confirm: 'تأكيد',
-          recentActivities: 'الأنشطة الأخيرة',
           
           // Validation
           required: 'هذا الحقل مطلوب',
@@ -226,21 +218,6 @@ i18n
           thobe: 'ثوب',
           abaya: 'عباية',
           dress: 'فستان',
-          
-          // Payroll (Arabic)
-          worker: 'العامل',
-          period: 'الفترة',
-          paymentSchedule: 'جدول الدفع',
-          allSchedules: 'جميع الجداول',
-          biWeekly: 'كل أسبوعين',
-          quarterly: 'ربع سنوي',
-          daily: 'يومي',
-          weekly: 'أسبوعي',
-          monthly: 'شهري',
-          earnings: 'الأرباح',
-          status: 'الحالة',
-          paid: 'مدفوع',
-          pending: 'معلق',
 
           // New Payment Schedule Translations
           workerPaymentSchedules: 'جداول دفع العمال',
