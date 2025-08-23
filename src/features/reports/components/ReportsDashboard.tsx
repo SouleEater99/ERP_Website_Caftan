@@ -13,7 +13,8 @@ import {
   Eye,
   FileText,
   PieChart,
-  Activity
+  Activity,
+  AlertCircle
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -33,35 +34,37 @@ import {
 import { 
   REPORT_PERIODS, 
   REPORT_TYPES, 
-  MOCK_PRODUCTION_DATA, 
-  MOCK_WORKER_PERFORMANCE, 
-  MOCK_MATERIAL_USAGE,
-  QUICK_STATS,
-  RECENT_ACTIVITIES,
   EXPORT_OPTIONS
 } from '../constants/reports.constants';
-import { 
-  getTotalProduction, 
-  getActiveWorkersCount, 
-  getTotalRevenue, 
-  getEfficiencyRate 
-} from '../utils/reports.utils';
+import { useReportsData } from '../hooks/useReportsData';
+import { formatCurrency, formatPercentage, formatNumber } from '../utils/reports.utils';
 
 const ReportsDashboard: React.FC = () => {
   const { t, i18n } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
   const [selectedReport, setSelectedReport] = useState('production');
-  const [loading, setLoading] = useState(false);
   
   const isRTL = i18n.language === 'ar';
 
+  const {
+    workLogStats,
+    monthlyProduction,
+    workerPerformance,
+    materialUsage,
+    recentActivities,
+    quickStats,
+    isLoading,
+    errors,
+    refetchAll
+  } = useReportsData(selectedPeriod);
+
   const handleRefresh = () => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1000);
+    refetchAll();
   };
 
   const handleExport = (format: string) => {
     console.log(`Exporting ${selectedReport} report as ${format}`);
+    // TODO: Implement actual export functionality
   };
 
   const ReportCard = ({ title, value, change, icon: Icon, color, trend }: any) => (
@@ -83,6 +86,19 @@ const ReportsDashboard: React.FC = () => {
       </div>
     </div>
   );
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-20">
+            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-slate-600 text-lg">{t('loadingReports') || 'Loading reports...'}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8">
@@ -114,10 +130,9 @@ const ReportsDashboard: React.FC = () => {
             
             <button 
               onClick={handleRefresh}
-              disabled={loading}
-              className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
             >
-              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              <RefreshCw className="w-4 h-4 mr-2" />
               <span>{t('refresh')}</span>
             </button>
             
@@ -131,32 +146,45 @@ const ReportsDashboard: React.FC = () => {
           </div>
         </div>
 
+        {/* Error Display */}
+        {Object.values(errors).some(error => error) && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-center">
+              <AlertCircle className="w-5 h-5 text-red-400 mr-2" />
+              <div>
+                <h3 className="text-sm font-medium text-red-800">Some data failed to load</h3>
+                <p className="text-sm text-red-700 mt-1">Please refresh to try again</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <ReportCard
             title={t('totalProduction')}
-            value={getTotalProduction(MOCK_PRODUCTION_DATA)}
+            value={workLogStats ? formatNumber(workLogStats.total_completed + workLogStats.total_pending) : '0'}
             change="+12.5%"
             icon={Package}
             color="bg-gradient-to-r from-blue-500 to-blue-600"
           />
           <ReportCard
             title={t('activeWorkers')}
-            value={getActiveWorkersCount()}
+            value={workLogStats ? workLogStats.worker_count.toString() : '0'}
             change="+3.2%"
             icon={Users}
             color="bg-gradient-to-r from-emerald-500 to-teal-600"
           />
           <ReportCard
             title={t('revenue')}
-            value={getTotalRevenue(MOCK_PRODUCTION_DATA)}
+            value={workLogStats ? formatCurrency(workLogStats.total_revenue) : '$0'}
             change="+18.7%"
             icon={DollarSign}
             color="bg-gradient-to-r from-violet-500 to-purple-600"
           />
           <ReportCard
             title={t('efficiency')}
-            value={getEfficiencyRate(MOCK_WORKER_PERFORMANCE)}
+            value={workLogStats ? formatPercentage(workLogStats.efficiency_rate) : '0%'}
             change="+5.1%"
             icon={TrendingUp}
             color="bg-gradient-to-r from-amber-500 to-orange-500"
@@ -190,7 +218,7 @@ const ReportsDashboard: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Chart */}
           <div className="lg:col-span-2">
-            {selectedReport === 'production' && (
+            {selectedReport === 'production' && monthlyProduction && (
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
                 <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <h3 className="text-xl font-bold text-slate-800">{t('productionTrends')}</h3>
@@ -200,7 +228,7 @@ const ReportsDashboard: React.FC = () => {
                   </div>
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={MOCK_PRODUCTION_DATA}>
+                  <AreaChart data={monthlyProduction}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis dataKey="month" stroke="#64748b" />
                     <YAxis stroke="#64748b" />
@@ -219,7 +247,7 @@ const ReportsDashboard: React.FC = () => {
               </div>
             )}
 
-            {selectedReport === 'workers' && (
+            {selectedReport === 'workers' && workerPerformance && (
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
                 <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <h3 className="text-xl font-bold text-slate-800">{t('workerPerformance')}</h3>
@@ -229,9 +257,9 @@ const ReportsDashboard: React.FC = () => {
                   </button>
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={MOCK_WORKER_PERFORMANCE}>
+                  <BarChart data={workerPerformance}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                    <XAxis dataKey="name" stroke="#64748b" />
+                    <XAxis dataKey="worker_name" stroke="#64748b" />
                     <YAxis stroke="#64748b" />
                     <Tooltip 
                       contentStyle={{ 
@@ -241,13 +269,13 @@ const ReportsDashboard: React.FC = () => {
                         boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
                       }} 
                     />
-                    <Bar dataKey="tasks" fill="#0EA5E9" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="tasks_completed" fill="#0EA5E9" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             )}
 
-            {selectedReport === 'materials' && (
+            {selectedReport === 'materials' && materialUsage && (
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
                 <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <h3 className="text-xl font-bold text-slate-800">{t('materialUsageDistribution')}</h3>
@@ -256,15 +284,15 @@ const ReportsDashboard: React.FC = () => {
                 <ResponsiveContainer width="100%" height={300}>
                   <RechartsPieChart>
                     <Pie
-                      data={MOCK_MATERIAL_USAGE}
+                      data={materialUsage}
                       cx="50%"
                       cy="50%"
                       outerRadius={100}
                       fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      dataKey="percentage"
+                      label={({ material_name, percentage }) => `${material_name} ${percentage.toFixed(1)}%`}
                     >
-                      {MOCK_MATERIAL_USAGE.map((entry, index) => (
+                      {materialUsage.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -274,14 +302,14 @@ const ReportsDashboard: React.FC = () => {
               </div>
             )}
 
-            {selectedReport === 'financial' && (
+            {selectedReport === 'financial' && monthlyProduction && (
               <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
                 <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
                   <h3 className="text-xl font-bold text-slate-800">{t('revenueTrends')}</h3>
                   <div className="text-sm text-slate-600">{t('monthlyRevenue')}</div>
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={MOCK_PRODUCTION_DATA}>
+                  <LineChart data={monthlyProduction}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                     <XAxis dataKey="month" stroke="#64748b" />
                     <YAxis stroke="#64748b" />
@@ -306,12 +334,14 @@ const ReportsDashboard: React.FC = () => {
             <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
               <h4 className="text-lg font-bold text-slate-800 mb-4">{t('quickStats')}</h4>
               <div className="space-y-4">
-                {QUICK_STATS.map((stat, index) => (
+                {quickStats?.map((stat, index) => (
                   <div key={index} className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
                     <span className="text-slate-600">{t(stat.label)}</span>
                     <span className={`font-bold ${stat.color}`}>{stat.value}</span>
                   </div>
-                ))}
+                )) || (
+                  <div className="text-slate-500 text-sm">Loading stats...</div>
+                )}
               </div>
             </div>
 
@@ -319,8 +349,8 @@ const ReportsDashboard: React.FC = () => {
             <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
               <h4 className="text-lg font-bold text-slate-800 mb-4">{t('recentActivities')}</h4>
               <div className="space-y-3">
-                {RECENT_ACTIVITIES.map((activity, index) => (
-                  <div key={index} className={`flex items-start space-x-3 p-3 bg-slate-50/50 rounded-lg ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                {recentActivities?.map((activity) => (
+                  <div key={activity.id} className={`flex items-start space-x-3 p-3 bg-slate-50/50 rounded-lg ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                     <div className={`w-2 h-2 rounded-full mt-2 ${
                       activity.status === 'success' ? 'bg-emerald-500' :
                       activity.status === 'pending' ? 'bg-amber-500' : 'bg-blue-500'
@@ -328,10 +358,12 @@ const ReportsDashboard: React.FC = () => {
                     <div className={`flex-1 ${isRTL ? 'text-right' : ''}`}>
                       <p className="text-sm font-medium text-slate-800">{t(activity.action)}</p>
                       <p className="text-xs text-slate-600">{activity.item}</p>
-                      <p className="text-xs text-slate-500 mt-1">{activity.time}</p>
+                      <p className="text-xs text-slate-500 mt-1">{new Date(activity.timestamp).toLocaleDateString()}</p>
                     </div>
                   </div>
-                ))}
+                )) || (
+                  <div className="text-slate-500 text-sm">Loading activities...</div>
+                )}
               </div>
             </div>
 
