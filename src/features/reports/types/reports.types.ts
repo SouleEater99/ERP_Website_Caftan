@@ -24,7 +24,35 @@ export interface ReportPeriod {
 }
 
 export interface ReportType {
-  value: string;
+  id: string;
   label: string;
   icon: string;
+}
+
+export interface QuickStat {
+  label: string;
+  value: string;
+  color: string;
+}
+
+export interface RecentActivity {
+  action: string;
+  item: string;
+  time: string;
+  status: 'success' | 'pending' | 'info';
+}
+
+export interface ExportOption {
+  format: string;
+  label: string;
+  icon: string;
+}
+
+export interface ReportCardProps {
+  title: string;
+  value: string;
+  change?: string;
+  icon: any;
+  color: string;
+  trend?: string;
 }

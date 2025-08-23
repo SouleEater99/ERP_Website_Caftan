@@ -24,3 +24,24 @@ export const formatCurrency = (amount: number): string => {
 export const formatPercentage = (value: number): string => {
   return `${value.toFixed(1)}%`;
 };
+
+export const formatNumber = (num: number): string => {
+  return num.toLocaleString();
+};
+
+export const getTotalProduction = (data: ProductionData[]): string => {
+  const total = data.reduce((sum, item) => sum + item.completed + item.pending, 0);
+  return formatNumber(total);
+};
+
+export const getActiveWorkersCount = (): string => {
+  return '32';
+};
+
+export const getTotalRevenue = (data: ProductionData[]): string => {
+  return formatCurrency(calculateTotalRevenue(data));
+};
+
+export const getEfficiencyRate = (data: WorkerPerformance[]): string => {
+  return formatPercentage(calculateAverageEfficiency(data));
+};

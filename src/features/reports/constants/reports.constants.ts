@@ -2,15 +2,14 @@ export const REPORT_PERIODS = [
   { value: 'daily', label: 'Daily' },
   { value: 'weekly', label: 'Weekly' },
   { value: 'monthly', label: 'Monthly' },
-  { value: 'quarterly', label: 'Quarterly' },
   { value: 'yearly', label: 'Yearly' }
 ];
 
 export const REPORT_TYPES = [
-  { value: 'production', label: 'Production', icon: '📊' },
-  { value: 'workers', label: 'Workers', icon: '👷' },
-  { value: 'materials', label: 'Materials', icon: '📦' },
-  { value: 'financial', label: 'Financial', icon: '💰' }
+  { id: 'production', label: 'productionOverview', icon: 'BarChart3' },
+  { id: 'workers', label: 'workerPerformance', icon: 'Users' },
+  { id: 'materials', label: 'materialUsage', icon: 'PieChart' },
+  { id: 'financial', label: 'financialSummary', icon: 'DollarSign' }
 ];
 
 export const MOCK_PRODUCTION_DATA = [
@@ -36,4 +35,38 @@ export const MOCK_MATERIAL_USAGE = [
   { name: 'Buttons', value: 20, color: '#0891B2' },
   { name: 'Zippers', value: 12, color: '#0E7490' },
   { name: 'Other', value: 8, color: '#164E63' }
+];
+
+export const QUICK_STATS = [
+  { label: 'todaysTasks', value: '47', color: 'text-slate-800' },
+  { label: 'completionRate', value: '94.2%', color: 'text-emerald-600' },
+  { label: 'activeOrders', value: '23', color: 'text-blue-600' },
+  { label: 'pendingApprovals', value: '8', color: 'text-amber-600' }
+];
+
+export const RECENT_ACTIVITIES = [
+  { 
+    action: 'productionCompleted', 
+    item: 'كفتان حريري #CT-001', 
+    time: 'منذ ساعتين', 
+    status: 'success' 
+  },
+  { 
+    action: 'qualityCheck', 
+    item: 'جلابية قطنية #CT-002', 
+    time: 'منذ 4 ساعات', 
+    status: 'pending' 
+  },
+  { 
+    action: 'materialRestocked', 
+    item: 'خيط حرير - 50 بكرة', 
+    time: 'منذ 6 ساعات', 
+    status: 'info' 
+  }
+];
+
+export const EXPORT_OPTIONS = [
+  { format: 'pdf', label: 'exportAsPDF', icon: 'FileText' },
+  { format: 'excel', label: 'exportAsExcel', icon: 'BarChart3' },
+  { format: 'csv', label: 'exportAsCSV', icon: 'Activity' }
 ];
