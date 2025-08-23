@@ -1,17 +1,18 @@
 import React from 'react';
 import { DollarSign, Calendar, Package } from "lucide-react";
-import { StatCard } from "../../../shared/components/common/StatCard";  // ✅ Updated path
+import { StatCard } from "../../../shared/components/common/StatCard";
 import { useTranslation } from "react-i18next";
 
 interface PayrollStatsProps {
   totalPayroll: number;
   paidAmount: number;
   totalPending: number;
+  paymentRate?: number; // Make this optional
   isRTL: boolean;
 }
 
 export const PayrollStats: React.FC<PayrollStatsProps> = ({ 
-  totalPayroll, paidAmount, totalPending, isRTL 
+  totalPayroll, paidAmount, totalPending, paymentRate, isRTL 
 }) => {
   const { t } = useTranslation();
   

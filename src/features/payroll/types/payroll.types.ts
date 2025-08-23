@@ -7,17 +7,17 @@ export interface Payroll {
   total_earnings: number;
   paid_status: boolean;
   created_at: string;
+  updated_at: string;
 }
 
-export interface PayrollPeriod {
+export interface Worker {
   id: string;
-  period_name: string;
-  start_date: string;
-  end_date: string;
-  status: 'active' | 'closed' | 'pending';
-  created_at: string;
-  closed_at?: string;
-  notes?: string;
+  name: string;
+  role: string;
+  payment_schedule?: string;
+  payment_day?: string;
+  next_payment_date?: string;
+  last_payment_date?: string;
 }
 
 export interface PayrollFilters {
@@ -26,4 +26,11 @@ export interface PayrollFilters {
   showUnpaidFirst: boolean;
   appliedWorkerFilter: string;
   appliedStatusFilter: string;
+}
+
+export interface PayrollStats {
+  totalPayroll: number;
+  paidAmount: number;
+  totalPending: number;
+  paymentRate: number;
 }

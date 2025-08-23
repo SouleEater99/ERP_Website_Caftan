@@ -1,13 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../../lib/supabase';
-import { Payroll as PayrollType } from '../../../lib/supabase';
+import { PayrollFilters } from '../types/payroll.types';
 
-interface UsePayrollDataProps {
-  selectedPeriod: string;
-  selectedSchedule: string;
-  showUnpaidFirst: boolean;
-  appliedWorkerFilter: string;
-  appliedStatusFilter: string;
+interface UsePayrollDataProps extends PayrollFilters {
   user: any;
 }
 
@@ -19,143 +14,92 @@ export const usePayrollData = ({
   appliedStatusFilter,
   user
 }: UsePayrollDataProps) => {
-  return useQuery<PayrollType[], Error>({
+  return useQuery({
     queryKey: ['payroll', selectedPeriod, selectedSchedule, showUnpaidFirst, appliedWorkerFilter, appliedStatusFilter],
     queryFn: async () => {
       console.log('🚀 Starting payroll query...');
       console.log(' Selected Period:', selectedPeriod);
-      console.log('⏰ Selected Schedule:', selectedSchedule);
-      
+      console.log(' ⏰ Selected Schedule:', selectedSchedule);
+      console.log(' 🔄 Show Unpaid First:', showUnpaidFirst);
+
       let query = supabase
         .from('payroll')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*');
 
-      // Declare variables outside the if blocks
-      let startDate: Date | null = null;
-      let endDate: Date | null = null;
-
-      // Apply period filtering based on selected schedule
-      if (selectedPeriod !== 'all') {
+      // Apply period filter
+      if (selectedPeriod && selectedPeriod !== 'all') {
+        console.log(' Applying period filter:', selectedPeriod);
         const now = new Date();
         
-        if (selectedSchedule === 'all') {
-          // Default to monthly for 'all' schedules
-          startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-          endDate = new Date(now.getMonth() + 1, 0);
-        } else {
-          // Calculate dates based on selected schedule
-          switch (selectedSchedule) {
-            case 'daily':
-              // For daily: use TODAY's work logs (not yesterday)
-              startDate = new Date(now);
-              endDate = new Date(now);
-              break;
-            case 'weekly':
-              // For weekly: use last 7 days including today
-              startDate = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000); // 6 days ago
-              endDate = now;
-              break;
-            case 'bi-weekly':
-              // For bi-weekly: use last 14 days including today
-              startDate = new Date(now.getTime() - 13 * 24 * 60 * 60 * 1000); // 13 days ago
-              endDate = now;
-              break;
-            case 'monthly':
-              startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-              endDate = now;
-              break;
-            case 'quarterly':
-              startDate = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1);
-              endDate = now;
-              break;
-            default:
-              startDate = new Date(now.getFullYear(), 0, 1); // Start of year
-              endDate = now;
-          }
+        switch (selectedPeriod) {
+          case 'current':
+            // Current month
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            query = query
+              .gte('period_start', startOfMonth.toISOString().split('T')[0])
+              .lte('period_end', endOfMonth.toISOString().split('T')[0]);
+            break;
+          case 'previous':
+            // Previous month
+            const startOfPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            const endOfPrevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+            query = query
+              .gte('period_start', startOfPrevMonth.toISOString().split('T')[0])
+              .lte('period_end', endOfPrevMonth.toISOString().split('T')[0]);
+            break;
+          case 'quarterly':
+            // Current quarter
+            const currentQuarter = Math.floor(now.getMonth() / 3);
+            const startOfQuarter = new Date(now.getFullYear(), currentQuarter * 3, 1);
+            const endOfQuarter = new Date(now.getFullYear(), (currentQuarter + 1) * 3, 0);
+            query = query
+              .gte('period_start', startOfQuarter.toISOString().split('T')[0])
+              .lte('period_end', endOfQuarter.toISOString().split('T')[0]);
+            break;
+          case 'yearly':
+            // Current year
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const endOfYear = new Date(now.getFullYear(), 11, 31);
+            query = query
+              .gte('period_start', startOfYear.toISOString().split('T')[0])
+              .lte('period_end', endOfYear.toISOString().split('T')[0]);
+            break;
         }
-        
-        query = query
-          .gte('period_start', startDate.toISOString().split('T')[0])
-          .lte('period_end', endDate.toISOString().split('T')[0]);
-      } else {
-        // When period is 'all', still apply schedule-based filtering
-        if (selectedSchedule !== 'all') {
-          const now = new Date();
-          
-          switch (selectedSchedule) {
-            case 'daily':
-              // For daily: use TODAY's work logs (not yesterday)
-              startDate = new Date(now);
-              endDate = new Date(now);
-              break;
-            case 'weekly':
-              // For weekly: use last 7 days including today
-              startDate = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000); // 6 days ago
-              endDate = now;
-              break;
-            case 'bi-weekly':
-              // For bi-weekly: use last 14 days including today
-              startDate = new Date(now.getTime() - 13 * 24 * 60 * 60 * 1000); // 13 days ago
-              endDate = now;
-              break;
-            case 'monthly':
-              startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-              endDate = now;
-              break;
-            case 'quarterly':
-              startDate = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3, 1);
-              endDate = now;
-              break;
-            default:
-              startDate = new Date(now.getFullYear(), 0, 1); // Start of year
-              endDate = now;
-          }
-          
-          query = query
-            .gte('period_start', startDate.toISOString().split('T')[0])
-            .lte('period_end', endDate.toISOString().split('T')[0]);
-        }
-      }
-
-      // Only log if dates were calculated
-      if (startDate && endDate) {
-        console.log(' Date range applied:', { 
-          startDate: startDate.toISOString().split('T')[0], 
-          endDate: endDate.toISOString().split('T')[0] 
-        });
       }
 
       // Apply worker filter
-      if (appliedWorkerFilter) {
+      if (appliedWorkerFilter && appliedWorkerFilter !== 'all' && appliedWorkerFilter.trim() !== '') {
+        console.log(' Applying worker filter:', appliedWorkerFilter);
         query = query.eq('worker_id', appliedWorkerFilter);
       }
 
       // Apply status filter
-      if (appliedStatusFilter !== '') {
-        query = query.eq('paid_status', appliedStatusFilter === 'paid');
+      if (appliedStatusFilter && appliedStatusFilter !== 'all' && appliedStatusFilter.trim() !== '') {
+        console.log(' Applying status filter:', appliedStatusFilter);
+        const isPaid = appliedStatusFilter === 'paid';
+        query = query.eq('paid_status', isPaid);
       }
 
-      const { data, error: fetchError } = await query;
-      
-      if (fetchError) {
-        console.error('❌ Query error:', fetchError);
-        throw new Error(fetchError.message);
-      }
-
-      // Sort data based on unpaid priority
-      let sortedData = data || [];
+      // Apply sorting based on unpaid priority
       if (showUnpaidFirst) {
-        sortedData = sortedData.sort((a, b) => {
-          if (a.paid_status !== b.paid_status) {
-            return a.paid_status ? 1 : -1; // Unpaid first
-          }
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime(); // Recent first
-        });
+        console.log(' Applying unpaid priority sorting');
+        query = query.order('paid_status', { ascending: true }); // false (unpaid) comes first
+      }
+      
+      // Default sorting by creation date
+      query = query.order('created_at', { ascending: false });
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('❌ Query error:', error);
+        throw error;
       }
 
-      return sortedData;
+      console.log(' ✅ Query successful, found', data?.length || 0, 'records');
+      return data || [];
     },
-    enabled: !!user && (user.role === 'supervisor' || user.role === 'admin')
+    enabled: !!user
   });
 };

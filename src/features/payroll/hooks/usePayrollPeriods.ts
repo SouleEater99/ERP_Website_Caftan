@@ -4,40 +4,38 @@ import { supabase } from '../../../lib/supabase';
 export const usePayrollPeriods = (user: any) => {
   const queryClient = useQueryClient();
 
+  // Get current period - using the correct 'status' column
   const { data: currentPeriod } = useQuery({
-    queryKey: ['payroll-periods', 'active'],
+    queryKey: ['payroll-periods', 'current'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('payroll_periods')
-        .select('*')
-        .eq('status', 'active')
-        .single();
-      
-      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
-      return data;
+      try {
+        // Get the active period using the 'status' column
+        const { data, error } = await supabase
+          .from('payroll_periods')
+          .select('*')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+        
+        if (error) {
+          console.log('No active payroll periods found, will create first one');
+          return null;
+        }
+        
+        return data;
+      } catch (error) {
+        console.log('Error fetching payroll periods:', error);
+        return null;
+      }
     },
-    enabled: !!user && (user.role === 'supervisor' || user.role === 'admin')
+    enabled: !!user
   });
 
+  // Create new period mutation - using the correct schema
   const createPeriodMutation = useMutation({
     mutationFn: async () => {
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      const currentMonth = now.getMonth();
-      
-      // 1. CHECK: Does current period already exist?
-      const { data: existingPeriods } = await supabase
-        .from('payroll_periods')
-        .select('*')
-        .eq('status', 'active')
-        .gte('start_date', `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-01`)
-        .lte('end_date', `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-31`);
-      
-      if (existingPeriods && existingPeriods.length > 0) {
-        throw new Error(`Period ${existingPeriods[0].period_name} already exists`);
-      }
-      
-      // 2. CLOSE: Previous active period if exists
+      // First, close any existing active period
       if (currentPeriod) {
         const { error: closeError } = await supabase
           .from('payroll_periods')
@@ -47,43 +45,32 @@ export const usePayrollPeriods = (user: any) => {
           })
           .eq('id', currentPeriod.id);
         
-        if (closeError) throw closeError;
+        if (closeError) {
+          console.error('Error closing current period:', closeError);
+        }
       }
+
+      // Create new period
+      const now = new Date();
+      const startDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      const endDate = new Date(now.getFullYear(), now.getMonth() + 2, 0);
       
-      // 3. CREATE: New current period
-      const periodStart = new Date(currentYear, currentMonth, 1);
-      const periodEnd = new Date(currentYear, currentMonth + 1, 0);
-      
-      const newPeriod = {
-        period_name: `${periodStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`,
-        start_date: periodStart.toISOString().split('T')[0],
-        end_date: periodEnd.toISOString().split('T')[0],
-        status: 'active',
-        notes: 'New payroll period created'
-      };
-      
-      const { error: periodError } = await supabase
+      const { data, error } = await supabase
         .from('payroll_periods')
-        .insert(newPeriod);
-      
-      if (periodError) throw periodError;
-      
-      // 4. UPDATE: All workers' payment dates to new period
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({
-          next_payment_date: periodStart.toISOString().split('T')[0],
-          last_payment_date: null
+        .insert({
+          period_name: `${startDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`,
+          start_date: startDate.toISOString().split('T')[0],
+          end_date: endDate.toISOString().split('T')[0],
+          status: 'active',
+          notes: 'Automatically created payroll period'
         })
-        .eq('role', 'worker');
-      
-      if (updateError) throw updateError;
-      
-      return newPeriod;
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payroll'] });
-      queryClient.invalidateQueries({ queryKey: ['workers', 'payment-schedules'] });
       queryClient.invalidateQueries({ queryKey: ['payroll-periods'] });
     }
   });

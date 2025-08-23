@@ -39,6 +39,15 @@ export const PayrollFilters: React.FC<PayrollFiltersProps> = ({
 }) => {
   const { t } = useTranslation();
   
+  // Debug logging to see what's happening
+  console.log('PayrollFilters props:', {
+    selectedPeriod,
+    showUnpaidFirst,
+    selectedSchedule,
+    appliedWorkerFilter,
+    appliedStatusFilter
+  });
+  
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -46,21 +55,24 @@ export const PayrollFilters: React.FC<PayrollFiltersProps> = ({
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
             <CalendarDays className="w-5 h-5 text-blue-600" />
-            <label className="text-sm font-semibold text-gray-700 arabic-text">
-              {t('selectPeriod')}
+            <label className="text-sm font-semibold text-gray-700">
+              Select Period
             </label>
           </div>
           <select
             value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 arabic-text bg-gray-50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            onChange={(e) => {
+              console.log('Period changed to:', e.target.value);
+              setSelectedPeriod(e.target.value);
+            }}
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 hover:bg-white focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             dir={isRTL ? 'rtl' : 'ltr'}
           >
-            <option value="all">{t('allPeriods')}</option>
-            <option value="current">{t('currentPeriod')}</option>
-            <option value="previous">{t('previousPeriod')}</option>
-            <option value="quarterly">{t('quarterly')}</option>
-            <option value="yearly">{t('yearly')}</option>
+            <option value="all">All Periods</option>
+            <option value="current">Current Period</option>
+            <option value="previous">Previous Period</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
           </select>
         </div>
 
@@ -68,8 +80,8 @@ export const PayrollFilters: React.FC<PayrollFiltersProps> = ({
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
             <Clock className="w-5 h-5 text-amber-600" />
-            <label className="text-sm font-semibold text-gray-700 arabic-text">
-              {t('displayPriority')}
+            <label className="text-sm font-semibold text-gray-700">
+              Display Priority
             </label>
           </div>
           <div className="flex items-center">
@@ -77,12 +89,15 @@ export const PayrollFilters: React.FC<PayrollFiltersProps> = ({
               <input
                 type="checkbox"
                 checked={showUnpaidFirst}
-                onChange={(e) => setShowUnpaidFirst(e.target.checked)}
+                onChange={(e) => {
+                  console.log('Unpaid priority changed to:', e.target.checked);
+                  setShowUnpaidFirst(e.target.checked);
+                }}
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              <span className="ml-3 text-sm font-medium text-gray-700 arabic-text">
-                {showUnpaidFirst ? t('enabled') : t('disabled')}
+              <span className="ml-3 text-sm font-medium text-gray-700">
+                {showUnpaidFirst ? 'Enabled' : 'Disabled'}
               </span>
             </label>
           </div>
@@ -90,12 +105,15 @@ export const PayrollFilters: React.FC<PayrollFiltersProps> = ({
 
         {/* Payment Schedule Filter */}
         <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {t('paymentSchedule')}
+          <label className="text-sm font-medium text-gray-700">
+            Payment Schedule
           </label>
           <select
             value={selectedSchedule}
-            onChange={(e) => setSelectedSchedule(e.target.value)}
+            onChange={(e) => {
+              console.log('Schedule changed to:', e.target.value);
+              setSelectedSchedule(e.target.value);
+            }}
             className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {scheduleOptions.map(option => (
@@ -105,63 +123,56 @@ export const PayrollFilters: React.FC<PayrollFiltersProps> = ({
             ))}
           </select>
         </div>
+      </div>
 
-        {/* Filter Button */}
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <Search className="w-5 h-5 text-green-600" />
-            <label className="text-sm font-semibold text-gray-700 arabic-text">
-              {t('filters')}
-            </label>
-          </div>
-          <button 
-            onClick={openFilterModal}
-            className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-          >
-            <Filter className={`w-4 h-4 inline ${isRTL ? 'ml-2' : 'mr-2'}`} />
-            <span className="arabic-text">
-              {appliedWorkerFilter || appliedStatusFilter ? t('filtersActive') : t('filter')}
+      {/* Applied Filters Display */}
+      <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-sm font-medium text-gray-700">Applied Filters:</span>
+          
+          {appliedWorkerFilter !== 'all' && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+              Worker: {users.find(u => u.id === appliedWorkerFilter)?.name || appliedWorkerFilter}
+              <button
+                onClick={onRemoveWorkerFilter}
+                className="ml-2 text-blue-600 hover:text-blue-800"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </span>
+          )}
+          
+          {appliedStatusFilter !== 'all' && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+              Status: {appliedStatusFilter}
+              <button
+                onClick={onRemoveStatusFilter}
+                className="ml-2 text-green-600 hover:text-green-800"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </span>
+          )}
+          
+          <button
+            onClick={onClearFilters}
+            className="text-sm text-gray-500 hover:text-gray-700 underline"
+          >
+            Clear All
           </button>
         </div>
       </div>
 
-      {/* Active Filters Display */}
-      {(appliedWorkerFilter || appliedStatusFilter) && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-600">{t('activeFilters')}:</span>
-            {appliedWorkerFilter && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                {users.find(u => u.id === appliedWorkerFilter)?.name || appliedWorkerFilter}
-                <button
-                  onClick={onRemoveWorkerFilter}
-                  className="ml-2 text-blue-600 hover:text-blue-800"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            )}
-            {appliedStatusFilter && (
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                {appliedStatusFilter === 'paid' ? t('paid') : t('pending')}
-                <button
-                  onClick={onRemoveStatusFilter}
-                  className="ml-2 text-green-600 hover:text-green-800"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            )}
-            <button
-              onClick={onClearFilters}
-              className="text-sm text-red-600 hover:text-red-800 font-medium"
-            >
-              {t('clearAll')}
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Advanced Filters Button */}
+      <div className="mt-6 pt-6 border-t border-gray-200">
+        <button
+          onClick={openFilterModal}
+          className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+        >
+          <Filter className="w-4 h-4" />
+          <span>Advanced Filters</span>
+        </button>
+      </div>
     </div>
   );
 };
