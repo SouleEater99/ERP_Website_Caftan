@@ -1,7 +1,7 @@
 import React from 'react';
-import { DollarSign, Calendar, Package } from 'lucide-react';
-import { StatCard } from '../common/StatCard';
-import { useTranslation } from 'react-i18next';
+import { DollarSign, Calendar, Package } from "lucide-react";
+import { StatCard } from "../../../shared/components/common/StatCard";  // ✅ Updated path
+import { useTranslation } from "react-i18next";
 
 interface PayrollStatsProps {
   totalPayroll: number;

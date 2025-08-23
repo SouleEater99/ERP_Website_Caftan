@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useAuthStore } from '../stores/authStore';
+import { useAuthStore } from '../shared/store/authStore';
 import { useTranslation } from 'react-i18next';
 import { 
   useDashboardStats, 
   useRecentActivities, 
   useLowStockItems,
   useTableStructure
-} from '../hooks/useSupabaseQuery';
+} from '../shared/hooks/useSupabaseQuery';
 import { 
   BarChart3, 
   TrendingUp, 

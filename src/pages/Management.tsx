@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAuthStore } from '../stores/authStore'
+import { useAuthStore } from '../shared/store/authStore'
 import { 
   useUsers, 
   useLocations, 
-  useAddUser, 
-  useAddLocation, 
+  useAddLocation,
   useUpdateLocation, 
   useDeleteLocation 
-} from '../hooks/useSupabaseQuery'
-import { LoadingSpinner, EmptyState, LocationCardSkeleton } from '../components/LoadingStates'
+} from "../shared/hooks/useSupabaseQuery";  // ✅ Updated path
+import { LoadingSpinner, EmptyState, LocationCardSkeleton } from '../shared/components/LoadingStates'
 import { 
   Settings, 
   Users, 
@@ -53,7 +52,7 @@ const Management: React.FC = () => {
   // Use custom hooks
   const { data: users = [], isLoading: usersLoading } = useUsers()
   const { data: locations = [], isLoading: locationsLoading } = useLocations()
-  const addUserMutation = useAddUser()
+  const addUserMutation = useAddLocation()
   const addLocationMutation = useAddLocation()
   const updateLocationMutation = useUpdateLocation()
   const deleteLocationMutation = useDeleteLocation()

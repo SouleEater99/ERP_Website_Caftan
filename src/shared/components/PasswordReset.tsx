@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../../lib/supabase'
 import { Mail, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
 
 const resetSchema = z.object({

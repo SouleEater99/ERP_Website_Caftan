@@ -3,9 +3,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
-import { useAuthStore } from '../stores/authStore'
+import { useAuthStore } from '../shared/store/authStore'
 import { CheckCircle, AlertTriangle, Package, Crown, Clock, User, Calendar, Scissors, Shirt } from 'lucide-react'
-import { useAddWorkLog } from '../hooks/useSupabaseQuery';
+import { useAddWorkLog } from '../shared/hooks/useSupabaseQuery';
 
 const workSchema = z.object({
   product: z.string().min(1, 'Product is required'),

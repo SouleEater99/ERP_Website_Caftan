@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseMutationOptions } from '@tanstack/react-query'
-import { supabase } from '../lib/supabase'
-import { useMonitoring } from '../lib/monitoring'
-import { useAuthStore } from '../stores/authStore'
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "../../lib/supabase";  // ✅ Go up two levels
+import { useMonitoring } from "../../lib/monitoring";  // ✅ Go up two levels
+import { useAuthStore } from "../store/authStore";
 import { getStockStatus } from '../utils/stockUtils'
 
 // Enhanced Supabase query hook with monitoring and error handling

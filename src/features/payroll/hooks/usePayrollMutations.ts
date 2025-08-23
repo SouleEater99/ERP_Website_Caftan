@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
-import { Payroll as PayrollType } from '../lib/supabase';
+import { supabase } from '../../../lib/supabase';
+import { Payroll as PayrollType } from '../../../lib/supabase';
 
 export const usePayrollMutations = () => {
   const queryClient = useQueryClient();

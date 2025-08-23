@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
-import { Payroll as PayrollType } from '../lib/supabase';
+import { supabase } from '../../../lib/supabase';
+import { Payroll as PayrollType } from '../../../lib/supabase';
 
 interface UsePayrollDataProps {
   selectedPeriod: string;

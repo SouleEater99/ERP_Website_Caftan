@@ -3,24 +3,26 @@ import { Calendar, User, Download, Filter, TrendingUp, Users, Package, CheckCirc
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
-import { useAuthStore } from '../stores/authStore';
+import { useAuthStore } from '../shared/store/authStore';
 import { Payroll as PayrollType } from '../lib/supabase';
 
 // Import our new components
-import { PayrollHeader } from '../components/Payroll/PayrollHeader';
-import { PayrollStats } from '../components/Payroll/PayrollStats';
-import { PayrollFilters } from '../components/Payroll/PayrollFilters';
-import { PayrollTable } from '../components/Payroll/PayrollTable';
-import { PayrollQuickActions } from '../components/Payroll/PayrollQuickActions';
-import { PayrollPaymentSummary } from '../components/Payroll/PayrollPaymentSummary';
-import { PayrollFilterModal } from '../components/Payroll/PayrollFilterModal';
-import { MessageToast } from '../components/common/MessageToast';
+import { 
+  PayrollHeader, 
+  PayrollStats, 
+  PayrollFilters,
+  PayrollTable,
+  PayrollQuickActions,
+  PayrollPaymentSummary,
+  PayrollFilterModal
+} from '../features/payroll';
+import { MessageToast } from '../shared/components/common/MessageToast';
 
 // Import our custom hooks
-import { usePayrollData } from '../hooks/usePayrollData';
-import { usePayrollMutations } from '../hooks/usePayrollMutations';
-import { usePayrollPeriods } from '../hooks/usePayrollPeriods';
-import { usePayrollFilters } from '../hooks/usePayrollFilters';
+import { usePayrollData } from '../features/payroll';
+import { usePayrollMutations } from '../features/payroll';
+import { usePayrollPeriods } from '../features/payroll';
+import { usePayrollFilters } from '../features/payroll';
 
 export default function Payroll() {
   const { t, i18n } = useTranslation();

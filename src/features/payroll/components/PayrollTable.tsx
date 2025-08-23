@@ -1,7 +1,7 @@
 import React from 'react';
 import { User, Download, DollarSign } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Payroll as PayrollType } from '../../lib/supabase';
+import { Payroll as PayrollType } from '../../../lib/supabase';
 
 interface PayrollTableProps {
   payrollData: PayrollType[];
