@@ -72,7 +72,8 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               
-              {user.role === 'worker' && (
+              {/* Allow both workers and admins to access Log Work for testing */}
+              {(user.role === 'worker' || user.role === 'admin') && (
                 <Route path="/log-work" element={<LogWork />} />
               )}
               

@@ -27,6 +27,7 @@ export interface UserFormData {
   role: string;
   worker_id?: string;
   password: string;
+  location?: string;
 }
 
 export interface LocationFormData {
@@ -41,4 +42,35 @@ export interface LocationFormData {
 export interface LocationUpdateData {
   id: string;
   updates: Partial<Location>;
+}
+
+export interface SystemStats {
+  totalUsers: number;
+  activeUsers: number;
+  totalLocations: number;
+  activeLocations: number;
+  totalWorkers: number;
+  systemUptime: string;
+}
+
+export interface QuickAction {
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+  action: string;
+}
+
+export interface ManagementTab {
+  id: string;
+  label: string;
+  icon: string;
+}
+
+export interface SystemSetting {
+  key: string;
+  type: 'text' | 'select' | 'toggle';
+  defaultValue?: string;
+  defaultChecked?: boolean;
+  options?: string[];
 }
