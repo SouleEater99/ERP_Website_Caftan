@@ -21,7 +21,8 @@ const workSchema = z.object({
 const LogWorkForm: React.FC = () => {
   const { user } = useAuthStore();
   const addWorkLog = useAddWorkLog();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   
   const {
     register,
@@ -39,7 +40,6 @@ const LogWorkForm: React.FC = () => {
   
   const watchedTask = watch('task');
   const watchedProduct = watch('product');
-  const watchedQuantity = watch('quantity');
   
   const onSubmit = async (data: WorkForm) => {
     try {
@@ -53,13 +53,13 @@ const LogWorkForm: React.FC = () => {
       // Show loading state
       const loadingDiv = document.createElement('div');
       loadingDiv.id = 'loading-message';
-      loadingDiv.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-      loadingDiv.textContent = 'Submitting work log...';
+      loadingDiv.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50 animate-bounce';
+      loadingDiv.textContent = 'جاري تسجيل العمل...';
       document.body.appendChild(loadingDiv);
 
       const result = await addWorkLog.mutateAsync({
-        worker_id: user.id, // Use the actual user ID
-        worker_name: user.name, // Use the actual user name (will be overridden by real name from DB)
+        worker_id: user.id,
+        worker_name: user.name,
         product: data.product,
         product_id: data.product_id,
         task: data.task,
@@ -76,8 +76,8 @@ const LogWorkForm: React.FC = () => {
       // Show success message
       const successDiv = document.createElement('div');
       successDiv.id = 'success-message';
-      successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-      successDiv.textContent = 'Work log submitted successfully!';
+      successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50 animate-bounce';
+      successDiv.textContent = t('workLoggedSuccess') || 'تم تسجيل العمل بنجاح!';
       document.body.appendChild(successDiv);
 
       // Remove success message after 3 seconds
@@ -96,8 +96,8 @@ const LogWorkForm: React.FC = () => {
       // Show error message
       const errorDiv = document.createElement('div');
       errorDiv.id = 'error-message';
-      errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-      errorDiv.textContent = `Error: ${error.message || 'Failed to log work'}`;
+      errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50';
+      errorDiv.textContent = `حدث خطأ في تسجيل العمل: ${error.message || 'فشل في تسجيل العمل'}`;
       document.body.appendChild(errorDiv);
 
       // Remove error message after 5 seconds
@@ -107,151 +107,235 @@ const LogWorkForm: React.FC = () => {
     }
   };
 
+  if (addWorkLog.isPending) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border-2 border-orange-200/30">
+          <div className="text-center">
+            <div className="w-12 h-12 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3"></div>
+            <p className="text-slate-600 font-medium text-sm">{t('loading') || 'جاري التحميل...'}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="max-w-2xl mx-auto">
+      <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border-2 border-orange-200/30">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-4">
-            <div className="p-3 bg-blue-100 rounded-full mr-3">
-              <Scissors className="w-8 h-8 text-blue-600" />
-            </div>
-            <h1 className="text-3xl font-bold text-slate-800">
-              {t('logWork')}
-            </h1>
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-orange-500 to-red-600 rounded-3xl mb-4 relative overflow-hidden shadow-lg">
+            <img 
+              src="/image.png" 
+              alt="Caftan Talia Logo" 
+              className="w-16 h-16 object-contain relative z-10"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling.style.display = 'block';
+              }}
+            />
+            <Crown className="h-10 w-10 text-white relative z-10 hidden" />
           </div>
-          <p className="text-slate-600">
-            {t('logWorkDescription')}
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+            {t('logWork')}
+          </h1>
+          <p className="text-orange-700 font-medium">
+            سجل أعمالك اليومية في كفتان تاليا
           </p>
         </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-3xl shadow-xl p-6 sm:p-8">
+        
+        {/* Worker Info Card */}
+        <div className="bg-gradient-to-r from-orange-50 to-red-50/50 rounded-2xl p-6 mb-8 border border-orange-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl flex items-center justify-center">
+                <User className="h-6 w-6 text-white" />
+              </div>
+              <div className={isRTL ? 'text-right' : ''}>
+                <p className="text-sm font-semibold text-orange-600">العامل</p>
+                <p className="font-bold text-orange-900">{user?.name}</p>
+              </div>
+            </div>
+            <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+              <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center">
+                <Calendar className="h-6 w-6 text-white" />
+              </div>
+              <div className={isRTL ? 'text-right' : ''}>
+                <p className="text-sm font-semibold text-orange-600">التاريخ</p>
+                <p className="font-bold text-orange-900">{new Date().toLocaleDateString('ar-SA')}</p>
+              </div>
+            </div>
+            <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center">
+                <Clock className="h-6 w-6 text-white" />
+              </div>
+              <div className={isRTL ? 'text-right' : ''}>
+                <p className="text-sm font-semibold text-orange-600">الوقت</p>
+                <p className="font-bold text-orange-900">{new Date().toLocaleTimeString('ar-SA')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Product Selection */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-slate-700 mb-3">
+          <div className="space-y-3">
+            <label className="block text-sm font-bold text-orange-800">
               {t('selectProduct')}
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {PRODUCTS.map((product) => (
-                <label
-                  key={product.value}
-                  className={`relative cursor-pointer group ${
-                    watchedProduct === product.value ? 'ring-2 ring-blue-500' : ''
-                  }`}
-                >
+                <label key={product.value} className="cursor-pointer">
                   <input
+                    {...register('product')}
                     type="radio"
                     value={product.value}
-                    {...register('product')}
                     className="sr-only"
                   />
-                  <div className="p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-300 transition-all duration-200 text-center group-hover:scale-105">
-                    <div className="text-2xl mb-2">{product.icon}</div>
-                    <div className="text-sm font-medium text-slate-700">
-                      {product.label}
+                  <div className={`p-4 rounded-2xl border-2 transition-all duration-300 ${
+                    watchedProduct === product.value
+                      ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white border-transparent shadow-lg scale-105'
+                      : 'bg-white/70 border-orange-200 hover:border-orange-300 hover:bg-white'
+                  }`}>
+                    <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                      <span className="text-2xl">{product.icon}</span>
+                      <span className="font-semibold">{product.label}</span>
                     </div>
                   </div>
                 </label>
               ))}
             </div>
             {errors.product && (
-              <p className="text-red-500 text-sm mt-2">
-                {errors.product.message}
+              <p className="text-sm text-red-500 font-medium flex items-center space-x-1">
+                <AlertTriangle className="h-4 w-4" />
+                <span>{errors.product.message}</span>
               </p>
             )}
           </div>
-
+          
+          {/* Product ID */}
+          <div className="space-y-3">
+            <label className="block text-sm font-bold text-orange-800">
+              {t('productId') || 'معرف المنتج'}
+            </label>
+            <input
+              {...register('product_id')}
+              type="text"
+              className="w-full p-4 bg-white/70 border-2 border-orange-200 rounded-2xl focus:border-red-500 focus:bg-white transition-all duration-300 text-orange-900 font-medium"
+              placeholder="CT-001 (اختياري)"
+              dir={isRTL ? 'rtl' : 'ltr'}
+            />
+          </div>
+          
           {/* Task Selection */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-slate-700 mb-3">
+          <div className="space-y-3">
+            <label className="block text-sm font-bold text-orange-800">
               {t('selectTask')}
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {TASKS.map((task) => (
-                <label
-                  key={task.value}
-                  className={`relative cursor-pointer group ${
-                    watchedTask === task.value ? 'ring-2 ring-blue-500' : ''
-                  }`}
-                >
+                <label key={task.value} className="cursor-pointer">
                   <input
+                    {...register('task')}
                     type="radio"
                     value={task.value}
-                    {...register('task')}
                     className="sr-only"
                   />
-                  <div className={`p-4 rounded-2xl border-2 border-slate-200 hover:border-blue-300 transition-all duration-200 text-center group-hover:scale-105 bg-gradient-to-br ${task.color} bg-opacity-10`}>
-                    <div className="text-2xl mb-2">{task.icon}</div>
-                    <div className="text-sm font-bold text-slate-700 mb-1">
-                      {t(task.label)}
+                  <div className={`p-4 rounded-2xl border-2 transition-all duration-300 ${
+                    watchedTask === task.value
+                      ? `bg-gradient-to-r ${task.color} text-white border-transparent shadow-lg scale-105`
+                      : 'bg-white/70 border-orange-200 hover:border-orange-300 hover:bg-white'
+                  }`}>
+                    <div className={`flex items-center space-x-3 mb-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                      <span className="text-2xl">{task.icon}</span>
+                      <span className="font-semibold">{t(task.label)}</span>
                     </div>
-                    <div className="text-xs text-slate-600">
+                    <p className={`text-xs opacity-80 ${isRTL ? 'text-right' : ''}`}>
                       {task.desc}
-                    </div>
+                    </p>
                   </div>
                 </label>
               ))}
             </div>
             {errors.task && (
-              <p className="text-red-500 text-sm mt-2">
-                {errors.task.message}
+              <p className="text-sm text-red-500 font-medium flex items-center space-x-1">
+                <AlertTriangle className="h-4 w-4" />
+                <span>{errors.task.message}</span>
               </p>
             )}
           </div>
-
-          {/* Quantity and Notes */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                {t('quantity')}
-              </label>
+          
+          {/* Quantity */}
+          <div className="space-y-3">
+            <label className="block text-sm font-bold text-orange-800">
+              {t('quantity')}
+            </label>
+            <input
+              {...register('quantity', { valueAsNumber: true })}
+              type="number"
+              min="1"
+              className="w-full p-4 bg-white/70 border-2 border-orange-200 rounded-2xl focus:border-red-500 focus:bg-white transition-all duration-300 text-orange-900 font-medium text-center text-2xl"
+            />
+            {errors.quantity && (
+              <p className="text-sm text-red-500 font-medium flex items-center space-x-1">
+                <AlertTriangle className="h-4 w-4" />
+                <span>{errors.quantity.message}</span>
+              </p>
+            )}
+          </div>
+          
+          {/* Completion Status */}
+          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200">
+            <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+              <CheckCircle className="h-6 w-6 text-green-600" />
+              <div className={isRTL ? 'text-right' : ''}>
+                <span className="font-bold text-green-900">{t('completed') || 'مكتمل'}</span>
+                <p className="text-sm text-green-700">ضع علامة إذا تم إنجاز المهمة بالكامل</p>
+              </div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
               <input
-                type="number"
-                min="1"
-                {...register('quantity', { valueAsNumber: true })}
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-2xl focus:border-blue-500 focus:outline-none transition-colors"
+                {...register('completed')}
+                type="checkbox"
+                className="sr-only peer"
               />
-              {errors.quantity && (
-                <p className="text-red-500 text-sm mt-2">
-                  {errors.quantity.message}
-                </p>
-              )}
-            </div>
-            
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                {t('notes')} ({t('optional')})
-              </label>
-              <textarea
-                {...register('notes')}
-                rows={3}
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-2xl focus:border-blue-500 focus:outline-none transition-colors resize-none"
-                placeholder={t('addNotes')}
-              />
-            </div>
+              <div className="w-14 h-8 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-6 peer-checked:after:border-white after:content-[''] after:absolute after:top-1 after:left-1 after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-green-500 peer-checked:to-emerald-600"></div>
+            </label>
           </div>
-
+          
+          {/* Notes */}
+          <div className="space-y-3">
+            <label className="block text-sm font-bold text-orange-800">
+              {t('notes') || 'ملاحظات'}
+            </label>
+            <textarea
+              {...register('notes')}
+              rows={3}
+              className="w-full p-4 bg-white/70 border-2 border-orange-200 rounded-2xl focus:border-red-500 focus:bg-white transition-all duration-300 text-orange-900 resize-none"
+              placeholder="ملاحظات اختيارية حول العمل..."
+              dir={isRTL ? 'rtl' : 'ltr'}
+            />
+          </div>
+          
           {/* Submit Button */}
-          <div className="text-center">
-            <button
-              type="submit"
-              disabled={addWorkLog.isPending}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {addWorkLog.isPending ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  {t('loggingWork')}
-                </div>
-              ) : (
-                <>
-                  <CheckCircle className="inline w-5 h-5 mr-2" />
-                  {t('logWork')}
-                </>
-              )}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={addWorkLog.isPending}
+            className="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white py-4 px-6 rounded-2xl font-bold text-lg hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-orange-500/50 transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {addWorkLog.isPending ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>جاري التسجيل...</span>
+              </div>
+            ) : (
+              <div className={`flex items-center justify-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                <Crown className="h-5 w-5" />
+                <span>{t('submit') || 'إرسال'}</span>
+              </div>
+            )}
+          </button>
         </form>
       </div>
     </div>
