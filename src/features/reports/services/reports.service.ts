@@ -27,6 +27,19 @@ export interface MaterialUsage {
   quantity_used: number;
   percentage: number;
   color: string;
+  cost_per_unit?: number;
+  total_cost?: number;
+}
+
+export interface MaterialUsageDetail {
+  material_name: string;
+  quantity_used: number;
+  percentage: number;
+  color: string;
+  last_used: string;
+  supplier?: string;
+  stock_level?: number;
+  reorder_point?: number;
 }
 
 export interface RecentActivity {
@@ -195,14 +208,14 @@ export class ReportsService {
     }
   }
 
-  // Get material usage data with period filtering
+  // Get material usage data with period filtering and enhanced details
   static async getMaterialUsage(period: string = 'monthly'): Promise<MaterialUsage[]> {
     try {
       const startDate = this.getStartDate(period);
       
       const { data, error } = await supabase
         .from('work_logs')
-        .select('product, quantity')
+        .select('product, quantity, created_at, task')
         .gte('created_at', startDate.toISOString());
 
       if (error) throw error;
@@ -211,29 +224,160 @@ export class ReportsService {
         return [];
       }
 
-      const materialStats = new Map<string, number>();
-      const totalQuantity = data.reduce((sum, log) => sum + log.quantity, 0);
+      const materialStats = new Map<string, { 
+        quantity: number; 
+        lastUsed: Date; 
+        tasks: Set<string>;
+        cost: number;
+      }>();
 
       data.forEach(log => {
         const product = log.product;
-        const current = materialStats.get(product) || 0;
-        materialStats.set(product, current + log.quantity);
+        const current = materialStats.get(product) || { 
+          quantity: 0, 
+          lastUsed: new Date(log.created_at), 
+          tasks: new Set(),
+          cost: 0
+        };
+        
+        current.quantity += log.quantity;
+        current.lastUsed = new Date(Math.max(current.lastUsed.getTime(), new Date(log.created_at).getTime()));
+        current.tasks.add(log.task);
+        
+        // Calculate estimated cost (placeholder - should use actual material costs)
+        const materialCosts: { [key: string]: number } = {
+          'cotton': 15,
+          'silk': 45,
+          'linen': 25,
+          'wool': 35,
+          'polyester': 8,
+          'denim': 20
+        };
+        
+        const baseCost = materialCosts[product.toLowerCase()] || 20;
+        current.cost += log.quantity * baseCost;
+        
+        materialStats.set(product, current);
       });
 
-      const colors = ['#0EA5E9', '#06B6D4', '#0891B2', '#0E7490', '#164E63'];
+      const totalQuantity = Array.from(materialStats.values()).reduce((sum, stats) => sum + stats.quantity, 0);
+      const colors = ['#0EA5E9', '#06B6D4', '#0891B2', '#0E7490', '#164E63', '#F59E0B', '#EF4444', '#8B5CF6'];
       
       return Array.from(materialStats.entries())
-        .map(([material_name, quantity_used], index) => ({
+        .map(([material_name, stats], index) => ({
           material_name,
-          quantity_used,
-          percentage: totalQuantity > 0 ? (quantity_used / totalQuantity) * 100 : 0,
-          color: colors[index % colors.length]
+          quantity_used: stats.quantity,
+          percentage: totalQuantity > 0 ? (stats.quantity / totalQuantity) * 100 : 0,
+          color: colors[index % colors.length],
+          cost_per_unit: stats.cost / stats.quantity,
+          total_cost: stats.cost
         }))
         .sort((a, b) => b.quantity_used - a.quantity_used)
-        .slice(0, 5);
+        .slice(0, 8); // Show top 8 materials
     } catch (error) {
       console.error('Error fetching material usage:', error);
       throw new Error('Failed to fetch material usage data');
+    }
+  }
+
+  // Get detailed material usage breakdown
+  static async getMaterialUsageDetails(period: string = 'monthly'): Promise<MaterialUsageDetail[]> {
+    try {
+      const startDate = this.getStartDate(period);
+      
+      const { data, error } = await supabase
+        .from('work_logs')
+        .select('product, quantity, created_at, task, worker_name')
+        .gte('created_at', startDate.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        return [];
+      }
+
+      const materialDetails = new Map<string, MaterialUsageDetail>();
+
+      data.forEach(log => {
+        const product = log.product;
+        const current = materialDetails.get(product);
+        
+        if (current) {
+          current.quantity_used += log.quantity;
+          current.last_used = log.created_at;
+        } else {
+          const colors = ['#0EA5E9', '#06B6D4', '#0891B2', '#0E7490', '#164E63', '#F59E0B', '#EF4444', '#8B5CF6'];
+          const randomColor = colors[Math.floor(Math.random() * colors.length)];
+          
+          materialDetails.set(product, {
+            material_name: product,
+            quantity_used: log.quantity,
+            percentage: 0,
+            color: randomColor,
+            last_used: log.created_at,
+            supplier: 'Local Supplier', // Placeholder
+            stock_level: Math.floor(Math.random() * 100) + 50, // Placeholder
+            reorder_point: 20 // Placeholder
+          });
+        }
+      });
+
+      // Calculate percentages
+      const totalQuantity = Array.from(materialDetails.values()).reduce((sum, detail) => sum + detail.quantity_used, 0);
+      materialDetails.forEach(detail => {
+        detail.percentage = totalQuantity > 0 ? (detail.quantity_used / totalQuantity) * 100 : 0;
+      });
+
+      return Array.from(materialDetails.values())
+        .sort((a, b) => b.quantity_used - a.quantity_used);
+    } catch (error) {
+      console.error('Error fetching material usage details:', error);
+      throw new Error('Failed to fetch material usage details');
+    }
+  }
+
+  // Get material usage trends over time
+  static async getMaterialUsageTrends(period: string = 'monthly'): Promise<any[]> {
+    try {
+      const startDate = this.getStartDate(period);
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const trendsData: any[] = [];
+
+      // Get data for the last 6 months
+      for (let i = 0; i < 6; i++) {
+        const monthStart = new Date(startDate);
+        monthStart.setMonth(startDate.getMonth() - 5 + i);
+        const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+        
+        const monthName = months[monthStart.getMonth()];
+
+        const { data: monthLogs, error } = await supabase
+          .from('work_logs')
+          .select('product, quantity')
+          .gte('created_at', monthStart.toISOString())
+          .lte('created_at', monthEnd.toISOString());
+
+        if (error) throw error;
+
+        const materialStats = new Map<string, number>();
+        monthLogs?.forEach(log => {
+          const current = materialStats.get(log.product) || 0;
+          materialStats.set(log.product, current + log.quantity);
+        });
+
+        const monthData: any = { month: monthName };
+        materialStats.forEach((quantity, material) => {
+          monthData[material] = quantity;
+        });
+
+        trendsData.push(monthData);
+      }
+
+      return trendsData;
+    } catch (error) {
+      console.error('Error fetching material usage trends:', error);
+      throw new Error('Failed to fetch material usage trends');
     }
   }
 

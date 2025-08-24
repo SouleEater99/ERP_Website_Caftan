@@ -55,6 +55,32 @@ export const useReportsData = (period: string = 'monthly') => {
   });
 
   const {
+    data: materialUsageDetails,
+    isLoading: materialDetailsLoading,
+    error: materialDetailsError,
+    refetch: refetchMaterialDetails
+  } = useQuery({
+    queryKey: ['materialUsageDetails', period],
+    queryFn: () => ReportsService.getMaterialUsageDetails(period),
+    staleTime: 5 * 60 * 1000,
+    retry: 3,
+    retryDelay: 1000,
+  });
+
+  const {
+    data: materialUsageTrends,
+    isLoading: materialTrendsLoading,
+    error: materialTrendsError,
+    refetch: refetchMaterialTrends
+  } = useQuery({
+    queryKey: ['materialUsageTrends', period],
+    queryFn: () => ReportsService.getMaterialUsageTrends(period),
+    staleTime: 5 * 60 * 1000,
+    retry: 3,
+    retryDelay: 1000,
+  });
+
+  const {
     data: recentActivities,
     isLoading: activitiesLoading,
     error: activitiesError,
@@ -80,13 +106,16 @@ export const useReportsData = (period: string = 'monthly') => {
     retryDelay: 1000,
   });
 
-  const isLoading = statsLoading || productionLoading || workersLoading || materialsLoading || activitiesLoading || quickStatsLoading;
+  const isLoading = statsLoading || productionLoading || workersLoading || materialsLoading || 
+                   materialDetailsLoading || materialTrendsLoading || activitiesLoading || quickStatsLoading;
 
   const hasErrors = Object.values({
     stats: statsError,
     production: productionError,
     workers: workersError,
     materials: materialsError,
+    materialDetails: materialDetailsError,
+    materialTrends: materialTrendsError,
     activities: activitiesError,
     quickStats: quickStatsError,
   }).some(error => error);
@@ -96,6 +125,8 @@ export const useReportsData = (period: string = 'monthly') => {
     refetchProduction();
     refetchWorkers();
     refetchMaterials();
+    refetchMaterialDetails();
+    refetchMaterialTrends();
     refetchActivities();
     refetchQuickStats();
   };
@@ -105,6 +136,8 @@ export const useReportsData = (period: string = 'monthly') => {
     monthlyProduction,
     workerPerformance,
     materialUsage,
+    materialUsageDetails,
+    materialUsageTrends,
     recentActivities,
     quickStats,
     isLoading,
@@ -114,6 +147,8 @@ export const useReportsData = (period: string = 'monthly') => {
       production: productionError,
       workers: workersError,
       materials: materialsError,
+      materialDetails: materialDetailsError,
+      materialTrends: materialTrendsError,
       activities: activitiesError,
       quickStats: quickStatsError,
     },

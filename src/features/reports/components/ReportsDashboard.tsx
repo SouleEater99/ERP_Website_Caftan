@@ -26,6 +26,7 @@ import {
   Tooltip, 
   ResponsiveContainer, 
   PieChart as RechartsPieChart, 
+  Pie,
   Cell, 
   LineChart, 
   Line, 
@@ -54,6 +55,8 @@ const ReportsDashboard: React.FC = () => {
     monthlyProduction,
     workerPerformance,
     materialUsage,
+    materialUsageDetails,
+    materialUsageTrends,
     recentActivities,
     quickStats,
     isLoading,
@@ -372,24 +375,114 @@ const ReportsDashboard: React.FC = () => {
                   <h3 className="text-xl font-bold text-orange-900">{t('materialUsageDistribution')}</h3>
                   <div className="text-sm text-orange-700">{t('currentMonth')}</div>
                 </div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <RechartsPieChart>
-                    <Pie
-                      data={materialUsage}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="percentage"
-                      label={({ material_name, percentage }) => `${material_name} ${percentage.toFixed(1)}%`}
-                    >
-                      {materialUsage.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                
+                {/* Material Usage Chart */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                  {/* Pie Chart */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-orange-800 mb-4">Usage Distribution</h4>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <RechartsPieChart>
+                        <Pie
+                          data={materialUsage}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="percentage"
+                          label={({ material_name, percentage }) => `${material_name} ${percentage.toFixed(1)}%`}
+                        >
+                          {materialUsage.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Material Details Table */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-orange-800 mb-4">Material Details</h4>
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {materialUsage.map((material, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-orange-50/50 rounded-lg">
+                          <div className="flex items-center space-x-3">
+                            <div 
+                              className="w-4 h-4 rounded-full" 
+                              style={{ backgroundColor: material.color }}
+                            ></div>
+                            <span className="font-medium text-orange-900">{material.material_name}</span>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-semibold text-orange-800">
+                              {material.quantity_used} units
+                            </div>
+                            <div className="text-xs text-orange-600">
+                              {material.percentage.toFixed(1)}%
+                            </div>
+                          </div>
+                        </div>
                       ))}
-                    </Pie>
-                    <Tooltip />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Material Usage Trends */}
+                {materialUsageTrends && materialUsageTrends.length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="text-lg font-semibold text-orange-800 mb-4">Usage Trends Over Time</h4>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <BarChart data={materialUsageTrends}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#fbbf24" />
+                        <XAxis dataKey="month" stroke="#92400e" />
+                        <YAxis stroke="#92400e" />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'white', 
+                            border: '1px solid #fbbf24',
+                            borderRadius: '12px',
+                            boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+                          }} 
+                        />
+                        {materialUsage.slice(0, 5).map((material, index) => (
+                          <Bar 
+                            key={material.material_name}
+                            dataKey={material.material_name} 
+                            fill={material.color} 
+                            radius={[2, 2, 0, 0]}
+                          />
+                        ))}
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                )}
+
+                {/* Material Cost Analysis */}
+                <div className="mt-6 p-4 bg-orange-50/50 rounded-lg">
+                  <h4 className="text-lg font-semibold text-orange-800 mb-3">Cost Analysis</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-900">
+                        ${materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0).toLocaleString()}
+                      </div>
+                      <div className="text-sm text-orange-600">Total Material Cost</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-900">
+                        {materialUsage.length}
+                      </div>
+                      <div className="text-sm text-orange-600">Materials Used</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-900">
+                        ${(materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0) / 
+                           materialUsage.reduce((sum, m) => sum + m.quantity_used, 0)).toFixed(2)}
+                      </div>
+                      <div className="text-sm text-orange-600">Cost Per Unit</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -486,6 +579,39 @@ const ReportsDashboard: React.FC = () => {
                 ))}
               </div>
             </div>
+
+            {/* Material Quick Stats - Show when materials report is selected */}
+            {selectedReport === 'materials' && materialUsage && (
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
+                <h4 className="text-lg font-bold text-orange-900 mb-4">Material Insights</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-orange-700 text-sm">Most Used</span>
+                    <span className="font-bold text-orange-900">
+                      {materialUsage[0]?.material_name || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-orange-700 text-sm">Total Units</span>
+                    <span className="font-bold text-orange-900">
+                      {materialUsage.reduce((sum, m) => sum + m.quantity_used, 0).toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-orange-700 text-sm">Avg Usage</span>
+                    <span className="font-bold text-orange-900">
+                      {(materialUsage.reduce((sum, m) => sum + m.quantity_used, 0) / materialUsage.length).toFixed(0)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-orange-700 text-sm">Top 3 Materials</span>
+                    <span className="font-bold text-orange-900">
+                      {materialUsage.slice(0, 3).map(m => m.material_name).join(', ')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
