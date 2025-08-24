@@ -32,22 +32,90 @@ export const useLocations = () => {
   });
 };
 
+// Add user to BOTH users table AND Supabase Auth
 export const useAddUser = () => {
   const queryClient = useQueryClient();
-
+  
   return useMutation({
-    mutationFn: async (userData: UserFormData) => {
-      // For now, we'll simulate user creation since Supabase Auth requires admin privileges
-      // In a real app, you'd use supabase.auth.admin.createUser()
-      console.log('Creating user:', userData);
+    mutationFn: async (userData: Omit<User, 'id' | 'created_at' | 'updated_at'>) => {
+      console.log('🚀 Starting user creation process...');
+      console.log(' User data received:', userData);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      return { success: true, user: { ...userData, id: Date.now().toString() } };
+      try {
+        // Step 1: Create user in Supabase Auth
+        console.log('🔐 Step 1: Creating user in Supabase Auth...');
+        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+          email: userData.email,
+          password: 'defaultPassword123!',
+          email_confirm: true,
+          user_metadata: {
+            name: userData.name,
+            role: userData.role
+          }
+        });
+
+        if (authError) {
+          console.error('❌ Error creating user in Supabase Auth:', authError);
+          throw new Error(`Auth creation failed: ${authError.message}`);
+        }
+
+        console.log('✅ User created in Supabase Auth:', authData.user);
+
+        // Step 2: Create user in users table with ONLY the columns that exist
+        console.log('📊 Step 2: Creating user in users table...');
+        
+        const userTableData = {
+          id: authData.user.id,
+          name: userData.name,
+          email: userData.email,
+          role: userData.role,
+          // Remove these if they don't exist in your table:
+          // created_at: new Date().toISOString(),
+          // updated_at: new Date().toISOString()
+        };
+
+        console.log('📝 Inserting into users table:', userTableData);
+
+        const { data: dbData, error: dbError } = await supabase
+          .from('users')
+          .insert([userTableData])
+          .select()
+          .single();
+
+        if (dbError) {
+          console.error('❌ Error creating user in users table:', dbError);
+          
+          // Cleanup auth user if database fails
+          try {
+            await supabase.auth.admin.deleteUser(authData.user.id);
+            console.log('🧹 Cleaned up auth user after database failure');
+          } catch (cleanupError) {
+            console.error('⚠️ Failed to cleanup auth user:', cleanupError);
+          }
+          
+          throw new Error(`Database creation failed: ${dbError.message}`);
+        }
+
+        console.log('✅ User created in users table:', dbData);
+
+        return {
+          success: true,
+          user: dbData,
+          auth_user: authData.user
+        };
+
+      } catch (error) {
+        console.error('❌ Error in complete user creation process:', error);
+        throw error;
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('🎉 User creation successful:', data);
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard_stats'] });
+    },
+    onError: (error) => {
+      console.error('❌ Add user mutation error:', error);
     }
   });
 };

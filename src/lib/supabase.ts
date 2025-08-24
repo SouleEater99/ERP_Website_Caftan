@@ -1,24 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co'
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key'
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseServiceKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY; // Use service role key
 
-// Enhanced environment validation
-const isValidSupabaseConfig = supabaseUrl && 
-  supabaseKey && 
-  !supabaseUrl.includes('your-project') && 
-  !supabaseKey.includes('your-anon-key') &&
-  supabaseUrl.startsWith('https://') &&
-  supabaseKey.length > 50
-
-if (!isValidSupabaseConfig) {
-  console.warn('⚠️ Supabase environment variables not configured properly.')
-  console.warn('Please check your .env file and ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set correctly.')
-  console.warn('Current URL:', supabaseUrl)
-  console.warn('Key length:', supabaseKey?.length || 0)
-}
-
-export const supabase = createClient(supabaseUrl, supabaseKey)
+export const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+});
 
 // Database types based on the migration schema
 export type UserRole = 'worker' | 'supervisor' | 'admin'

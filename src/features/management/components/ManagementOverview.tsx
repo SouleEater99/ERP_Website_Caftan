@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../../../shared/store/authStore';
-import { useUsers, useLocations } from '../hooks/useManagement';
+import { useUsers, useLocations, useAddUser } from '../hooks/useManagement';
 import { LoadingSpinner, EmptyState } from '../../../shared/components/LoadingStates';
 import { MANAGEMENT_TABS, QUICK_ACTIONS, SYSTEM_SETTINGS } from '../constants/management.constants';
 import { 
@@ -49,6 +49,17 @@ const ManagementOverview: React.FC = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
+  // Add these new states
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [userFormData, setUserFormData] = useState({
+    name: '',
+    email: '',
+    role: 'worker',
+    is_active: true
+  });
+
+  const addUserMutation = useAddUser();
+
   const { data: users = [], isLoading: usersLoading } = useUsers();
   const { data: locations = [], isLoading: locationsLoading } = useLocations();
   
@@ -63,29 +74,89 @@ const ManagementOverview: React.FC = () => {
     systemUptime: '99.9%'
   };
 
+  // Update the handleQuickAction function
   const handleQuickAction = (action: string) => {
+    console.log('🔍 Quick action triggered:', action);
+    
     switch (action) {
       case 'addUser':
-        setShowUserModal(true);
+        console.log('🚀 Opening Add User modal...');
+        setShowAddUserModal(true);
         break;
       case 'addLocation':
-        setShowLocationModal(true);
+        console.log('📍 Location management coming soon');
+        alert('Location management coming soon!');
         break;
       case 'backup':
-        console.log('Backup initiated');
+        console.log('💾 Backup functionality coming soon');
+        alert('Backup functionality coming soon!');
         break;
       case 'reports':
-        console.log('Navigate to reports');
+        console.log('📊 Navigating to reports...');
+        window.location.href = '/reports';
         break;
       case 'security':
+        console.log('🔒 Switching to security tab');
         setActiveTab('system');
         break;
       case 'notifications':
-        console.log('Open notifications');
+        console.log('🔔 Switching to notifications tab');
+        setActiveTab('system');
         break;
       default:
-        console.log('Action:', action);
+        console.log('❓ Unknown action:', action);
     }
+  };
+
+  // Add user form submission handler
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('🚀 Submitting user form:', userFormData);
+    
+    try {
+      console.log('📊 Creating user in database and auth...');
+      const result = await addUserMutation.mutateAsync(userFormData);
+      console.log('✅ User created successfully:', result);
+      
+      // Show success message with credentials
+      const successMessage = `User added successfully! 
+      
+Login Credentials:
+Email: ${userFormData.email}
+Password: defaultPassword123!
+
+The user can now login to the system.`;
+      
+      alert(successMessage);
+      
+      // Close modal and reset form
+      setShowAddUserModal(false);
+      setUserFormData({
+        name: '',
+        email: '',
+        role: 'worker',
+        is_active: true
+      });
+      
+      console.log(' Refreshing page to show new user...');
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('❌ Error adding user:', error);
+      const errorMessage = `Error adding user: ${(error as Error).message}`;
+      alert(errorMessage);
+    }
+  };
+
+  // Reset user form
+  const resetUserForm = () => {
+    console.log('🔄 Resetting user form...');
+    setUserFormData({
+      name: '',
+      email: '',
+      role: 'worker',
+      is_active: true
+    });
   };
 
   const QuickActionCard = ({ title, description, icon: Icon, onClick, color = 'bg-gradient-to-r from-blue-500 to-blue-600' }: any) => (
@@ -257,6 +328,135 @@ const ManagementOverview: React.FC = () => {
         isOpen={showLocationModal} 
         onClose={() => setShowLocationModal(false)} 
       />
+
+      {/* Add User Modal */}
+      {showAddUserModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+              <h3 className="text-lg font-semibold text-gray-900">Add New User</h3>
+              <button
+                onClick={() => {
+                  console.log('❌ Closing Add User modal');
+                  setShowAddUserModal(false);
+                  resetUserForm();
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleAddUser} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={userFormData.name}
+                  onChange={(e) => {
+                    console.log('👤 Updating name:', e.target.value);
+                    setUserFormData({...userFormData, name: e.target.value});
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter user's full name"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email *
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={userFormData.email}
+                  onChange={(e) => {
+                    console.log('📧 Updating email:', e.target.value);
+                    setUserFormData({...userFormData, email: e.target.value});
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter user's email address"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Role *
+                </label>
+                <select
+                  required
+                  value={userFormData.role}
+                  onChange={(e) => {
+                    console.log('👔 Updating role:', e.target.value);
+                    setUserFormData({...userFormData, role: e.target.value});
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="worker">👷 Worker</option>
+                  <option value="supervisor">👨‍💼 Supervisor</option>
+                  <option value="admin">👑 Administrator</option>
+                </select>
+              </div>
+              
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="is_active"
+                  checked={userFormData.is_active}
+                  onChange={(e) => {
+                    console.log('💪 Updating active status:', e.target.checked);
+                    setUserFormData({...userFormData, is_active: e.target.checked});
+                  }}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="is_active" className="ml-2 text-sm text-gray-700">
+                  Active (user can login)
+                </label>
+              </div>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  <strong>Note:</strong> User will receive a default password: <code className="bg-blue-100 px-1 rounded">defaultPassword123!</code>
+                </p>
+              </div>
+              
+              <div className="flex items-center justify-end space-x-3 rtl:space-x-reverse pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    console.log('❌ Cancelling user creation');
+                    setShowAddUserModal(false);
+                    resetUserForm();
+                  }}
+                  className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addUserMutation.isPending}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center"
+                >
+                  {addUserMutation.isPending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Add User
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
