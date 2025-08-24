@@ -190,22 +190,26 @@
   font-weight: 700;
 }
 
-/* Mobile Optimizations */
-@media (max-width: 768px) {
-  .mobile-padding {
-    @apply px-4 py-2;
-  }
-  
-  .mobile-text {
-    @apply text-sm;
-  }
-  
-  .mobile-button {
-    @apply py-3 px-4 text-base;
-  }
-  
+/* Mobile responsive for dashboard */
+@media (max-width: 640px) {
   .mobile-card {
-    @apply p-4 rounded-xl;
+    padding: 1rem;
+  }
+  
+  .responsive-text {
+    font-size: 0.875rem;
+  }
+  
+  .tablet-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tablet-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 }
 
