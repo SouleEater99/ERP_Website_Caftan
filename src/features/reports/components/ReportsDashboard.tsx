@@ -483,6 +483,37 @@ const ReportsDashboard: React.FC = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Material Insights - Now below the chart instead of on the right side */}
+                <div className="mt-6 p-4 bg-gradient-to-r from-orange-50 to-red-50/50 rounded-lg border border-orange-200">
+                  <h4 className="text-lg font-bold text-orange-900 mb-4">Material Insights</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="text-center p-3 bg-white/70 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-900">
+                        {materialUsage[0]?.material_name || 'N/A'}
+                      </div>
+                      <div className="text-sm text-orange-600">Most Used</div>
+                    </div>
+                    <div className="text-center p-3 bg-white/70 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-900">
+                        {materialUsage.reduce((sum, m) => sum + m.quantity_used, 0).toLocaleString()}
+                      </div>
+                      <div className="text-sm text-orange-600">Total Units</div>
+                    </div>
+                    <div className="text-center p-3 bg-white/70 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-900">
+                        {(materialUsage.reduce((sum, m) => sum + m.quantity_used, 0) / materialUsage.length).toFixed(0)}
+                      </div>
+                      <div className="text-sm text-orange-600">Avg Usage</div>
+                    </div>
+                    <div className="text-center p-3 bg-white/70 rounded-lg">
+                      <div className="text-lg font-bold text-orange-900">
+                        {materialUsage.slice(0, 3).map(m => m.material_name).join(', ')}
+                      </div>
+                      <div className="text-sm text-orange-600">Top 3 Materials</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -579,39 +610,6 @@ const ReportsDashboard: React.FC = () => {
                 ))}
               </div>
             </div>
-
-            {/* Material Quick Stats - Show when materials report is selected */}
-            {selectedReport === 'materials' && materialUsage && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-                <h4 className="text-lg font-bold text-orange-900 mb-4">Material Insights</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-orange-700 text-sm">Most Used</span>
-                    <span className="font-bold text-orange-900">
-                      {materialUsage[0]?.material_name || 'N/A'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-orange-700 text-sm">Total Units</span>
-                    <span className="font-bold text-orange-900">
-                      {materialUsage.reduce((sum, m) => sum + m.quantity_used, 0).toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-orange-700 text-sm">Avg Usage</span>
-                    <span className="font-bold text-orange-900">
-                      {(materialUsage.reduce((sum, m) => sum + m.quantity_used, 0) / materialUsage.length).toFixed(0)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-orange-700 text-sm">Top 3 Materials</span>
-                    <span className="font-bold text-orange-900">
-                      {materialUsage.slice(0, 3).map(m => m.material_name).join(', ')}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
