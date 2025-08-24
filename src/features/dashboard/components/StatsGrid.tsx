@@ -17,7 +17,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({ stats, isRTL }) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 tablet-grid desktop-grid gap-4 sm:gap-6 mb-6 sm:mb-8">
       <StatCard
-        title={t('totalWorkers')}
+        title={t('stats.totalWorkers')}
         value={stats.totalWorkers}
         icon={Users}
         color={DASHBOARD_COLORS.TOTAL_WORKERS}
@@ -26,7 +26,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({ stats, isRTL }) => {
         isRTL={isRTL}
       />
       <StatCard
-        title={t('activeOrders')}
+        title={t('stats.activeOrders')}
         value={stats.activeOrders}
         icon={Package}
         color={DASHBOARD_COLORS.ACTIVE_ORDERS}
@@ -35,7 +35,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({ stats, isRTL }) => {
         isRTL={isRTL}
       />
       <StatCard
-        title={t('completedTasks')}
+        title={t('stats.completedTasks')}
         value={stats.completedTasks}
         icon={BarChart3}
         color={DASHBOARD_COLORS.COMPLETED_TASKS}
@@ -44,7 +44,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({ stats, isRTL }) => {
         isRTL={isRTL}
       />
       <StatCard
-        title={t('pendingApprovals')}
+        title={t('stats.pendingApprovals')}
         value={stats.pendingApprovals}
         icon={Clock}
         color={DASHBOARD_COLORS.PENDING_APPROVALS}
@@ -52,7 +52,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({ stats, isRTL }) => {
         isRTL={isRTL}
       />
       <StatCard
-        title="Workers Pay"
+        title={t('stats.workersPay')}
         value={formatCurrency(stats.totalEarnings)}
         icon={DollarSign}
         color={DASHBOARD_COLORS.TOTAL_EARNINGS}

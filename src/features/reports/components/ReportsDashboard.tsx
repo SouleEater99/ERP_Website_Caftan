@@ -180,7 +180,7 @@ const ReportsDashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center py-20">
             <div className="w-16 h-16 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-orange-600 text-lg">{t('loadingReports') || 'Loading reports...'}</p>
+            <p className="text-orange-600 text-lg">{t('reports.loadingReports')}</p>
           </div>
         </div>
       </div>
@@ -194,10 +194,10 @@ const ReportsDashboard: React.FC = () => {
         <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
           <div className={isRTL ? 'text-right' : ''}>
             <h1 className="text-3xl font-bold text-orange-900">
-              {t('reportsAnalytics')}
+              {t('navigation.reportsAnalytics')}
             </h1>
             <p className="text-orange-700 mt-1">
-              {t('comprehensiveInsights')}
+              {t('navigation.comprehensiveInsights')}
             </p>
           </div>
           
@@ -210,7 +210,7 @@ const ReportsDashboard: React.FC = () => {
             >
               {REPORT_PERIODS.map(period => (
                 <option key={period.value} value={period.value}>
-                  {t(period.label)}
+                  {t(`dashboard.${period.label}`)}
                 </option>
               ))}
             </select>
@@ -220,7 +220,7 @@ const ReportsDashboard: React.FC = () => {
               className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              <span>{t('refresh')}</span>
+              <span>{t('common.refresh')}</span>
             </button>
             
             <button 
@@ -229,7 +229,7 @@ const ReportsDashboard: React.FC = () => {
               className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:from-orange-600 hover:to-red-700 transition-colors disabled:opacity-50"
             >
               <Download className="w-4 h-4 mr-2" />
-              <span>{exporting ? 'Exporting...' : t('export')}</span>
+              <span>{exporting ? t('reports.exporting') : t('common.export')}</span>
             </button>
           </div>
         </div>
@@ -240,13 +240,13 @@ const ReportsDashboard: React.FC = () => {
             <div className="flex items-center">
               <AlertTriangle className="w-5 h-5 text-red-400 mr-2" />
               <div>
-                <h3 className="text-sm font-medium text-red-800">Some data failed to load</h3>
-                <p className="text-sm text-red-700 mt-1">Please refresh to try again</p>
+                <h3 className="text-sm font-medium text-red-800">{t('reports.someDataFailed')}</h3>
+                <p className="text-sm text-red-700 mt-1">{t('reports.pleaseRefresh')}</p>
                 <button 
                   onClick={handleRefresh}
                   className="mt-2 px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors"
                 >
-                  Retry
+                  {t('reports.retry')}
                 </button>
               </div>
             </div>
@@ -256,28 +256,28 @@ const ReportsDashboard: React.FC = () => {
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <ReportCard
-            title={t('totalProduction')}
+            title={t('navigation.totalProduction')}
             value={workLogStats ? formatNumber(workLogStats.total_completed + workLogStats.total_pending) : '0'}
             change="+12.5%"
             icon={Package}
             color="bg-gradient-to-r from-orange-500 to-red-600"
           />
           <ReportCard
-            title={t('activeWorkers')}
+            title={t('navigation.activeWorkers')}
             value={workLogStats ? workLogStats.worker_count.toString() : '0'}
             change="+3.2%"
             icon={Users}
             color="bg-gradient-to-r from-orange-500 to-red-600"
           />
           <ReportCard
-            title={t('revenue')}
+            title={t('navigation.revenue')}
             value={workLogStats ? formatCurrency(workLogStats.total_revenue) : '$0'}
             change="+18.7%"
             icon={DollarSign}
             color="bg-gradient-to-r from-orange-500 to-red-600"
           />
           <ReportCard
-            title={t('efficiency')}
+            title={t('navigation.efficiency')}
             value={workLogStats ? formatPercentage(workLogStats.efficiency_rate) : '0%'}
             change="+5.1%"
             icon={TrendingUp}
@@ -302,7 +302,7 @@ const ReportsDashboard: React.FC = () => {
                 {tab.icon === 'Users' && <Users className="w-4 h-4 mr-2" />}
                 {tab.icon === 'PieChart' && <PieChart className="w-4 h-4 mr-2" />}
                 {tab.icon === 'DollarSign' && <DollarSign className="w-4 h-4 mr-2" />}
-                <span>{t(tab.label)}</span>
+                <span>{t(`dashboard.${tab.label}`)}</span>
               </button>
             ))}
           </div>
@@ -315,10 +315,10 @@ const ReportsDashboard: React.FC = () => {
             {selectedReport === 'production' && monthlyProduction && (
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
                 <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <h3 className="text-xl font-bold text-orange-900">{t('productionTrends')}</h3>
+                  <h3 className="text-xl font-bold text-orange-900">{t('dashboard.productionTrends')}</h3>
                   <div className={`flex items-center space-x-2 text-sm text-orange-700 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                     <Calendar className="w-4 h-4" />
-                    <span>{t('lastSixMonths')}</span>
+                    <span>{t('dashboard.lastSixMonths')}</span>
                   </div>
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
@@ -344,10 +344,10 @@ const ReportsDashboard: React.FC = () => {
             {selectedReport === 'workers' && workerPerformance && (
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
                 <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <h3 className="text-xl font-bold text-orange-900">{t('workerPerformance')}</h3>
+                  <h3 className="text-xl font-bold text-orange-900">{t('dashboard.workerPerformance')}</h3>
                   <button className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors text-sm">
                     <Eye className="w-4 h-4 mr-1" />
-                    <span>{t('viewDetails')}</span>
+                    <span>{t('dashboard.viewDetails')}</span>
                   </button>
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
@@ -372,15 +372,15 @@ const ReportsDashboard: React.FC = () => {
             {selectedReport === 'materials' && materialUsage && (
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
                 <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <h3 className="text-xl font-bold text-orange-900">{t('materialUsageDistribution')}</h3>
-                  <div className="text-sm text-orange-700">{t('currentMonth')}</div>
+                  <h3 className="text-xl font-bold text-orange-900">{t('dashboard.materialUsageDistribution')}</h3>
+                  <div className="text-sm text-orange-700">{t('dashboard.currentMonth')}</div>
                 </div>
                 
                 {/* Material Usage Chart */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                   {/* Pie Chart */}
                   <div>
-                    <h4 className="text-lg font-semibold text-orange-800 mb-4">Usage Distribution</h4>
+                    <h4 className="text-lg font-semibold text-orange-800 mb-4">{t('reports.usageDistribution')}</h4>
                     <ResponsiveContainer width="100%" height={250}>
                       <RechartsPieChart>
                         <Pie
@@ -403,7 +403,7 @@ const ReportsDashboard: React.FC = () => {
 
                   {/* Material Details Table */}
                   <div>
-                    <h4 className="text-lg font-semibold text-orange-800 mb-4">Material Details</h4>
+                    <h4 className="text-lg font-semibold text-orange-800 mb-4">{t('reports.materialDetails')}</h4>
                     <div className="space-y-2 max-h-64 overflow-y-auto">
                       {materialUsage.map((material, index) => (
                         <div key={index} className="flex items-center justify-between p-3 bg-orange-50/50 rounded-lg">
@@ -416,7 +416,7 @@ const ReportsDashboard: React.FC = () => {
                           </div>
                           <div className="text-right">
                             <div className="text-sm font-semibold text-orange-800">
-                              {material.quantity_used} units
+                              {material.quantity_used} {t('common.unit')}
                             </div>
                             <div className="text-xs text-orange-600">
                               {material.percentage.toFixed(1)}%
@@ -431,7 +431,7 @@ const ReportsDashboard: React.FC = () => {
                 {/* Material Usage Trends */}
                 {materialUsageTrends && materialUsageTrends.length > 0 && (
                   <div className="mt-6">
-                    <h4 className="text-lg font-semibold text-orange-800 mb-4">Usage Trends Over Time</h4>
+                    <h4 className="text-lg font-semibold text-orange-800 mb-4">{t('reports.usageTrendsOverTime')}</h4>
                     <ResponsiveContainer width="100%" height={200}>
                       <BarChart data={materialUsageTrends}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#fbbf24" />
@@ -460,57 +460,57 @@ const ReportsDashboard: React.FC = () => {
 
                 {/* Material Cost Analysis */}
                 <div className="mt-6 p-4 bg-orange-50/50 rounded-lg">
-                  <h4 className="text-lg font-semibold text-orange-800 mb-3">Cost Analysis</h4>
+                  <h4 className="text-lg font-semibold text-orange-800 mb-3">{t('reports.costAnalysis')}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-orange-900">
                         ${materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0).toLocaleString()}
                       </div>
-                      <div className="text-sm text-orange-600">Total Material Cost</div>
+                      <div className="text-sm text-orange-600">{t('reports.totalMaterialCost')}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-orange-900">
                         {materialUsage.length}
                       </div>
-                      <div className="text-sm text-orange-600">Materials Used</div>
+                      <div className="text-sm text-orange-600">{t('reports.materialsUsed')}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-orange-900">
                         ${(materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0) / 
                            materialUsage.reduce((sum, m) => sum + m.quantity_used, 0)).toFixed(2)}
                       </div>
-                      <div className="text-sm text-orange-600">Cost Per Unit</div>
+                      <div className="text-sm text-orange-600">{t('reports.costPerUnit')}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Material Insights - Now below the chart instead of on the right side */}
                 <div className="mt-6 p-4 bg-gradient-to-r from-orange-50 to-red-50/50 rounded-lg border border-orange-200">
-                  <h4 className="text-lg font-bold text-orange-900 mb-4">Material Insights</h4>
+                  <h4 className="text-lg font-bold text-orange-900 mb-4">{t('reports.materialInsights')}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="text-center p-3 bg-white/70 rounded-lg">
                       <div className="text-2xl font-bold text-orange-900">
                         {materialUsage[0]?.material_name || 'N/A'}
                       </div>
-                      <div className="text-sm text-orange-600">Most Used</div>
+                      <div className="text-sm text-orange-600">{t('reports.mostUsed')}</div>
                     </div>
                     <div className="text-center p-3 bg-white/70 rounded-lg">
                       <div className="text-2xl font-bold text-orange-900">
                         {materialUsage.reduce((sum, m) => sum + m.quantity_used, 0).toLocaleString()}
                       </div>
-                      <div className="text-sm text-orange-600">Total Units</div>
+                      <div className="text-sm text-orange-600">{t('reports.totalUnits')}</div>
                     </div>
                     <div className="text-center p-3 bg-white/70 rounded-lg">
                       <div className="text-2xl font-bold text-orange-900">
                         {(materialUsage.reduce((sum, m) => sum + m.quantity_used, 0) / materialUsage.length).toFixed(0)}
                       </div>
-                      <div className="text-sm text-orange-600">Avg Usage</div>
+                      <div className="text-sm text-orange-600">{t('reports.avgUsage')}</div>
                     </div>
                     <div className="text-center p-3 bg-white/70 rounded-lg">
                       <div className="text-lg font-bold text-orange-900">
                         {materialUsage.slice(0, 3).map(m => m.material_name).join(', ')}
                       </div>
-                      <div className="text-sm text-orange-600">Top 3 Materials</div>
+                      <div className="text-sm text-orange-600">{t('reports.top3Materials')}</div>
                     </div>
                   </div>
                 </div>
@@ -520,8 +520,8 @@ const ReportsDashboard: React.FC = () => {
             {selectedReport === 'financial' && monthlyProduction && (
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
                 <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <h3 className="text-xl font-bold text-orange-900">{t('revenueTrends')}</h3>
-                  <div className="text-sm text-orange-700">{t('monthlyRevenue')}</div>
+                  <h3 className="text-xl font-bold text-orange-900">{t('dashboard.revenueTrends')}</h3>
+                  <div className="text-sm text-orange-700">{t('dashboard.monthlyRevenue')}</div>
                 </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={monthlyProduction}>
@@ -546,8 +546,8 @@ const ReportsDashboard: React.FC = () => {
             {!monthlyProduction && !workerPerformance && !materialUsage && (
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-12 shadow-lg border border-orange-200/30 text-center">
                 <Package className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-orange-900 mb-2">No data available</h3>
-                <p className="text-orange-600">Select a different period or report type to view data.</p>
+                <h3 className="text-lg font-medium text-orange-900 mb-2">{t('reports.noDataAvailable')}</h3>
+                <p className="text-orange-600">{t('reports.selectDifferentPeriod')}</p>
               </div>
             )}
           </div>
@@ -556,7 +556,7 @@ const ReportsDashboard: React.FC = () => {
           <div className="space-y-6">
             {/* Quick Stats */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-              <h4 className="text-lg font-bold text-orange-900 mb-4">{t('quickStats')}</h4>
+              <h4 className="text-lg font-bold text-orange-900 mb-4">{t('dashboard.quickStats')}</h4>
               <div className="space-y-4">
                 {quickStats?.map((stat, index) => (
                   <div key={index} className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -564,14 +564,14 @@ const ReportsDashboard: React.FC = () => {
                     <span className={`font-bold ${stat.color}`}>{stat.value}</span>
                   </div>
                 )) || (
-                  <div className="text-orange-500 text-sm">Loading stats...</div>
+                  <div className="text-orange-500 text-sm">{t('common.loading')}</div>
                 )}
               </div>
             </div>
 
             {/* Recent Activities */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-              <h4 className="text-lg font-bold text-orange-900 mb-4">{t('recentActivities')}</h4>
+              <h4 className="text-lg font-bold text-orange-900 mb-4">{t('dashboard.recentActivities')}</h4>
               <div className="space-y-3">
                 {recentActivities?.map((activity) => (
                   <div key={activity.id} className={`flex items-start space-x-3 p-3 bg-orange-50/50 rounded-lg ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
@@ -586,14 +586,14 @@ const ReportsDashboard: React.FC = () => {
                     </div>
                   </div>
                 )) || (
-                  <div className="text-orange-500 text-sm">Loading activities...</div>
+                  <div className="text-orange-500 text-sm">{t('common.loading')}</div>
                 )}
               </div>
             </div>
 
             {/* Export Options */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-              <h4 className="text-lg font-bold text-orange-900 mb-4">{t('exportReports')}</h4>
+              <h4 className="text-lg font-bold text-orange-900 mb-4">{t('dashboard.exportReports')}</h4>
               <div className="space-y-2">
                 {EXPORT_OPTIONS.map((option, index) => (
                   <button 
@@ -605,7 +605,7 @@ const ReportsDashboard: React.FC = () => {
                     {option.icon === 'FileText' && <FileText className="w-4 h-4 mr-2" />}
                     {option.icon === 'BarChart3' && <BarChart3 className="w-4 h-4 mr-2" />}
                     {option.icon === 'Activity' && <Activity className="w-4 h-4 mr-2" />}
-                    <span>{t(option.label)}</span>
+                    <span>{t(`dashboard.${option.label}`)}</span>
                   </button>
                 ))}
               </div>

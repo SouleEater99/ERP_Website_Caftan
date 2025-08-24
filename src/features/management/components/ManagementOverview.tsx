@@ -119,13 +119,13 @@ const ManagementOverview: React.FC = () => {
       console.log('✅ User created successfully:', result);
       
       // Show success message with credentials
-      const successMessage = `User added successfully! 
+      const successMessage = `${t('messages.success.userAdded')} 
       
-Login Credentials:
-Email: ${userFormData.email}
-Password: defaultPassword123!
+${t('authentication.login')} ${t('common.credentials')}:
+${t('authentication.email')}: ${userFormData.email}
+${t('authentication.password')}: defaultPassword123!
 
-The user can now login to the system.`;
+${t('messages.info.userCanLogin')}`;
       
       alert(successMessage);
       
@@ -143,7 +143,7 @@ The user can now login to the system.`;
       
     } catch (error) {
       console.error('❌ Error adding user:', error);
-      const errorMessage = `Error adding user: ${(error as Error).message}`;
+      const errorMessage = `${t('messages.error.userAddFailed')}: ${(error as Error).message}`;
       alert(errorMessage);
     }
   };
@@ -187,7 +187,7 @@ The user can now login to the system.`;
           )}
         </div>
         <div className={`p-3 rounded-xl ${color} ${isRTL ? 'ml-4' : ''}`}>
-          <Icon className="w-6 h-6 text-white" />
+          <Icon className="h-6 h-6 text-white" />
         </div>
       </div>
     </div>
@@ -204,21 +204,21 @@ The user can now login to the system.`;
         <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
           <div className={isRTL ? 'text-right' : ''}>
             <h1 className="text-3xl font-bold text-slate-800">
-              {t('managementPanel')}
+              {t('management.managementPanel')}
             </h1>
             <p className="text-slate-600 mt-1">
-              {t('centralizedControl')}
+              {t('management.centralizedControl')}
             </p>
           </div>
           
           <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
             <button className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors">
               <RefreshCw className="w-4 h-4 mr-2" />
-              <span>{t('refresh')}</span>
+              <span>{t('common.refresh')}</span>
             </button>
             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
               <Settings className="w-4 h-4 mr-2" />
-              <span>{t('settings')}</span>
+              <span>{t('common.settings')}</span>
             </button>
           </div>
         </div>
@@ -240,7 +240,7 @@ The user can now login to the system.`;
                 {tab.icon === 'Users' && <Users className="w-4 h-4 mr-2" />}
                 {tab.icon === 'MapPin' && <MapPin className="w-4 h-4 mr-2" />}
                 {tab.icon === 'Cog' && <Cog className="w-4 h-4 mr-2" />}
-                <span>{t(tab.label)}</span>
+                <span>{t(`management.${tab.label}`)}</span>
               </button>
             ))}
           </div>
@@ -252,23 +252,23 @@ The user can now login to the system.`;
             {/* System Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <StatCard
-                title="totalUsers"
+                title="management.totalUsers"
                 value={systemStats.totalUsers}
-                change={`${systemStats.activeUsers} نشط`}
+                change={`${systemStats.activeUsers} ${t('common.active')}`}
                 icon={Users}
                 color="bg-gradient-to-r from-blue-500 to-blue-600"
               />
               <StatCard
-                title="locations"
+                title="management.locations"
                 value={systemStats.totalLocations}
-                change={`${systemStats.activeLocations} نشط`}
+                change={`${systemStats.activeLocations} ${t('common.active')}`}
                 icon={MapPin}
                 color="bg-gradient-to-r from-emerald-500 to-teal-600"
               />
               <StatCard
-                title="totalWorkers"
+                title="management.totalWorkers"
                 value={systemStats.totalWorkers}
-                change={t('acrossAllLocations')}
+                change={t('management.acrossAllLocations')}
                 icon={Building}
                 color="bg-gradient-to-r from-violet-500 to-purple-600"
               />
@@ -277,7 +277,7 @@ The user can now login to the system.`;
             {/* Quick Actions */}
             <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-slate-800">{t('quickActions')}</h3>
+                <h3 className="text-xl font-bold text-slate-800">{t('management.quickActions')}</h3>
                 <Info className="w-5 h-5 text-slate-400" />
               </div>
               
@@ -334,7 +334,7 @@ The user can now login to the system.`;
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <div className={`flex items-center justify-between mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <h3 className="text-lg font-semibold text-gray-900">Add New User</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t('management.addNewUser')}</h3>
               <button
                 onClick={() => {
                   console.log('❌ Closing Add User modal');
@@ -350,7 +350,7 @@ The user can now login to the system.`;
             <form onSubmit={handleAddUser} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Name *
+                  {t('management.fullName')} *
                 </label>
                 <input
                   type="text"
@@ -361,13 +361,13 @@ The user can now login to the system.`;
                     setUserFormData({...userFormData, name: e.target.value});
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter user's full name"
+                  placeholder={t('management.enterFullName')}
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
+                  {t('authentication.email')} *
                 </label>
                 <input
                   type="email"
@@ -378,13 +378,13 @@ The user can now login to the system.`;
                     setUserFormData({...userFormData, email: e.target.value});
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter user's email address"
+                  placeholder={t('management.enterEmailAddress')}
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Role *
+                  {t('management.role')} *
                 </label>
                 <select
                   required
@@ -395,9 +395,9 @@ The user can now login to the system.`;
                   }}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="worker">👷 Worker</option>
-                  <option value="supervisor">👨‍💼 Supervisor</option>
-                  <option value="admin">👑 Administrator</option>
+                  <option value="worker">👷 {t('management.worker')}</option>
+                  <option value="supervisor">👨‍💼 {t('management.supervisor')}</option>
+                  <option value="admin">👑 {t('management.admin')}</option>
                 </select>
               </div>
               
@@ -413,13 +413,13 @@ The user can now login to the system.`;
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="is_active" className="ml-2 text-sm text-gray-700">
-                  Active (user can login)
+                  {t('common.active')} ({t('messages.info.userCanLogin')})
                 </label>
               </div>
               
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-sm text-blue-800">
-                  <strong>Note:</strong> User will receive a default password: <code className="bg-blue-100 px-1 rounded">defaultPassword123!</code>
+                  <strong>{t('common.notes')}:</strong> {t('messages.info.userWillReceiveDefaultPassword')}: <code className="bg-blue-100 px-1 rounded">defaultPassword123!</code>
                 </p>
               </div>
               
@@ -433,7 +433,7 @@ The user can now login to the system.`;
                   }}
                   className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -443,12 +443,12 @@ The user can now login to the system.`;
                   {addUserMutation.isPending ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Creating...
+                      {t('messages.info.creating')}
                     </>
                   ) : (
                     <>
                       <UserPlus className="w-4 h-4 mr-2" />
-                      Add User
+                      {t('management.addUser')}
                     </>
                   )}
                 </button>

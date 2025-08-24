@@ -54,7 +54,7 @@ const LogWorkForm: React.FC = () => {
       const loadingDiv = document.createElement('div');
       loadingDiv.id = 'loading-message';
       loadingDiv.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50 animate-bounce';
-      loadingDiv.textContent = 'جاري تسجيل العمل...';
+      loadingDiv.textContent = t('workLogging.submitting');
       document.body.appendChild(loadingDiv);
 
       const result = await addWorkLog.mutateAsync({
@@ -77,7 +77,7 @@ const LogWorkForm: React.FC = () => {
       const successDiv = document.createElement('div');
       successDiv.id = 'success-message';
       successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50 animate-bounce';
-      successDiv.textContent = t('workLoggedSuccess') || 'تم تسجيل العمل بنجاح!';
+      successDiv.textContent = t('workLogging.workLoggedSuccess');
       document.body.appendChild(successDiv);
 
       // Remove success message after 3 seconds
@@ -97,7 +97,7 @@ const LogWorkForm: React.FC = () => {
       const errorDiv = document.createElement('div');
       errorDiv.id = 'error-message';
       errorDiv.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-2xl shadow-lg z-50';
-      errorDiv.textContent = `حدث خطأ في تسجيل العمل: ${error.message || 'فشل في تسجيل العمل'}`;
+      errorDiv.textContent = `${t('messages.error.workLogFailed')}: ${error.message || t('messages.error.unknownError')}`;
       document.body.appendChild(errorDiv);
 
       // Remove error message after 5 seconds
@@ -113,7 +113,7 @@ const LogWorkForm: React.FC = () => {
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border-2 border-orange-200/30">
           <div className="text-center">
             <div className="w-12 h-12 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3"></div>
-            <p className="text-slate-600 font-medium text-sm">{t('loading') || 'جاري التحميل...'}</p>
+            <p className="text-slate-600 font-medium text-sm">{t('common.loading')}</p>
           </div>
         </div>
       </div>
@@ -138,10 +138,10 @@ const LogWorkForm: React.FC = () => {
             <Crown className="h-10 w-10 text-white relative z-10 hidden" />
           </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
-            {t('logWork')}
+            {t('navigation.logWork')}
           </h1>
           <p className="text-orange-700 font-medium">
-            سجل أعمالك اليومية في كفتان تاليا
+            {t('workLogging.dailyWorkLog')}
           </p>
         </div>
         
@@ -153,7 +153,7 @@ const LogWorkForm: React.FC = () => {
                 <User className="h-6 w-6 text-white" />
               </div>
               <div className={isRTL ? 'text-right' : ''}>
-                <p className="text-sm font-semibold text-orange-600">العامل</p>
+                <p className="text-sm font-semibold text-orange-600">{t('workLogging.worker')}</p>
                 <p className="font-bold text-orange-900">{user?.name}</p>
               </div>
             </div>
@@ -162,8 +162,8 @@ const LogWorkForm: React.FC = () => {
                 <Calendar className="h-6 w-6 text-white" />
               </div>
               <div className={isRTL ? 'text-right' : ''}>
-                <p className="text-sm font-semibold text-orange-600">التاريخ</p>
-                <p className="font-bold text-orange-900">{new Date().toLocaleDateString('ar-SA')}</p>
+                <p className="text-sm font-semibold text-orange-600">{t('common.date')}</p>
+                <p className="font-bold text-orange-900">{new Date().toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</p>
               </div>
             </div>
             <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
@@ -171,8 +171,8 @@ const LogWorkForm: React.FC = () => {
                 <Clock className="h-6 w-6 text-white" />
               </div>
               <div className={isRTL ? 'text-right' : ''}>
-                <p className="text-sm font-semibold text-orange-600">الوقت</p>
-                <p className="font-bold text-orange-900">{new Date().toLocaleTimeString('ar-SA')}</p>
+                <p className="text-sm font-semibold text-orange-600">{t('common.time')}</p>
+                <p className="font-bold text-orange-900">{new Date().toLocaleTimeString(i18n.language === 'ar' ? 'ar-SA' : 'en-US')}</p>
               </div>
             </div>
           </div>
@@ -182,7 +182,7 @@ const LogWorkForm: React.FC = () => {
           {/* Product Selection */}
           <div className="space-y-3">
             <label className="block text-sm font-bold text-orange-800">
-              {t('selectProduct')}
+              {t('workLogging.selectProduct')}
             </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {PRODUCTS.map((product) => (
@@ -200,7 +200,7 @@ const LogWorkForm: React.FC = () => {
                   }`}>
                     <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                       <span className="text-2xl">{product.icon}</span>
-                      <span className="font-semibold">{product.label}</span>
+                      <span className="font-semibold">{t(`products.${product.value}`)}</span>
                     </div>
                   </div>
                 </label>
@@ -209,7 +209,7 @@ const LogWorkForm: React.FC = () => {
             {errors.product && (
               <p className="text-sm text-red-500 font-medium flex items-center space-x-1">
                 <AlertTriangle className="h-4 w-4" />
-                <span>{errors.product.message}</span>
+                <span>{t('validation.required')}</span>
               </p>
             )}
           </div>
@@ -217,13 +217,13 @@ const LogWorkForm: React.FC = () => {
           {/* Product ID */}
           <div className="space-y-3">
             <label className="block text-sm font-bold text-orange-800">
-              {t('productId') || 'معرف المنتج'}
+              {t('workLogging.productId')}
             </label>
             <input
               {...register('product_id')}
               type="text"
               className="w-full p-4 bg-white/70 border-2 border-orange-200 rounded-2xl focus:border-red-500 focus:bg-white transition-all duration-300 text-orange-900 font-medium"
-              placeholder="CT-001 (اختياري)"
+              placeholder={t('workLogging.productId')}
               dir={isRTL ? 'rtl' : 'ltr'}
             />
           </div>
@@ -231,7 +231,7 @@ const LogWorkForm: React.FC = () => {
           {/* Task Selection */}
           <div className="space-y-3">
             <label className="block text-sm font-bold text-orange-800">
-              {t('selectTask')}
+              {t('workLogging.selectTask')}
             </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {TASKS.map((task) => (
@@ -249,10 +249,10 @@ const LogWorkForm: React.FC = () => {
                   }`}>
                     <div className={`flex items-center space-x-3 mb-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                       <span className="text-2xl">{task.icon}</span>
-                      <span className="font-semibold">{t(task.label)}</span>
+                      <span className="font-semibold">{t(`tasks.${task.value}`)}</span>
                     </div>
                     <p className={`text-xs opacity-80 ${isRTL ? 'text-right' : ''}`}>
-                      {task.desc}
+                      {t(`tasks.${task.value}Desc`)}
                     </p>
                   </div>
                 </label>
@@ -261,7 +261,7 @@ const LogWorkForm: React.FC = () => {
             {errors.task && (
               <p className="text-sm text-red-500 font-medium flex items-center space-x-1">
                 <AlertTriangle className="h-4 w-4" />
-                <span>{errors.task.message}</span>
+                <span>{t('validation.required')}</span>
               </p>
             )}
           </div>
@@ -269,7 +269,7 @@ const LogWorkForm: React.FC = () => {
           {/* Quantity */}
           <div className="space-y-3">
             <label className="block text-sm font-bold text-orange-800">
-              {t('quantity')}
+              {t('workLogging.quantity')}
             </label>
             <input
               {...register('quantity', { valueAsNumber: true })}
@@ -280,7 +280,7 @@ const LogWorkForm: React.FC = () => {
             {errors.quantity && (
               <p className="text-sm text-red-500 font-medium flex items-center space-x-1">
                 <AlertTriangle className="h-4 w-4" />
-                <span>{errors.quantity.message}</span>
+                <span>{t('validation.positiveNumber')}</span>
               </p>
             )}
           </div>
@@ -290,8 +290,8 @@ const LogWorkForm: React.FC = () => {
             <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
               <CheckCircle className="h-6 w-6 text-green-600" />
               <div className={isRTL ? 'text-right' : ''}>
-                <span className="font-bold text-green-900">{t('completed') || 'مكتمل'}</span>
-                <p className="text-sm text-green-700">ضع علامة إذا تم إنجاز المهمة بالكامل</p>
+                <span className="font-bold text-green-900">{t('workLogging.completed')}</span>
+                <p className="text-sm text-green-700">{t('workLogging.markAsCompleted')}</p>
               </div>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
@@ -307,13 +307,13 @@ const LogWorkForm: React.FC = () => {
           {/* Notes */}
           <div className="space-y-3">
             <label className="block text-sm font-bold text-orange-800">
-              {t('notes') || 'ملاحظات'}
+              {t('workLogging.notes')}
             </label>
             <textarea
               {...register('notes')}
               rows={3}
               className="w-full p-4 bg-white/70 border-2 border-orange-200 rounded-2xl focus:border-red-500 focus:bg-white transition-all duration-300 text-orange-900 resize-none"
-              placeholder="ملاحظات اختيارية حول العمل..."
+              placeholder={t('workLogging.optionalNotes')}
               dir={isRTL ? 'rtl' : 'ltr'}
             />
           </div>
@@ -327,12 +327,12 @@ const LogWorkForm: React.FC = () => {
             {addWorkLog.isPending ? (
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                <span>جاري التسجيل...</span>
+                <span>{t('workLogging.submitting')}</span>
               </div>
             ) : (
               <div className={`flex items-center justify-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                 <Crown className="h-5 w-5" />
-                <span>{t('submit') || 'إرسال'}</span>
+                <span>{t('workLogging.submitWork')}</span>
               </div>
             )}
           </button>

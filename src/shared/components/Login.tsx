@@ -91,7 +91,7 @@ const Login: React.FC = () => {
                 <div className="space-y-4">
                   <div className="relative group">
                     <label className="block responsive-text font-semibold text-slate-700 mb-2">
-                      {t('email')}
+                      {t('authentication.email')}
                     </label>
                     <input
                       {...register('email')}
@@ -101,13 +101,13 @@ const Login: React.FC = () => {
                       dir={isRTL ? 'rtl' : 'ltr'}
                     />
                     {errors.email && (
-                      <p className="mt-2 responsive-text text-red-500 font-medium">{errors.email.message}</p>
+                      <p className="mt-2 responsive-text text-red-500 font-medium">{t('validation.invalidEmail')}</p>
                     )}
                   </div>
                   
                   <div className="relative group">
                     <label className="block responsive-text font-semibold text-slate-700 mb-2">
-                      {t('password')}
+                      {t('authentication.password')}
                     </label>
                     <div className="relative">
                       <input
@@ -125,7 +125,7 @@ const Login: React.FC = () => {
                       </button>
                     </div>
                     {errors.password && (
-                      <p className="mt-2 responsive-text text-red-500 font-medium">{errors.password.message}</p>
+                      <p className="mt-2 responsive-text text-red-500 font-medium">{t('validation.required')}</p>
                     )}
                   </div>
                 </div>
@@ -138,10 +138,10 @@ const Login: React.FC = () => {
                         <p className="text-red-600 font-medium responsive-text">{error}</p>
                         {error.includes('Invalid login credentials') && (
                           <div className="mt-2 text-sm text-red-500">
-                            <p>Default admin credentials:</p>
-                            <p>Email: admin@caftantalia.com</p>
-                            <p>Password: admin123456</p>
-                            <p className="mt-1 text-xs">Check setup docs if you've changed these.</p>
+                            <p>{t('messages.info.defaultAdminCredentials')}:</p>
+                            <p>{t('authentication.email')}: admin@caftantalia.com</p>
+                            <p>{t('authentication.password')}: admin123456</p>
+                            <p className="mt-1 text-xs">{t('messages.info.checkSetupDocs')}</p>
                           </div>
                         )}
                       </div>
@@ -157,12 +157,12 @@ const Login: React.FC = () => {
                   {loading ? (
                     <div className="flex items-center justify-center space-x-2">
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span className="responsive-text">{t('loading')}</span>
+                      <span className="responsive-text">{t('common.loading')}</span>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center space-x-2">
                       <Shield className="h-5 w-5" />
-                      <span className="responsive-text">{t('login')}</span>
+                      <span className="responsive-text">{t('authentication.login')}</span>
                     </div>
                   )}
                 </button>
@@ -175,7 +175,7 @@ const Login: React.FC = () => {
                   onClick={() => setIsResetMode(true)}
                   className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors arabic-text"
                 >
-                  {t('forgotPassword')}
+                  {t('authentication.forgotPassword')}
                 </button>
               </div>
             </>

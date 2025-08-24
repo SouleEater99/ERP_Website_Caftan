@@ -59,14 +59,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const isRTL = i18n.language === 'ar'
   
   const navigation = [
-    { name: t('dashboard'), href: '/', icon: Home, roles: ['worker', 'supervisor', 'admin'], gradient: 'from-orange-500 to-red-500' },
-    { name: 'Approvals', href: '/approvals', icon: CheckCircle, roles: ['supervisor', 'admin'], gradient: 'from-teal-500 to-emerald-500' },
-    { name: t('inventory'), href: '/inventory', icon: Package, roles: ['supervisor', 'admin'], gradient: 'from-blue-500 to-cyan-500' },
-    { name: t('logWork'), href: '/log-work', icon: ClipboardList, roles: ['worker'], gradient: 'from-green-500 to-emerald-500' },
-    { name: t('bom'), href: '/bom', icon: FileText, roles: ['admin'], gradient: 'from-purple-500 to-pink-500' },
-    { name: t('payroll'), href: '/payroll', icon: DollarSign, roles: ['supervisor', 'admin'], gradient: 'from-yellow-500 to-orange-500' },
-    { name: t('reports'), href: '/reports', icon: BarChart3, roles: ['supervisor', 'admin'], gradient: 'from-indigo-500 to-purple-500' },
-    { name: 'Management', href: '/management', icon: Settings, roles: ['admin'], gradient: 'from-slate-500 to-gray-500' }
+    { name: t('navigation.dashboard'), href: '/', icon: Home, roles: ['worker', 'supervisor', 'admin'], gradient: 'from-orange-500 to-red-500' },
+    { name: t('approvals'), href: '/approvals', icon: CheckCircle, roles: ['supervisor', 'admin'], gradient: 'from-teal-500 to-emerald-500' },
+    { name: t('navigation.inventory'), href: '/inventory', icon: Package, roles: ['supervisor', 'admin'], gradient: 'from-blue-500 to-cyan-500' },
+    { name: t('navigation.logWork'), href: '/log-work', icon: ClipboardList, roles: ['worker'], gradient: 'from-green-500 to-emerald-500' },
+    { name: t('navigation.bom'), href: '/bom', icon: FileText, roles: ['admin'], gradient: 'from-purple-500 to-pink-500' },
+    { name: t('navigation.payroll'), href: '/payroll', icon: DollarSign, roles: ['supervisor', 'admin'], gradient: 'from-yellow-500 to-orange-500' },
+    { name: t('navigation.reports'), href: '/reports', icon: BarChart3, roles: ['supervisor', 'admin'], gradient: 'from-indigo-500 to-purple-500' },
+    { name: t('navigation.management'), href: '/management', icon: Settings, roles: ['admin'], gradient: 'from-slate-500 to-gray-500' }
   ]
   
   const filteredNavigation = navigation.filter(item => 
@@ -150,9 +150,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </div>
               <div>
                 <h1 className="text-base sm:text-lg font-bold primary-gradient-text">
-                  Caftan Talia
+                  {t('authentication.appName')}
                 </h1>
-                <p className="text-xs text-slate-500 font-medium hidden sm:block">Production System</p>
+                <p className="text-xs text-slate-500 font-medium hidden sm:block">{t('authentication.appSubtitle')}</p>
               </div>
             </div>
           </div>
@@ -176,7 +176,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <Languages className="h-5 w-5" />
                   </div>
                   <span className="font-semibold responsive-text">
-                    {i18n.language === 'en' ? 'العربية' : 'English'}
+                    {i18n.language === 'en' ? t('management.arabic') : t('management.english')}
                   </span>
                 </button>
                 
@@ -187,7 +187,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <div className={`flex items-center justify-center w-8 xl:w-10 h-8 xl:h-10 rounded-xl ${isRTL ? 'ml-2 xl:ml-3' : 'mr-2 xl:mr-3'} bg-slate-100 text-slate-600 group-hover:bg-red-100 group-hover:text-red-600 transition-all duration-300`}>
                     <LogOut className="h-5 w-5" />
                   </div>
-                  <span className="font-semibold responsive-text">{t('logout')}</span>
+                  <span className="font-semibold responsive-text">{t('dashboard.logout')}</span>
                 </button>
               </li>
             </ul>
@@ -210,7 +210,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className={`flex flex-1 items-center ${isRTL ? 'justify-start' : 'justify-between'}`}>
               <div className={`flex items-center space-x-4 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                 <div className="responsive-subheading font-bold text-slate-800">
-                  {t('welcome')}, <span className="primary-gradient-text">{user?.name}</span>
+                  {t('dashboard.welcomeBack')}, <span className="primary-gradient-text">{user?.name}</span>
                 </div>
               </div>
               
@@ -222,7 +222,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 
                 <div className={`hidden sm:flex items-center space-x-3 bg-white/70 rounded-2xl px-3 xl:px-4 py-2 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className="w-6 h-6 xl:w-8 xl:h-8 primary-gradient rounded-xl flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
+                    <User className="h-4 h-4 text-white" />
                   </div>
                   <div>
                     <div className="text-xs xl:text-sm font-bold text-slate-800">{user?.name}</div>

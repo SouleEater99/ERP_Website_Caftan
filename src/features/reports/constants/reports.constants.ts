@@ -1,8 +1,8 @@
 export const REPORT_PERIODS = [
-  { value: 'daily', label: 'Daily' },
-  { value: 'weekly', label: 'Weekly' },
-  { value: 'monthly', label: 'Monthly' },
-  { value: 'yearly', label: 'Yearly' }
+  { value: 'daily', label: 'daily' },
+  { value: 'weekly', label: 'weekly' },
+  { value: 'monthly', label: 'monthly' },
+  { value: 'yearly', label: 'yearly' }
 ];
 
 export const REPORT_TYPES = [
