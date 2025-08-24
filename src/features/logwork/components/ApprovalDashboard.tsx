@@ -6,13 +6,15 @@ import { WorkLog } from '../types/logwork.types';
 
 interface ApprovalDashboardProps {
   onOpenModal: (log: WorkLog) => void;
+  isRTL: boolean;
 }
 
-const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal }) => {
+const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal, isRTL }) => {
   const { t, i18n } = useTranslation();
   const { data: pendingLogs, isLoading, error } = usePendingApprovals();
   
-  const isRTL = i18n.language === 'ar';
+  // Remove this line since isRTL is now passed as prop
+  // const isRTL = i18n.language === 'ar';
 
   if (isLoading) {
     return (
@@ -78,7 +80,7 @@ const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal }) =>
         {pendingLogs.map((log, index) => (
           <div key={log.id} className="p-6 hover:bg-slate-50/50 transition-all duration-200 group">
             <div className={`flex items-start justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <div className="flex-1">
+              <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
                 <div className={`flex items-center space-x-3 mb-4 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className="w-3 h-3 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full shadow-sm"></div>
                   <h3 className="font-semibold text-slate-800 text-lg">{log.product}</h3>
@@ -90,7 +92,7 @@ const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal }) =>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4">
-                  <div className={`flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200/50 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                  <div className={`flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200/50 ${isRTL ? 'flex-row-reverse space-x-reverse text-right' : 'text-left'}`}>
                     <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                       <User className="w-4 h-4 text-blue-600" />
                     </div>
@@ -100,7 +102,7 @@ const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal }) =>
                     </div>
                   </div>
                   
-                  <div className={`flex items-center space-x-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200/50 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                  <div className={`flex items-center space-x-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200/50 ${isRTL ? 'flex-row-reverse space-x-reverse text-right' : 'text-left'}`}>
                     <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
                       <Package className="w-4 h-4 text-green-600" />
                     </div>
@@ -110,7 +112,7 @@ const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal }) =>
                     </div>
                   </div>
                   
-                  <div className={`flex items-center space-x-3 p-3 bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl border border-purple-200/50 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                  <div className={`flex items-center space-x-3 p-3 bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl border border-purple-200/50 ${isRTL ? 'flex-row-reverse space-x-reverse text-right' : 'text-left'}`}>
                     <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
                       <Calendar className="w-4 h-4 text-purple-600" />
                     </div>
@@ -124,7 +126,7 @@ const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal }) =>
                 </div>
                 
                 {log.notes && (
-                  <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200/50">
+                  <div className={`p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200/50 ${isRTL ? 'text-right' : 'text-left'}`}>
                     <p className="text-sm text-blue-800 font-medium">{log.notes}</p>
                   </div>
                 )}
