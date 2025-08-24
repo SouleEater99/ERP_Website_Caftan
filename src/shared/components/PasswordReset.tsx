@@ -61,7 +61,7 @@ const PasswordReset: React.FC<PasswordResetProps> = ({ onBack }) => {
         </div>
         
         <h2 className="text-2xl font-bold text-slate-800 mb-4 arabic-heading">
-          {isRTL ? 'تم إرسال البريد الإلكتروني' : 'Email Sent'}
+          {isRTL ? t('passwordReset.emailSent') : 'Email Sent'}
         </h2>
         
         <p className="text-slate-600 mb-6 arabic-text">
@@ -77,7 +77,7 @@ const PasswordReset: React.FC<PasswordResetProps> = ({ onBack }) => {
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           <span className="arabic-text">
-            {isRTL ? 'العودة لتسجيل الدخول' : 'Back to Login'}
+            {isRTL ? t('passwordReset.backToLogin') : 'Back to Login'}
           </span>
         </button>
       </div>
@@ -92,7 +92,7 @@ const PasswordReset: React.FC<PasswordResetProps> = ({ onBack }) => {
         </div>
         
         <h2 className="text-2xl font-bold text-slate-800 mb-2 arabic-heading">
-          {isRTL ? 'إعادة تعيين كلمة المرور' : 'Reset Password'}
+          {isRTL ? t('passwordReset.resetPassword') : 'Reset Password'}
         </h2>
         
         <p className="text-slate-600 arabic-text">
@@ -112,7 +112,7 @@ const PasswordReset: React.FC<PasswordResetProps> = ({ onBack }) => {
             {...register('email')}
             type="email"
             className="w-full px-4 py-3 bg-white/70 border-2 border-slate-200 rounded-2xl focus:border-blue-500 focus:bg-white transition-all duration-300 text-slate-800 placeholder-slate-400"
-            placeholder={isRTL ? 'أدخل بريدك الإلكتروني' : 'Enter your email'}
+            placeholder={isRTL ? t('passwordReset.enterEmail') : 'Enter your email'}
             dir={isRTL ? 'rtl' : 'ltr'}
           />
           {errors.email && (
@@ -141,14 +141,14 @@ const PasswordReset: React.FC<PasswordResetProps> = ({ onBack }) => {
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                 <span className="arabic-text">
-                  {isRTL ? 'جاري الإرسال...' : 'Sending...'}
+                  {isRTL ? t('passwordReset.sending') : 'Sending...'}
                 </span>
               </div>
             ) : (
               <div className="flex items-center justify-center space-x-2">
                 <Mail className="h-5 w-5" />
                 <span className="arabic-text">
-                  {isRTL ? 'إرسال رابط إعادة التعيين' : 'Send Reset Link'}
+                  {isRTL ? t('passwordReset.sendResetLink') : 'Send Reset Link'}
                 </span>
               </div>
             )}
@@ -161,7 +161,7 @@ const PasswordReset: React.FC<PasswordResetProps> = ({ onBack }) => {
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             <span className="arabic-text">
-              {isRTL ? 'العودة لتسجيل الدخول' : 'Back to Login'}
+              {isRTL ? t('passwordReset.backToLogin') : 'Back to Login'}
             </span>
           </button>
         </div>

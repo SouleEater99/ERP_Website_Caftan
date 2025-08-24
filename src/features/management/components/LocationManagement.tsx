@@ -37,7 +37,7 @@ const LocationManagement: React.FC = () => {
   });
 
   const handleDeleteLocation = async (id: string) => {
-    if (window.confirm(t('confirmDeleteLocation'))) {
+    if (window.confirm(t('locationManagement.confirmDeleteLocation'))) {
       try {
         await deleteLocation.mutateAsync(id);
       } catch (error) {
@@ -51,7 +51,7 @@ const LocationManagement: React.FC = () => {
       <div className="bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600">{t('loadingLocations')}</p>
+          <p className="text-slate-600">{t('locationManagement.loadingLocations')}</p>
         </div>
       </div>
     );
@@ -62,7 +62,7 @@ const LocationManagement: React.FC = () => {
       <div className="bg-white rounded-2xl p-8 shadow-lg border border-slate-200">
         <div className="text-center text-red-600">
           <AlertTriangle className="w-12 h-12 mx-auto mb-4" />
-          <p className="text-lg font-semibold mb-2">{t('errorLoadingLocations')}</p>
+          <p className="text-lg font-semibold mb-2">{t('locationManagement.errorLoadingLocations')}</p>
           <p className="text-sm">{error.message}</p>
         </div>
       </div>
@@ -75,8 +75,8 @@ const LocationManagement: React.FC = () => {
       <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
         <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
           <div className={isRTL ? 'text-right' : ''}>
-            <h3 className="text-xl font-bold text-slate-800">{t('locationManagement')}</h3>
-            <p className="text-slate-600">{t('manageFacilities')}</p>
+            <h3 className="text-xl font-bold text-slate-800">{t('locationManagement.locationManagement')}</h3>
+            <p className="text-slate-600">{t('locationManagement.manageFacilities')}</p>
           </div>
           
           <button
@@ -84,7 +84,7 @@ const LocationManagement: React.FC = () => {
             className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center"
           >
             <Plus className="w-4 h-4 mr-2" />
-            <span>{t('addLocation')}</span>
+            <span>{t('locationManagement.addLocation')}</span>
           </button>
         </div>
       </div>
@@ -99,7 +99,7 @@ const LocationManagement: React.FC = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={t('searchLocations')}
+              placeholder={t('locationManagement.searchLocations')}
               className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               dir={isRTL ? 'rtl' : 'ltr'}
             />
@@ -113,7 +113,7 @@ const LocationManagement: React.FC = () => {
               className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               dir={isRTL ? 'rtl' : 'ltr'}
             >
-              <option value="all">{t('allStatuses')}</option>
+              <option value="all">{t('locationManagement.allStatuses')}</option>
               {LOCATION_STATUSES.map(status => (
                 <option key={status.value} value={status.value}>
                   {t(status.label)}
@@ -171,7 +171,7 @@ const LocationManagement: React.FC = () => {
               
               <div className="pt-3 border-t border-slate-200">
                 <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span className="text-sm text-slate-600">{t('workers')}</span>
+                  <span className="text-sm text-slate-600">{t('locationManagement.workers')}</span>
                   <span className="font-semibold text-slate-900">{location.worker_count}</span>
                 </div>
               </div>
@@ -206,7 +206,7 @@ const LocationManagement: React.FC = () => {
           <div className="text-slate-400 mb-4">
             <MapPin className="w-12 h-12 mx-auto" />
           </div>
-          <p className="text-slate-600">{t('noLocationsFound')}</p>
+          <p className="text-slate-600">{t('locationManagement.noLocationsFound')}</p>
         </div>
       )}
 
@@ -214,19 +214,19 @@ const LocationManagement: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 text-center">
           <div className="text-3xl font-bold text-emerald-600">{locations.length}</div>
-          <div className="text-sm text-slate-600">{t('totalLocations')}</div>
+          <div className="text-sm text-slate-600">{t('locationManagement.totalLocations')}</div>
         </div>
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 text-center">
           <div className="text-3xl font-bold text-green-600">
             {locations.filter(l => l.status === 'active').length}
           </div>
-          <div className="text-sm text-slate-600">{t('activeLocations')}</div>
+          <div className="text-sm text-slate-600">{t('locationManagement.activeLocations')}</div>
         </div>
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 text-center">
           <div className="text-3xl font-bold text-blue-600">
             {locations.reduce((sum, l) => sum + l.worker_count, 0)}
           </div>
-          <div className="text-sm text-slate-600">{t('totalWorkers')}</div>
+          <div className="text-sm text-slate-600">{t('locationManagement.totalWorkers')}</div>
         </div>
       </div>
     </div>

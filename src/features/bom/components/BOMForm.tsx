@@ -43,7 +43,7 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
     <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-2 bg-white p-4 rounded-md border">
       <div className="flex flex-col">
         <label className="text-xs text-gray-500 mb-1">
-          {i18n.language === 'ar' ? BOM_FORM_LABELS.PRODUCT : 'Product'}
+          {t('bom.labels.product')}
         </label>
         <select
           className="border rounded px-2 py-1"
@@ -51,7 +51,7 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
           onChange={e => setForm({ ...form, product: e.target.value })}
           disabled={productsLoading}
         >
-          <option value="">{i18n.language === 'ar' ? BOM_FORM_PLACEHOLDERS.SELECT_PRODUCT : 'Select product'}</option>
+          <option value="">{t('bom.placeholders.selectProduct')}</option>
           {productOptions.map(p => (
             <option key={p.code} value={p.name_en}>
               {getLocalizedName(p, i18n.language)}
@@ -62,7 +62,7 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
 
       <div className="flex flex-col">
         <label className="text-xs text-gray-500 mb-1">
-          {i18n.language === 'ar' ? BOM_FORM_LABELS.MATERIAL : 'Material'}
+          {t('bom.labels.material')}
         </label>
         <select
           className="border rounded px-2 py-1"
@@ -70,7 +70,7 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
           onChange={e => handleMaterialChange(e.target.value)}
           disabled={materialsLoading}
         >
-          <option value="">{i18n.language === 'ar' ? BOM_FORM_PLACEHOLDERS.SELECT_MATERIAL : 'Select material'}</option>
+          <option value="">{t('bom.placeholders.selectMaterial')}</option>
           {materials.map(m => (
             <option key={m.material} value={m.material}>
               {getMaterialName(m.material)}
@@ -81,11 +81,11 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
 
       <div className="flex flex-col">
         <label className="text-xs text-gray-500 mb-1">
-          {i18n.language === 'ar' ? BOM_FORM_LABELS.QTY_PER_UNIT : 'Qty/Unit'}
+          {t('bom.labels.qtyPerUnit')}
         </label>
         <input
           className="border rounded px-2 py-1 w-28"
-          placeholder={BOM_FORM_PLACEHOLDERS.QTY_PER_UNIT}
+          placeholder={t('bom.placeholders.qtyPerUnit')}
           type="number"
           step="0.01"
           value={form.qty_per_unit}
@@ -95,11 +95,11 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
 
       <div className="flex flex-col">
         <label className="text-xs text-gray-500 mb-1">
-          {i18n.language === 'ar' ? BOM_FORM_LABELS.UNIT : 'Unit'}
+          {t('bom.labels.unit')}
         </label>
         <input
           className="border rounded px-2 py-1 w-24"
-          placeholder={BOM_FORM_PLACEHOLDERS.UNIT}
+          placeholder={t('bom.placeholders.unit')}
           value={form.unit}
           onChange={e => setForm({ ...form, unit: e.target.value })}
         />
@@ -107,11 +107,11 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
 
       <div className="flex flex-col">
         <label className="text-xs text-gray-500 mb-1">
-          {i18n.language === 'ar' ? BOM_FORM_LABELS.WASTE_PERCENT : 'Waste %'}
+          {t('bom.labels.wastePercent')}
         </label>
         <input
           className="border rounded px-2 py-1 w-24"
-          placeholder={BOM_FORM_PLACEHOLDERS.WASTE_PERCENT}
+          placeholder={t('bom.placeholders.wastePercent')}
           type="number"
           step="0.01"
           value={form.waste_percent}
@@ -121,7 +121,7 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
 
       <div className="flex flex-col">
         <label className="text-xs text-gray-500 mb-1">
-          {i18n.language === 'ar' ? BOM_FORM_LABELS.STAGE : 'Stage'}
+          {t('bom.labels.stage')}
         </label>
         <select
           className="border rounded px-2 py-1"
@@ -129,7 +129,7 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
           onChange={e => setForm({ ...form, deduct_at_stage: e.target.value })}
           disabled={stagesLoading}
         >
-          <option value="">{i18n.language === 'ar' ? BOM_FORM_PLACEHOLDERS.SELECT_STAGE : 'Select stage'}</option>
+          <option value="">{t('bom.placeholders.selectStage')}</option>
           {stageOptions.map(s => (
             <option key={s.code} value={s.name_en}>
               {getLocalizedName(s, i18n.language)}

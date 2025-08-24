@@ -137,7 +137,21 @@
     "qtyPerUnit": "الكمية لكل وحدة",
     "wastePercent": "نسبة الفقد %",
     "deductAtStage": "خصم في مرحلة",
-    "addBOM": "إضافة مادة"
+    "addBOM": "إضافة مادة",
+    "labels": {
+      "product": "المنتج",
+      "material": "المادة",
+      "qtyPerUnit": "الكمية/الوحدة",
+      "unit": "الوحدة",
+      "wastePercent": "نسبة الفقد"
+    },
+    "placeholders": {
+      "selectProduct": "اختر المنتج",
+      "selectMaterial": "اختر المادة",
+      "qtyPerUnit": "أدخل الكمية",
+      "unit": "أدخل الوحدة",
+      "wastePercent": "أدخل نسبة الفقد"
+    }
   },
   
   "payroll": {
@@ -435,5 +449,51 @@
     "errorCreatingPeriod": "خطأ في إنشاء الفترة الجديدة",
     "creatingPeriod": "جاري إنشاء الفترة الجديدة...",
     "createNewPeriod": "إنشاء فترة جديدة (الحالية: {current})"
+  },
+  
+  "locationManagement": {
+    "confirmDeleteLocation": "هل أنت متأكد من حذف هذا الموقع؟",
+    "loadingLocations": "جاري تحميل المواقع...",
+    "errorLoadingLocations": "خطأ في تحميل المواقع",
+    "locationManagement": "إدارة المواقع",
+    "manageFacilities": "إدارة المرافق",
+    "addLocation": "إضافة موقع",
+    "searchLocations": "البحث في المواقع...",
+    "allStatuses": "جميع الحالات",
+    "workers": "العمال",
+    "noLocationsFound": "لم يتم العثور على مواقع",
+    "totalLocations": "إجمالي المواقع",
+    "activeLocations": "المواقع النشطة",
+    "totalWorkers": "إجمالي العمال"
+  },
+  
+  "userManagement": {
+    "loadingUsers": "جاري تحميل المستخدمين...",
+    "errorLoadingUsers": "خطأ في تحميل المستخدمين",
+    "userManagement": "إدارة المستخدمين",
+    "manageUserAccounts": "إدارة حسابات المستخدمين",
+    "addUser": "إضافة مستخدم",
+    "searchUsers": "البحث في المستخدمين...",
+    "allRoles": "جميع الأدوار"
+  },
+  
+  "passwordReset": {
+    "emailSent": "تم إرسال البريد الإلكتروني",
+    "backToLogin": "العودة لتسجيل الدخول",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "enterEmail": "أدخل بريدك الإلكتروني",
+    "sending": "جاري الإرسال...",
+    "sendResetLink": "إرسال رابط إعادة التعيين",
+    "resetDescription": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور"
+  },
+  
+  "forms": {
+    "enterLocationName": "أدخل اسم الموقع",
+    "enterCity": "أدخل المدينة",
+    "enterAddress": "أدخل العنوان",
+    "enterPhone": "أدخل رقم الهاتف",
+    "enterEmail": "أدخل البريد الإلكتروني",
+    "enterFullName": "أدخل الاسم الكامل",
+    "enterPassword": "أدخل كلمة المرور"
   }
 }

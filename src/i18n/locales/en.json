@@ -137,7 +137,21 @@
     "qtyPerUnit": "Quantity per Unit",
     "wastePercent": "Waste %",
     "deductAtStage": "Deduct at Stage",
-    "addBOM": "Add BOM Entry"
+    "addBOM": "Add BOM Entry",
+    "labels": {
+      "product": "Product",
+      "material": "Material",
+      "qtyPerUnit": "Qty/Unit",
+      "unit": "Unit",
+      "wastePercent": "Waste %"
+    },
+    "placeholders": {
+      "selectProduct": "Select product",
+      "selectMaterial": "Select material",
+      "qtyPerUnit": "Enter quantity",
+      "unit": "Enter unit",
+      "wastePercent": "Enter waste percentage"
+    }
   },
   
   "payroll": {
@@ -419,5 +433,51 @@
     "errorCreatingPeriod": "Error creating new period",
     "creatingPeriod": "Creating new period...",
     "createNewPeriod": "Create New Period (Current: {current})"
+  },
+  
+  "locationManagement": {
+    "confirmDeleteLocation": "Are you sure you want to delete this location?",
+    "loadingLocations": "Loading locations...",
+    "errorLoadingLocations": "Error loading locations",
+    "locationManagement": "Location Management",
+    "manageFacilities": "Manage Facilities",
+    "addLocation": "Add Location",
+    "searchLocations": "Search locations...",
+    "allStatuses": "All Statuses",
+    "workers": "Workers",
+    "noLocationsFound": "No locations found",
+    "totalLocations": "Total Locations",
+    "activeLocations": "Active Locations",
+    "totalWorkers": "Total Workers"
+  },
+  
+  "userManagement": {
+    "loadingUsers": "Loading users...",
+    "errorLoadingUsers": "Error loading users",
+    "userManagement": "User Management",
+    "manageUserAccounts": "Manage User Accounts",
+    "addUser": "Add User",
+    "searchUsers": "Search users...",
+    "allRoles": "All Roles"
+  },
+  
+  "passwordReset": {
+    "emailSent": "Email Sent",
+    "backToLogin": "Back to Login",
+    "resetPassword": "Reset Password",
+    "enterEmail": "Enter your email",
+    "sending": "Sending...",
+    "sendResetLink": "Send Reset Link",
+    "resetDescription": "Enter your email and we'll send you a password reset link"
+  },
+  
+  "forms": {
+    "enterLocationName": "Enter location name",
+    "enterCity": "Enter city",
+    "enterAddress": "Enter address",
+    "enterPhone": "Enter phone number",
+    "enterEmail": "Enter email",
+    "enterFullName": "Enter full name",
+    "enterPassword": "Enter password"
   }
 }
