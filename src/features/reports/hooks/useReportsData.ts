@@ -11,6 +11,8 @@ export const useReportsData = (period: string = 'monthly') => {
     queryKey: ['workLogStats', period],
     queryFn: () => ReportsService.getWorkLogStats(period),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const {
@@ -19,9 +21,11 @@ export const useReportsData = (period: string = 'monthly') => {
     error: productionError,
     refetch: refetchProduction
   } = useQuery({
-    queryKey: ['monthlyProduction'],
-    queryFn: () => ReportsService.getMonthlyProduction(),
+    queryKey: ['monthlyProduction', period],
+    queryFn: () => ReportsService.getMonthlyProduction(period),
     staleTime: 5 * 60 * 1000,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const {
@@ -30,9 +34,11 @@ export const useReportsData = (period: string = 'monthly') => {
     error: workersError,
     refetch: refetchWorkers
   } = useQuery({
-    queryKey: ['workerPerformance'],
-    queryFn: () => ReportsService.getWorkerPerformance(),
+    queryKey: ['workerPerformance', period],
+    queryFn: () => ReportsService.getWorkerPerformance(period),
     staleTime: 5 * 60 * 1000,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const {
@@ -41,9 +47,11 @@ export const useReportsData = (period: string = 'monthly') => {
     error: materialsError,
     refetch: refetchMaterials
   } = useQuery({
-    queryKey: ['materialUsage'],
-    queryFn: () => ReportsService.getMaterialUsage(),
+    queryKey: ['materialUsage', period],
+    queryFn: () => ReportsService.getMaterialUsage(period),
     staleTime: 5 * 60 * 1000,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const {
@@ -52,9 +60,11 @@ export const useReportsData = (period: string = 'monthly') => {
     error: activitiesError,
     refetch: refetchActivities
   } = useQuery({
-    queryKey: ['recentActivities'],
-    queryFn: () => ReportsService.getRecentActivities(),
+    queryKey: ['recentActivities', period],
+    queryFn: () => ReportsService.getRecentActivities(period),
     staleTime: 2 * 60 * 1000, // 2 minutes
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const {
@@ -63,12 +73,23 @@ export const useReportsData = (period: string = 'monthly') => {
     error: quickStatsError,
     refetch: refetchQuickStats
   } = useQuery({
-    queryKey: ['quickStats'],
-    queryFn: () => ReportsService.getQuickStats(),
+    queryKey: ['quickStats', period],
+    queryFn: () => ReportsService.getQuickStats(period),
     staleTime: 2 * 60 * 1000,
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const isLoading = statsLoading || productionLoading || workersLoading || materialsLoading || activitiesLoading || quickStatsLoading;
+
+  const hasErrors = Object.values({
+    stats: statsError,
+    production: productionError,
+    workers: workersError,
+    materials: materialsError,
+    activities: activitiesError,
+    quickStats: quickStatsError,
+  }).some(error => error);
 
   const refetchAll = () => {
     refetchStats();
@@ -87,6 +108,7 @@ export const useReportsData = (period: string = 'monthly') => {
     recentActivities,
     quickStats,
     isLoading,
+    hasErrors,
     errors: {
       stats: statsError,
       production: productionError,

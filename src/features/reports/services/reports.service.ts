@@ -26,6 +26,7 @@ export interface MaterialUsage {
   material_name: string;
   quantity_used: number;
   percentage: number;
+  color: string;
 }
 
 export interface RecentActivity {
@@ -36,198 +37,310 @@ export interface RecentActivity {
   status: 'success' | 'pending' | 'info';
 }
 
+export interface ExportData {
+  filename: string;
+  data: any;
+  format: string;
+}
+
 export class ReportsService {
-  // Get overall statistics
-  static async getWorkLogStats(period: string = 'monthly'): Promise<WorkLogStats> {
-    const { data, error } = await supabase
-      .from('work_logs')
-      .select('*');
-
-    if (error) throw error;
-
+  // Helper method to get start date based on period
+  private static getStartDate(period: string): Date {
     const now = new Date();
-    let startDate: Date;
-
     switch (period) {
       case 'daily':
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        break;
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
       case 'weekly':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
+        return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       case 'monthly':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
+        return new Date(now.getFullYear(), now.getMonth(), 1);
       case 'yearly':
-        startDate = new Date(now.getFullYear(), 0, 1);
-        break;
+        return new Date(now.getFullYear(), 0, 1);
       default:
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        return new Date(now.getFullYear(), now.getMonth(), 1);
     }
-
-    const filteredData = data.filter(log => new Date(log.created_at) >= startDate);
-
-    const total_completed = filteredData.filter(log => log.completed).length;
-    const total_pending = filteredData.filter(log => !log.completed).length;
-    const total_revenue = filteredData.reduce((sum, log) => sum + (log.quantity * 10), 0); // Assuming 10 per unit
-    const worker_count = new Set(filteredData.map(log => log.worker_id)).size;
-    const efficiency_rate = filteredData.length > 0 ? (total_completed / filteredData.length) * 100 : 0;
-
-    return {
-      total_completed,
-      total_pending,
-      total_revenue,
-      worker_count,
-      efficiency_rate
-    };
   }
 
-  // Get monthly production data
-  static async getMonthlyProduction(): Promise<MonthlyProduction[]> {
-    const { data, error } = await supabase
-      .from('work_logs')
-      .select('*')
-      .gte('created_at', new Date(new Date().getFullYear(), 0, 1).toISOString());
-
-    if (error) throw error;
-
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const monthlyData: MonthlyProduction[] = [];
-
-    for (let i = 0; i < 6; i++) {
-      const monthIndex = new Date().getMonth() - 5 + i;
-      const monthName = months[monthIndex];
-      const monthStart = new Date(new Date().getFullYear(), monthIndex, 1);
-      const monthEnd = new Date(new Date().getFullYear(), monthIndex + 1, 0);
-
-      const monthLogs = data.filter(log => {
-        const logDate = new Date(log.created_at);
-        return logDate >= monthStart && logDate <= monthEnd;
-      });
-
-      const completed = monthLogs.filter(log => log.completed).length;
-      const pending = monthLogs.filter(log => !log.completed).length;
-      const revenue = monthLogs.reduce((sum, log) => sum + (log.quantity * 10), 0);
-
-      monthlyData.push({
-        month: monthName,
-        completed,
-        pending,
-        revenue
-      });
-    }
-
-    return monthlyData;
+  // Helper method to calculate revenue (placeholder - should use actual product prices)
+  private static calculateRevenue(workLog: any): number {
+    // TODO: Replace with actual product pricing from database
+    const basePrice = 25; // Base price per unit
+    const taskMultiplier = workLog.task === 'sewing' ? 1.2 : 
+                          workLog.task === 'cutting' ? 1.0 : 
+                          workLog.task === 'finishing' ? 1.1 : 1.0;
+    return workLog.quantity * basePrice * taskMultiplier;
   }
 
-  // Get worker performance data
-  static async getWorkerPerformance(): Promise<WorkerPerformance[]> {
-    const { data, error } = await supabase
-      .from('work_logs')
-      .select('*')
-      .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString());
-
-    if (error) throw error;
-
-    const workerStats = new Map<string, { tasks: number; completed: number; earnings: number }>();
-
-    data.forEach(log => {
-      const workerName = log.worker_name || 'Unknown Worker';
-      const current = workerStats.get(workerName) || { tasks: 0, completed: 0, earnings: 0 };
+  // Get overall statistics with proper period filtering
+  static async getWorkLogStats(period: string = 'monthly'): Promise<WorkLogStats> {
+    try {
+      const startDate = this.getStartDate(period);
       
-      current.tasks += 1;
-      if (log.completed) current.completed += 1;
-      current.earnings += log.quantity * 10; // Assuming 10 per unit
+      const { data, error } = await supabase
+        .from('work_logs')
+        .select('*')
+        .gte('created_at', startDate.toISOString());
 
-      workerStats.set(workerName, current);
-    });
+      if (error) throw error;
 
-    return Array.from(workerStats.entries()).map(([worker_name, stats]) => ({
-      worker_name,
-      tasks_completed: stats.completed,
-      efficiency: stats.tasks > 0 ? (stats.completed / stats.tasks) * 100 : 0,
-      total_earnings: stats.earnings
-    })).sort((a, b) => b.tasks_completed - a.tasks_completed).slice(0, 5);
+      if (!data || data.length === 0) {
+        return {
+          total_completed: 0,
+          total_pending: 0,
+          total_revenue: 0,
+          worker_count: 0,
+          efficiency_rate: 0
+        };
+      }
+
+      const total_completed = data.filter(log => log.completed).length;
+      const total_pending = data.filter(log => !log.completed).length;
+      const total_revenue = data.reduce((sum, log) => sum + this.calculateRevenue(log), 0);
+      const worker_count = new Set(data.map(log => log.worker_id)).size;
+      const efficiency_rate = data.length > 0 ? (total_completed / data.length) * 100 : 0;
+
+      return {
+        total_completed,
+        total_pending,
+        total_revenue,
+        worker_count,
+        efficiency_rate
+      };
+    } catch (error) {
+      console.error('Error fetching work log stats:', error);
+      throw new Error('Failed to fetch work log statistics');
+    }
   }
 
-  // Get material usage data
-  static async getMaterialUsage(): Promise<MaterialUsage[]> {
-    const { data, error } = await supabase
-      .from('work_logs')
-      .select('product, quantity')
-      .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString());
+  // Get monthly production data with proper period filtering
+  static async getMonthlyProduction(period: string = 'monthly'): Promise<MonthlyProduction[]> {
+    try {
+      const startDate = this.getStartDate(period);
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthlyData: MonthlyProduction[] = [];
 
-    if (error) throw error;
+      // Get data for the last 6 months from the start date
+      for (let i = 0; i < 6; i++) {
+        const monthStart = new Date(startDate);
+        monthStart.setMonth(startDate.getMonth() - 5 + i);
+        const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+        
+        const monthName = months[monthStart.getMonth()];
 
-    const materialStats = new Map<string, number>();
-    const totalQuantity = data.reduce((sum, log) => sum + log.quantity, 0);
+        const { data: monthLogs, error } = await supabase
+          .from('work_logs')
+          .select('*')
+          .gte('created_at', monthStart.toISOString())
+          .lte('created_at', monthEnd.toISOString());
 
-    data.forEach(log => {
-      const product = log.product;
-      const current = materialStats.get(product) || 0;
-      materialStats.set(product, current + log.quantity);
-    });
+        if (error) throw error;
 
-    const colors = ['#0EA5E9', '#06B6D4', '#0891B2', '#0E7490', '#164E63'];
-    
-    return Array.from(materialStats.entries())
-      .map(([material_name, quantity_used], index) => ({
-        material_name,
-        quantity_used,
-        percentage: totalQuantity > 0 ? (quantity_used / totalQuantity) * 100 : 0,
-        color: colors[index % colors.length]
-      }))
-      .sort((a, b) => b.quantity_used - a.quantity_used)
-      .slice(0, 5);
+        const completed = monthLogs?.filter(log => log.completed).length || 0;
+        const pending = monthLogs?.filter(log => !log.completed).length || 0;
+        const revenue = monthLogs?.reduce((sum, log) => sum + this.calculateRevenue(log), 0) || 0;
+
+        monthlyData.push({
+          month: monthName,
+          completed,
+          pending,
+          revenue
+        });
+      }
+
+      return monthlyData;
+    } catch (error) {
+      console.error('Error fetching monthly production:', error);
+      throw new Error('Failed to fetch monthly production data');
+    }
   }
 
-  // Get recent activities
-  static async getRecentActivities(): Promise<RecentActivity[]> {
-    const { data, error } = await supabase
-      .from('work_logs')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(10);
+  // Get worker performance data with period filtering
+  static async getWorkerPerformance(period: string = 'monthly'): Promise<WorkerPerformance[]> {
+    try {
+      const startDate = this.getStartDate(period);
+      
+      const { data, error } = await supabase
+        .from('work_logs')
+        .select('*')
+        .gte('created_at', startDate.toISOString());
 
-    if (error) throw error;
+      if (error) throw error;
 
-    return data.map(log => ({
-      id: log.id,
-      action: log.completed ? 'productionCompleted' : 'taskStarted',
-      item: `${log.product} - ${log.task}`,
-      timestamp: log.created_at,
-      status: log.completed ? 'success' : 'pending'
-    }));
+      if (!data || data.length === 0) {
+        return [];
+      }
+
+      const workerStats = new Map<string, { tasks: number; completed: number; earnings: number }>();
+
+      data.forEach(log => {
+        const workerName = log.worker_name || 'Unknown Worker';
+        const current = workerStats.get(workerName) || { tasks: 0, completed: 0, earnings: 0 };
+        
+        current.tasks += 1;
+        if (log.completed) current.completed += 1;
+        current.earnings += this.calculateRevenue(log);
+
+        workerStats.set(workerName, current);
+      });
+
+      return Array.from(workerStats.entries()).map(([worker_name, stats]) => ({
+        worker_name,
+        tasks_completed: stats.completed,
+        efficiency: stats.tasks > 0 ? (stats.completed / stats.tasks) * 100 : 0,
+        total_earnings: stats.earnings
+      })).sort((a, b) => b.tasks_completed - a.tasks_completed).slice(0, 5);
+    } catch (error) {
+      console.error('Error fetching worker performance:', error);
+      throw new Error('Failed to fetch worker performance data');
+    }
   }
 
-  // Get quick stats
-  static async getQuickStats(): Promise<{ label: string; value: string; color: string }[]> {
-    const today = new Date();
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  // Get material usage data with period filtering
+  static async getMaterialUsage(period: string = 'monthly'): Promise<MaterialUsage[]> {
+    try {
+      const startDate = this.getStartDate(period);
+      
+      const { data, error } = await supabase
+        .from('work_logs')
+        .select('product, quantity')
+        .gte('created_at', startDate.toISOString());
 
-    const { data: todayLogs, error: todayError } = await supabase
-      .from('work_logs')
-      .select('*')
-      .gte('created_at', todayStart.toISOString());
+      if (error) throw error;
 
-    if (todayError) throw todayError;
+      if (!data || data.length === 0) {
+        return [];
+      }
 
-    const { data: allLogs, error: allError } = await supabase
-      .from('work_logs')
-      .select('*');
+      const materialStats = new Map<string, number>();
+      const totalQuantity = data.reduce((sum, log) => sum + log.quantity, 0);
 
-    if (allError) throw allError;
+      data.forEach(log => {
+        const product = log.product;
+        const current = materialStats.get(product) || 0;
+        materialStats.set(product, current + log.quantity);
+      });
 
-    const todayTasks = todayLogs.length;
-    const completionRate = allLogs.length > 0 ? (allLogs.filter(log => log.completed).length / allLogs.length) * 100 : 0;
-    const activeOrders = allLogs.filter(log => !log.completed).length;
-    const pendingApprovals = allLogs.filter(log => log.completed && !log.approved).length;
+      const colors = ['#0EA5E9', '#06B6D4', '#0891B2', '#0E7490', '#164E63'];
+      
+      return Array.from(materialStats.entries())
+        .map(([material_name, quantity_used], index) => ({
+          material_name,
+          quantity_used,
+          percentage: totalQuantity > 0 ? (quantity_used / totalQuantity) * 100 : 0,
+          color: colors[index % colors.length]
+        }))
+        .sort((a, b) => b.quantity_used - a.quantity_used)
+        .slice(0, 5);
+    } catch (error) {
+      console.error('Error fetching material usage:', error);
+      throw new Error('Failed to fetch material usage data');
+    }
+  }
 
-    return [
-      { label: 'todaysTasks', value: todayTasks.toString(), color: 'text-slate-800' },
-      { label: 'completionRate', value: `${completionRate.toFixed(1)}%`, color: 'text-emerald-600' },
-      { label: 'activeOrders', value: activeOrders.toString(), color: 'text-blue-600' },
-      { label: 'pendingApprovals', value: pendingApprovals.toString(), color: 'text-amber-600' }
-    ];
+  // Get recent activities with period filtering
+  static async getRecentActivities(period: string = 'monthly'): Promise<RecentActivity[]> {
+    try {
+      const startDate = this.getStartDate(period);
+      
+      const { data, error } = await supabase
+        .from('work_logs')
+        .select('*')
+        .gte('created_at', startDate.toISOString())
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        return [];
+      }
+
+      return data.map(log => ({
+        id: log.id,
+        action: log.completed ? 'productionCompleted' : 'taskStarted',
+        item: `${log.product} - ${log.task}`,
+        timestamp: log.created_at,
+        status: log.completed ? 'success' : 'pending'
+      }));
+    } catch (error) {
+      console.error('Error fetching recent activities:', error);
+      throw new Error('Failed to fetch recent activities');
+    }
+  }
+
+  // Get quick stats with period filtering
+  static async getQuickStats(period: string = 'monthly'): Promise<{ label: string; value: string; color: string }[]> {
+    try {
+      const startDate = this.getStartDate(period);
+      const today = new Date();
+      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      // Get today's logs
+      const { data: todayLogs, error: todayError } = await supabase
+        .from('work_logs')
+        .select('*')
+        .gte('created_at', todayStart.toISOString());
+
+      if (todayError) throw todayError;
+
+      // Get period logs
+      const { data: periodLogs, error: periodError } = await supabase
+        .from('work_logs')
+        .select('*')
+        .gte('created_at', startDate.toISOString());
+
+      if (periodError) throw periodError;
+
+      const todayTasks = todayLogs?.length || 0;
+      const completionRate = periodLogs && periodLogs.length > 0 ? 
+        (periodLogs.filter(log => log.completed).length / periodLogs.length) * 100 : 0;
+      const activeOrders = periodLogs?.filter(log => !log.completed).length || 0;
+      const pendingApprovals = periodLogs?.filter(log => log.completed && !log.approved).length || 0;
+
+      return [
+        { label: 'todaysTasks', value: todayTasks.toString(), color: 'text-slate-800' },
+        { label: 'completionRate', value: `${completionRate.toFixed(1)}%`, color: 'text-emerald-600' },
+        { label: 'activeOrders', value: activeOrders.toString(), color: 'text-blue-600' },
+        { label: 'pendingApprovals', value: pendingApprovals.toString(), color: 'text-amber-600' }
+      ];
+    } catch (error) {
+      console.error('Error fetching quick stats:', error);
+      throw new Error('Failed to fetch quick statistics');
+    }
+  }
+
+  // Export report data
+  static async exportReport(reportType: string, period: string, format: string): Promise<ExportData> {
+    try {
+      let data: any;
+      
+      switch (reportType) {
+        case 'production':
+          data = await this.getMonthlyProduction(period);
+          break;
+        case 'workers':
+          data = await this.getWorkerPerformance(period);
+          break;
+        case 'materials':
+          data = await this.getMaterialUsage(period);
+          break;
+        case 'financial':
+          data = await this.getMonthlyProduction(period);
+          break;
+        default:
+          throw new Error('Invalid report type');
+      }
+
+      const filename = `${reportType}_${period}_${new Date().toISOString().split('T')[0]}`;
+      
+      return {
+        filename,
+        data,
+        format
+      };
+    } catch (error) {
+      console.error('Error exporting report:', error);
+      throw new Error('Failed to export report');
+    }
   }
 }
