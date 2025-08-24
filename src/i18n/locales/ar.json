@@ -1,11 +1,24 @@
 {
-  "approvals": "الموافقات",
-  "pendingApprovals": "الموافقات المعلقة",
-  "reviewAndApprove": "مراجعة والموافقة",
-  "allTasksApproved": "جميع المهام معتمدة!",
-  "noPendingApprovals": "لا توجد موافقات معلقة في الوقت الحالي",
-  "loadingApprovals": "جاري تحميل الموافقات المعلقة...",
-  "errorLoadingApprovals": "خطأ في تحميل الموافقات المعلقة",
+  "approvals": {
+    "pendingApprovals": "الموافقات المعلقة",
+    "loadingApprovals": "جاري تحميل الموافقات المعلقة...",
+    "errorLoadingApprovals": "خطأ في تحميل الموافقات المعلقة",
+    "allTasksApproved": "جميع المهام معتمدة!",
+    "noPendingApprovals": "لا توجد موافقات معلقة في الوقت الحالي",
+    "task": "مهمة",
+    "tasks": "مهام",
+    "awaitingApproval": "في انتظار الموافقة",
+    "worker": "العامل",
+    "completed": "مكتمل",
+    "reviewAndApprove": "مراجعة والموافقة",
+    "taskApproval": "موافقة المهمة",
+    "workLogDetails": "تفاصيل سجل العمل",
+    "product": "المنتج",
+    "quantity": "الكمية",
+    "notes": "ملاحظات",
+    "reject": "رفض",
+    "approve": "موافقة"
+  },
   
   "dashboard": {
     "title": "لوحة التحكم",

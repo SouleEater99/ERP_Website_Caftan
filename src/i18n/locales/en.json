@@ -1,11 +1,24 @@
 {
-  "approvals": "Approvals",
-  "pendingApprovals": "Pending Approvals",
-  "reviewAndApprove": "Review & Approve",
-  "allTasksApproved": "All tasks are approved!",
-  "noPendingApprovals": "No pending approvals at this time",
-  "loadingApprovals": "Loading pending approvals...",
-  "errorLoadingApprovals": "Error loading pending approvals",
+  "approvals": {
+    "pendingApprovals": "Pending Approvals",
+    "loadingApprovals": "Loading pending approvals...",
+    "errorLoadingApprovals": "Error loading pending approvals",
+    "allTasksApproved": "All tasks are approved!",
+    "noPendingApprovals": "No pending approvals at this time",
+    "task": "task",
+    "tasks": "tasks",
+    "awaitingApproval": "awaiting approval",
+    "worker": "Worker",
+    "completed": "Completed",
+    "reviewAndApprove": "Review & Approve",
+    "taskApproval": "Task Approval",
+    "workLogDetails": "Work Log Details",
+    "product": "Product",
+    "quantity": "Quantity",
+    "notes": "Notes",
+    "reject": "Reject",
+    "approve": "Approve"
+  },
   
   "dashboard": {
     "title": "Dashboard",
