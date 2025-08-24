@@ -34,6 +34,13 @@ import {
   Mail
 } from 'lucide-react';
 
+// Import the new components
+import UserModal from './UserModal';
+import LocationModal from './LocationModal';
+import UserManagement from './UserManagement';
+import LocationManagement from './LocationManagement';
+import SystemConfiguration from './SystemConfiguration';
+
 const ManagementOverview: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuthStore();
@@ -224,15 +231,32 @@ const ManagementOverview: React.FC = () => {
           </div>
         )}
 
-        {/* Other tabs would be implemented here */}
-        {activeTab !== 'overview' && (
-          <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200">
-            <p className="text-center text-slate-600">
-              {t('tabContentComingSoon')} - {t(activeTab)}
-            </p>
-          </div>
+        {/* User Management Tab */}
+        {activeTab === 'users' && (
+          <UserManagement />
+        )}
+
+        {/* Location Management Tab */}
+        {activeTab === 'locations' && (
+          <LocationManagement />
+        )}
+
+        {/* System Configuration Tab */}
+        {activeTab === 'system' && (
+          <SystemConfiguration />
         )}
       </div>
+
+      {/* Modals */}
+      <UserModal 
+        isOpen={showUserModal} 
+        onClose={() => setShowUserModal(false)} 
+      />
+      
+      <LocationModal 
+        isOpen={showLocationModal} 
+        onClose={() => setShowLocationModal(false)} 
+      />
     </div>
   );
 };
