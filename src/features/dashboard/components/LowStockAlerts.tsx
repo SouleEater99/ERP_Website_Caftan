@@ -3,6 +3,7 @@ import { AlertTriangle, Scissors } from 'lucide-react';
 import { LowStockItem } from '../types/dashboard.types';
 import { DASHBOARD_SECTIONS, DASHBOARD_MESSAGES } from '../constants/dashboard.constants';
 import { formatStockInfo, getAnimationDelay } from '../utils/dashboard.utils';
+import { useTranslation } from 'react-i18next';
 
 interface LowStockAlertsProps {
   stockItems: LowStockItem[];
@@ -10,10 +11,12 @@ interface LowStockAlertsProps {
 }
 
 export const LowStockAlerts: React.FC<LowStockAlertsProps> = ({ stockItems, isRTL }) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="glass-card rounded-2xl p-4 sm:p-6 border-2 border-red-200/30 slide-up stagger-2 mobile-card">
       <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <h3 className="responsive-subheading font-bold text-red-800">{DASHBOARD_SECTIONS.LOW_STOCK_ALERTS}</h3>
+        <h3 className="responsive-subheading font-bold text-red-800">{t('dashboard.lowStockAlerts')}</h3>
         <div className="p-2 bg-red-100 rounded-xl">
           <AlertTriangle className="w-5 h-5 text-red-600" />
         </div>
@@ -43,7 +46,7 @@ export const LowStockAlerts: React.FC<LowStockAlertsProps> = ({ stockItems, isRT
         ) : (
           <div className="text-center py-8 text-slate-500">
             <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-            <p>{DASHBOARD_MESSAGES.ALL_STOCK_ADEQUATE}</p>
+            <p>{t('dashboard.allStockAdequate')}</p>
           </div>
         )}
       </div>

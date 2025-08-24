@@ -39,7 +39,10 @@
     "monthly": "Monthly",
     "yearly": "Yearly",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "lowStockAlerts": "Low Stock Alerts",
+    "noRecentActivities": "No recent activities",
+    "allStockAdequate": "All stock levels are adequate"
   },
   
   "navigation": {

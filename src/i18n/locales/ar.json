@@ -39,7 +39,10 @@
     "monthly": "شهري",
     "yearly": "سنوي",
     "settings": "الإعدادات",
-    "logout": "تسجيل الخروج"
+    "logout": "تسجيل الخروج",
+    "lowStockAlerts": "تنبيهات المخزون المنخفض",
+    "noRecentActivities": "لا توجد أنشطة حديثة",
+    "allStockAdequate": "جميع مستويات المخزون كافية"
   },
   
   "navigation": {

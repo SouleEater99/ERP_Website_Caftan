@@ -1,7 +1,7 @@
 import { DashboardStats, RecentActivity, LowStockItem } from '../types/dashboard.types';
 
 export const formatCurrency = (amount: number): string => {
-  return `$${amount.toLocaleString()}`;
+  return `${amount.toLocaleString()} MAD`;
 };
 
 export const getDefaultStats = (): DashboardStats => ({

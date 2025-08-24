@@ -6,7 +6,6 @@ import {
   StatsGrid,
   RecentActivities,
   LowStockAlerts,
-  DebugInfo,
   DashboardFooter,
   LoadingScreen
 } from '../features/dashboard';
@@ -57,8 +56,6 @@ const Dashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-2 sm:px-0">
       <DashboardHeader userName={user?.name} isRTL={isRTL} />
-
-      <DebugInfo tableStructure={tableStructure} />
 
       <StatsGrid stats={dashboardStats} isRTL={isRTL} />
 
