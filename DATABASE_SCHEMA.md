@@ -15,8 +15,8 @@ Here's a breakdown:
 
 ### 📝 **work_logs Table**
 - **Purpose**: Records the daily work activities performed by individual workers.
-- **Key Columns**: `id`, `worker_id` (links to users), `worker_name`, `product`, `product_id`, `task`, `quantity`, `completed` (boolean), `notes`, `approved` (boolean).
-- **Role**: Tracks production output, worker productivity, and tasks completed. It's essential for calculating worker earnings and monitoring production progress. Policies allow workers to log and read their own entries, while supervisors/admins can view all.
+- **Key Columns**: `id`, `worker_id` (links to users), `worker_name`, `product`, `product_id`, `task`, `quantity`, `completed` (boolean), `notes`, `approved` (boolean), `approver_notes`, `approved_at`, `approver_id`.
+- **Role**: Tracks production output, worker productivity, and tasks completed. It's essential for calculating worker earnings and monitoring production progress. The approval system ensures quality control and proper validation of completed work. Policies allow workers to log and read their own entries, while supervisors/admins can view all and approve completed tasks.
 
 ### 🏷️ **products Table**
 - **Purpose**: Stores a catalog of all products manufactured or managed by the system.

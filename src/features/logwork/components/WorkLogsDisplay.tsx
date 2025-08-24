@@ -9,8 +9,12 @@ import {
   XCircle, 
   Eye,
   Filter,
-  RefreshCw
+  RefreshCw,
+  X,
+  AlertCircle
 } from 'lucide-react';
+import TaskApprovalModal from './TaskApprovalModal';
+import { WorkLog } from '../types/logwork.types';
 
 interface WorkLogsDisplayProps {
   workerId?: string;
@@ -21,6 +25,8 @@ const WorkLogsDisplay: React.FC<WorkLogsDisplayProps> = ({ workerId }) => {
   const { t } = useTranslation();
   const [filterStatus, setFilterStatus] = useState<'all' | 'completed' | 'in-progress'>('all');
   const [filterProduct, setFilterProduct] = useState('all');
+  const [selectedLog, setSelectedLog] = useState<WorkLog | null>(null);
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
 
   if (isLoading) {
     return (
@@ -176,18 +182,28 @@ const WorkLogsDisplay: React.FC<WorkLogsDisplayProps> = ({ workerId }) => {
                 )}
               </div>
               
-              {/* Status Badge */}
-              <div className="ml-4">
+              {/* Status and Actions */}
+              <div className="ml-4 flex flex-col items-end space-y-2">
+                {/* Status Badge */}
                 <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                   log.completed 
-                    ? 'bg-green-100 text-green-800' 
+                    ? log.approved 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-orange-100 text-orange-800'
                     : 'bg-yellow-100 text-yellow-800'
                 }`}>
                   {log.completed ? (
-                    <>
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      Completed
-                    </>
+                    log.approved ? (
+                      <>
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Approved
+                      </>
+                    ) : (
+                      <>
+                        <Clock className="w-3 h-3 mr-1" />
+                        Pending Approval
+                      </>
+                    )
                   ) : (
                     <>
                       <Clock className="w-3 h-3 mr-1" />
@@ -195,11 +211,37 @@ const WorkLogsDisplay: React.FC<WorkLogsDisplayProps> = ({ workerId }) => {
                     </>
                   )}
                 </span>
+
+                {/* Action Buttons */}
+                {log.completed && !log.approved && (
+                  <button
+                    onClick={() => {
+                      setSelectedLog(log);
+                      setShowApprovalModal(true);
+                    }}
+                    className="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Eye className="w-3 h-3 mr-1" />
+                    Review & Approve
+                  </button>
+                )}
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Approval Modal */}
+      {selectedLog && (
+        <TaskApprovalModal
+          workLog={selectedLog}
+          isOpen={showApprovalModal}
+          onClose={() => {
+            setShowApprovalModal(false);
+            setSelectedLog(null);
+          }}
+        />
+      )}
     </div>
   );
 };

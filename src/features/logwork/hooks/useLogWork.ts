@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { supabase } from '../../../lib/supabase';
 import { WorkLog, WorkForm } from '../types/logwork.types';
 
@@ -90,5 +90,54 @@ export const useWorkLogs = (workerId?: string) => {
       return data;
     },
     enabled: !!workerId
+  });
+};
+
+export const useApproveWorkLog = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ logId, approved, approverNotes }: { 
+      logId: string; 
+      approved: boolean; 
+      approverNotes?: string;
+    }) => {
+      const { data, error } = await supabase
+        .from('work_logs')
+        .update({ 
+          approved, 
+          approver_notes: approverNotes,
+          approved_at: approved ? new Date().toISOString() : null,
+          approver_id: approved ? (await supabase.auth.getUser()).data.user?.id : null
+        })
+        .eq('id', logId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['work-logs'] });
+      queryClient.invalidateQueries({ queryKey: ['activities'] });
+      queryClient.invalidateQueries({ queryKey: ['pending-approvals'] });
+    },
+  });
+};
+
+export const usePendingApprovals = () => {
+  return useQuery({
+    queryKey: ['pending-approvals'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('work_logs_with_names')
+        .select('*')
+        .eq('completed', true)
+        .eq('approved', false)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
   });
 };
