@@ -12,6 +12,7 @@ import BOM from "./pages/BOM";
 import Reports from "./pages/Reports";
 import Management from "./pages/Management";
 import LogWork from "./pages/LogWork";
+import Approvals from './pages/Approvals';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,6 +66,7 @@ function App() {
                   <Route path="/inventory" element={<Inventory />} />
                   <Route path="/payroll" element={<Payroll />} />
                   <Route path="/reports" element={<Reports />} />
+                  <Route path="/approvals" element={<Approvals />} />
                 </>
               )}
               

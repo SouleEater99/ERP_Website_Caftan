@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { X, CheckCircle, XCircle, AlertCircle, Eye } from 'lucide-react';
 import { useApproveWorkLog } from '../hooks/useLogWork';
 import { WorkLog } from '../types/logwork.types';
 
@@ -14,7 +14,6 @@ const TaskApprovalModal: React.FC<TaskApprovalModalProps> = ({
   isOpen, 
   onClose 
 }) => {
-  const [approverNotes, setApproverNotes] = useState('');
   const [isApproving, setIsApproving] = useState(false);
   const approveWorkLog = useApproveWorkLog();
 
@@ -25,8 +24,7 @@ const TaskApprovalModal: React.FC<TaskApprovalModalProps> = ({
     try {
       await approveWorkLog.mutateAsync({
         logId: workLog.id,
-        approved,
-        approverNotes: approverNotes.trim() || undefined
+        approved
       });
       onClose();
     } catch (error) {
@@ -65,19 +63,6 @@ const TaskApprovalModal: React.FC<TaskApprovalModalProps> = ({
                 <div><span className="font-medium">Notes:</span> {workLog.notes}</div>
               )}
             </div>
-          </div>
-
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Approval Notes (Optional)
-            </label>
-            <textarea
-              value={approverNotes}
-              onChange={(e) => setApproverNotes(e.target.value)}
-              placeholder="Add any notes about this approval..."
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              rows={3}
-            />
           </div>
 
           {/* Action Buttons */}

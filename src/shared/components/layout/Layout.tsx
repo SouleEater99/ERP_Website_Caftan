@@ -15,7 +15,8 @@ import {
   Languages,
   Crown,
   Bell,
-  User
+  User,
+  CheckCircle
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -59,8 +60,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   const navigation = [
     { name: t('dashboard'), href: '/', icon: Home, roles: ['worker', 'supervisor', 'admin'], gradient: 'from-orange-500 to-red-500' },
-    { name: t('logWork'), href: '/log-work', icon: ClipboardList, roles: ['worker'], gradient: 'from-green-500 to-emerald-500' },
+    { name: 'Approvals', href: '/approvals', icon: CheckCircle, roles: ['supervisor', 'admin'], gradient: 'from-teal-500 to-emerald-500' },
     { name: t('inventory'), href: '/inventory', icon: Package, roles: ['supervisor', 'admin'], gradient: 'from-blue-500 to-cyan-500' },
+    { name: t('logWork'), href: '/log-work', icon: ClipboardList, roles: ['worker'], gradient: 'from-green-500 to-emerald-500' },
     { name: t('bom'), href: '/bom', icon: FileText, roles: ['admin'], gradient: 'from-purple-500 to-pink-500' },
     { name: t('payroll'), href: '/payroll', icon: DollarSign, roles: ['supervisor', 'admin'], gradient: 'from-yellow-500 to-orange-500' },
     { name: t('reports'), href: '/reports', icon: BarChart3, roles: ['supervisor', 'admin'], gradient: 'from-indigo-500 to-purple-500' },

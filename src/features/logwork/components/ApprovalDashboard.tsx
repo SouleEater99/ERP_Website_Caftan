@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { usePendingApprovals } from '../hooks/useLogWork';
-import { CheckCircle, XCircle, Clock, Package, User, Calendar } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Package, User, Calendar, Eye } from 'lucide-react';
 import TaskApprovalModal from './TaskApprovalModal';
 import { WorkLog } from '../types/logwork.types';
 

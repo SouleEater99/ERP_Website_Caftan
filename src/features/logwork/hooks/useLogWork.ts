@@ -75,9 +75,9 @@ export const useWorkLogs = (workerId?: string) => {
   return useQuery({
     queryKey: ['work-logs', workerId],
     queryFn: async () => {
-      // Use the view instead of the base table
+      // Use the base table instead of the view
       let query = supabase
-        .from('work_logs_with_names') // Use the view with real names
+        .from('work_logs') // Use base table instead of view
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -97,19 +97,13 @@ export const useApproveWorkLog = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ logId, approved, approverNotes }: { 
+    mutationFn: async ({ logId, approved }: { 
       logId: string; 
       approved: boolean; 
-      approverNotes?: string;
     }) => {
       const { data, error } = await supabase
         .from('work_logs')
-        .update({ 
-          approved, 
-          approver_notes: approverNotes,
-          approved_at: approved ? new Date().toISOString() : null,
-          approver_id: approved ? (await supabase.auth.getUser()).data.user?.id : null
-        })
+        .update({ approved })
         .eq('id', logId)
         .select()
         .single();
@@ -130,7 +124,7 @@ export const usePendingApprovals = () => {
     queryKey: ['pending-approvals'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('work_logs_with_names')
+        .from('work_logs') // Use base table instead of view
         .select('*')
         .eq('completed', true)
         .eq('approved', false)
