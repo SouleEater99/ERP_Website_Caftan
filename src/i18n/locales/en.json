@@ -158,24 +158,35 @@
   },
   
   "bom": {
-    "product": "Product",
-    "qtyPerUnit": "Quantity per Unit",
-    "wastePercent": "Waste %",
-    "deductAtStage": "Deduct at Stage",
-    "addBOM": "Add BOM Entry",
+    "title": "Bill of Materials",
+    "description": "Manage product components and required materials",
+    "totalItems": "Total Items",
+    "addNewItem": "Add New Item",
+    "addItem": "Add Item",
+    "adding": "Adding...",
     "labels": {
       "product": "Product",
       "material": "Material",
       "qtyPerUnit": "Qty/Unit",
       "unit": "Unit",
-      "wastePercent": "Waste %"
+      "wastePercent": "Waste %",
+      "deductAtStage": "Deduct at Stage"
     },
     "placeholders": {
-      "selectProduct": "Select product",
-      "selectMaterial": "Select material",
-      "qtyPerUnit": "Enter quantity",
-      "unit": "Enter unit",
-      "wastePercent": "Enter waste percentage"
+      "selectProduct": "Select Product",
+      "selectMaterial": "Select Material",
+      "selectStage": "Select Stage",
+      "qtyPerUnit": "Qty/Unit",
+      "unit": "Unit",
+      "wastePercent": "Waste %"
+    },
+    "table": {
+      "product": "Product",
+      "material": "Material",
+      "qtyPerUnit": "Qty/Unit",
+      "unit": "Unit",
+      "wastePercent": "Waste %",
+      "deductAtStage": "Deduct at Stage"
     }
   },
   

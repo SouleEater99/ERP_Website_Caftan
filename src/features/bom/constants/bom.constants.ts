@@ -1,22 +1,22 @@
 export const BOM_FORM_LABELS = {
-  PRODUCT: 'المنتج',
-  MATERIAL: 'المادة',
-  QTY_PER_UNIT: 'الكمية/الوحدة',
-  UNIT: 'الوحدة',
-  WASTE_PERCENT: 'نسبة الهدر %',
-  STAGE: 'المرحلة',
+  PRODUCT: 'product',
+  MATERIAL: 'material',
+  QTY_PER_UNIT: 'qtyPerUnit',
+  UNIT: 'unit',
+  WASTE_PERCENT: 'wastePercent',
+  STAGE: 'stage',
 } as const;
 
 export const BOM_FORM_PLACEHOLDERS = {
-  SELECT_PRODUCT: 'اختر المنتج',
-  SELECT_MATERIAL: 'اختر المادة',
-  SELECT_STAGE: 'اختر المرحلة',
-  QTY_PER_UNIT: 'Qty/Unit',
-  UNIT: 'Unit',
-  WASTE_PERCENT: 'Waste %',
+  SELECT_PRODUCT: 'selectProduct',
+  SELECT_MATERIAL: 'selectMaterial',
+  SELECT_STAGE: 'selectStage',
+  QTY_PER_UNIT: 'qtyPerUnit',
+  UNIT: 'unit',
+  WASTE_PERCENT: 'wastePercent',
 } as const;
 
 export const BOM_ACTIONS = {
-  ADD_COMPONENT: 'إضافة مكون',
-  ADDING: 'جاري الإضافة...',
+  ADD_COMPONENT: 'addComponent',
+  ADDING: 'adding',
 } as const;

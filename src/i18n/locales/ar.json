@@ -166,24 +166,35 @@
   },
   
   "bom": {
-    "product": "المنتج",
-    "qtyPerUnit": "الكمية لكل وحدة",
-    "wastePercent": "نسبة الفقد %",
-    "deductAtStage": "خصم في مرحلة",
-    "addBOM": "إضافة مادة",
+    "title": "قائمة المواد",
+    "description": "إدارة مكونات المنتجات والمواد المطلوبة",
+    "totalItems": "إجمالي العناصر",
+    "addNewItem": "إضافة عنصر جديد",
+    "addItem": "إضافة عنصر",
+    "adding": "جاري الإضافة...",
     "labels": {
       "product": "المنتج",
       "material": "المادة",
       "qtyPerUnit": "الكمية/الوحدة",
       "unit": "الوحدة",
-      "wastePercent": "نسبة الفقد"
+      "wastePercent": "نسبة الهدر %",
+      "deductAtStage": "خصم في المرحلة"
     },
     "placeholders": {
       "selectProduct": "اختر المنتج",
       "selectMaterial": "اختر المادة",
-      "qtyPerUnit": "أدخل الكمية",
-      "unit": "أدخل الوحدة",
-      "wastePercent": "أدخل نسبة الفقد"
+      "selectStage": "اختر المرحلة",
+      "qtyPerUnit": "الكمية/الوحدة",
+      "unit": "الوحدة",
+      "wastePercent": "نسبة الهدر %"
+    },
+    "table": {
+      "product": "المنتج",
+      "material": "المادة",
+      "qtyPerUnit": "الكمية/الوحدة",
+      "unit": "الوحدة",
+      "wastePercent": "نسبة الهدر %",
+      "deductAtStage": "خصم في المرحلة"
     }
   },
   
