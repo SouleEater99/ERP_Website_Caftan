@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { 
   InventoryHeader, 
-  DebugInfo, 
   LowStockAlert, 
   InventoryTable 
 } from '../features/inventory';
@@ -10,7 +9,6 @@ import { useStock, useStockMovements } from '../features/inventory';
 import { useAddStockMutation, useConsumeStockMutation } from '../features/inventory';
 import { calculateStockRow, filterLowStockItems, validateQuantity } from '../features/inventory';
 import { StockRow } from '../features/inventory/types/inventory.types';
-import { INVENTORY_MESSAGES } from '../features/inventory/constants/inventory.constants';
 
 const Inventory: React.FC = () => {
   const { t } = useTranslation();
@@ -49,13 +47,6 @@ const Inventory: React.FC = () => {
   return (
     <div className="space-y-6">
       <InventoryHeader />
-
-      <DebugInfo 
-        stockCount={stock?.length || 0}
-        movementsLoaded={!!usedSummary}
-        addMutation={addStockMutation}
-        consumeMutation={consumeStockMutation}
-      />
 
       <LowStockAlert lowStockItems={lowStockItems} />
 
