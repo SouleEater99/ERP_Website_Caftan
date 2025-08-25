@@ -189,48 +189,63 @@ const ReportsDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ${isRTL ? 'sm:flex-row-reverse' : ''}`}>
-          <div className={isRTL ? 'text-right' : ''}>
-            <h1 className="text-3xl font-bold text-orange-900">
-              {t('navigation.reportsAnalytics')}
-            </h1>
-            <p className="text-orange-700 mt-1">
-              {t('navigation.comprehensiveInsights')}
-            </p>
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-800 mb-2">{t('reports.title')}</h1>
+              <p className="text-slate-600">{t('reports.description')}</p>
+            </div>
+            <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+              <button
+                onClick={handleRefresh}
+                className="flex items-center px-4 py-2 bg-white text-slate-700 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                <span>{t('common.refresh')}</span>
+              </button>
+              <button
+                onClick={() => setExporting(!exporting)}
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                <span>{exporting ? t('reports.exporting') : t('common.export')}</span>
+              </button>
+            </div>
           </div>
-          
-          <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-            <select 
+        </div>
+
+        {/* Period and Report Type Selection */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">{t('reports.selectPeriod')}</label>
+            <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="px-4 py-2 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 w-auto bg-white/80"
-              dir={isRTL ? 'rtl' : 'ltr'}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {REPORT_PERIODS.map(period => (
                 <option key={period.value} value={period.value}>
-                  {t(`dashboard.${period.label}`)}
+                  {t(`reports.periods.${period.label}`)}
                 </option>
               ))}
             </select>
-            
-            <button 
-              onClick={handleRefresh}
-              className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors"
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">{t('reports.selectReportType')}</label>
+            <select
+              value={selectedReport}
+              onChange={(e) => setSelectedReport(e.target.value)}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              <span>{t('common.refresh')}</span>
-            </button>
-            
-            <button 
-              onClick={() => handleExport('pdf')}
-              disabled={exporting}
-              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:from-orange-600 hover:to-red-700 transition-colors disabled:opacity-50"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              <span>{exporting ? t('reports.exporting') : t('common.export')}</span>
-            </button>
+              {REPORT_TYPES.map(report => (
+                <option key={report.id} value={report.id}>
+                  {t(`reports.types.${report.label}`)}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

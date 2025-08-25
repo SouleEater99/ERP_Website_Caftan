@@ -244,25 +244,26 @@
   },
   
   "reports": {
-    "loadingReports": "Loading reports...",
+    "title": "Reports",
+    "description": "View and analyze all reports",
+    "selectPeriod": "Select Period",
+    "selectReportType": "Select Report Type",
     "exporting": "Exporting...",
-    "someDataFailed": "Some data failed to load",
-    "pleaseRefresh": "Please refresh to try again",
-    "retry": "Retry",
-    "noDataAvailable": "No data available",
-    "selectDifferentPeriod": "Select a different period or report type to view data",
-    "usageDistribution": "Usage Distribution",
-    "materialDetails": "Material Details",
-    "usageTrendsOverTime": "Usage Trends Over Time",
-    "costAnalysis": "Cost Analysis",
-    "totalMaterialCost": "Total Material Cost",
-    "materialsUsed": "Materials Used",
-    "costPerUnit": "Cost Per Unit",
-    "materialInsights": "Material Insights",
-    "mostUsed": "Most Used",
-    "totalUnits": "Total Units",
-    "avgUsage": "Avg Usage",
-    "top3Materials": "Top 3 Materials"
+    "periods": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
+    "types": {
+      "productionOverview": "Production Overview",
+      "workerPerformance": "Worker Performance",
+      "materialUsage": "Material Usage",
+      "financialSummary": "Financial Summary"
+    },
+    "exportAsPDF": "Export as PDF",
+    "exportAsExcel": "Export as Excel",
+    "exportAsCSV": "Export as CSV"
   },
   
   "common": {

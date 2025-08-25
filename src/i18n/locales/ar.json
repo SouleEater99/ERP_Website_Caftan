@@ -255,7 +255,25 @@
 
   "reports": {
     "title": "التقارير",
-    "description": "عرض وتحليل جميع التقارير"
+    "description": "عرض وتحليل جميع التقارير",
+    "selectPeriod": "اختر الفترة",
+    "selectReportType": "اختر نوع التقرير",
+    "exporting": "جاري التصدير...",
+    "periods": {
+      "daily": "يومي",
+      "weekly": "أسبوعي",
+      "monthly": "شهري",
+      "yearly": "سنوي"
+    },
+    "types": {
+      "productionOverview": "نظرة عامة على الإنتاج",
+      "workerPerformance": "أداء العمال",
+      "materialUsage": "استخدام المواد",
+      "financialSummary": "الملخص المالي"
+    },
+    "exportAsPDF": "تصدير كـ PDF",
+    "exportAsExcel": "تصدير كـ Excel",
+    "exportAsCSV": "تصدير كـ CSV"
   },
 
   "management": {
