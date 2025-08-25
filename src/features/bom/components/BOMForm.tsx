@@ -39,22 +39,24 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
     });
   };
 
+  const isRTL = i18n.language === 'ar';
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-10">
+    <form onSubmit={handleSubmit} className="space-y-12">
       {/* Form Fields Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         {/* Product Selection */}
         <div className="group">
-          <div className="space-y-4">
-            <label className="block text-sm font-extrabold text-slate-900 uppercase tracking-wider">
-              <span className="inline-flex items-center space-x-2">
-                <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full"></div>
-                <span>{t('bom.labels.product')}</span>
+          <div className="space-y-5">
+            <label className={`block text-sm font-black text-slate-900 uppercase tracking-widest ${isRTL ? 'text-right' : 'text-left'}`}>
+              <span className={`inline-flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className="w-3 h-3 bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-600 rounded-full shadow-lg shadow-blue-500/30"></div>
+                <span className={`bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent ${isRTL ? 'mr-4' : 'ml-3'}`}>{t('bom.labels.product')}</span>
               </span>
             </label>
             <div className="relative">
               <select
-                className="w-full px-6 py-5 border-2 border-slate-200 rounded-3xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-500 bg-gradient-to-r from-white to-slate-50/80 backdrop-blur-sm shadow-lg hover:shadow-xl hover:border-slate-300 group-hover:shadow-blue-500/10"
+                className={`w-full px-7 py-6 border-2 border-slate-200 rounded-3xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-500 bg-gradient-to-r from-white via-slate-50/90 to-white backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-blue-500/20 hover:border-slate-300 group-hover:shadow-blue-500/15 transform group-hover:scale-[1.02] ${isRTL ? 'text-right' : 'text-left'}`}
                 value={form.product}
                 onChange={e => setForm({ ...form, product: e.target.value })}
                 disabled={productsLoading}
@@ -72,10 +74,10 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
                   );
                 })}
               </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-6 pointer-events-none">
-                <div className="w-6 h-6 bg-gradient-to-r from-slate-400 to-slate-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <div className={`absolute inset-y-0 ${isRTL ? 'left-0 pl-7' : 'right-0 pr-7'} flex items-center pointer-events-none`}>
+                <div className="w-8 h-8 bg-gradient-to-r from-slate-500 via-slate-600 to-slate-700 rounded-xl flex items-center justify-center shadow-lg shadow-slate-500/20 transform group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
@@ -85,16 +87,16 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
 
         {/* Material Selection */}
         <div className="group">
-          <div className="space-y-4">
-            <label className="block text-sm font-extrabold text-slate-900 uppercase tracking-wider">
-              <span className="inline-flex items-center space-x-2">
-                <div className="w-2 h-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"></div>
-                <span>{t('bom.labels.material')}</span>
+          <div className="space-y-5">
+            <label className={`block text-sm font-black text-slate-900 uppercase tracking-widest ${isRTL ? 'text-right' : 'text-left'}`}>
+              <span className={`inline-flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className="w-3 h-3 bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 rounded-full shadow-lg shadow-green-500/30"></div>
+                <span className={`bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent ${isRTL ? 'mr-4' : 'ml-3'}`}>{t('bom.labels.material')}</span>
               </span>
             </label>
             <div className="relative">
               <select
-                className="w-full px-6 py-5 border-2 border-slate-200 rounded-3xl focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all duration-500 bg-gradient-to-r from-white to-slate-50/80 backdrop-blur-sm shadow-lg hover:shadow-xl hover:border-slate-300 group-hover:shadow-green-500/10"
+                className={`w-full px-7 py-6 border-2 border-slate-200 rounded-3xl focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all duration-500 bg-gradient-to-r from-white via-slate-50/90 to-white backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-green-500/20 hover:border-slate-300 group-hover:shadow-green-500/15 transform group-hover:scale-[1.02] ${isRTL ? 'text-right' : 'text-left'}`}
                 value={form.material}
                 onChange={e => handleMaterialChange(e.target.value)}
                 disabled={materialsLoading}
@@ -112,10 +114,10 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
                   );
                 })}
               </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-6 pointer-events-none">
-                <div className="w-6 h-6 bg-gradient-to-r from-slate-400 to-slate-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <div className={`absolute inset-y-0 ${isRTL ? 'left-0 pl-7' : 'right-0 pr-7'} flex items-center pointer-events-none`}>
+                <div className="w-8 h-8 bg-gradient-to-r from-slate-500 via-slate-600 to-slate-700 rounded-xl flex items-center justify-center shadow-lg shadow-slate-500/20 transform group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
@@ -125,15 +127,15 @@ export const BOMForm: React.FC<BOMFormProps> = ({ form, setForm, onSuccess }) =>
 
         {/* Quantity Per Unit */}
         <div className="group">
-          <div className="space-y-4">
-            <label className="block text-sm font-extrabold text-slate-900 uppercase tracking-wider">
-              <span className="inline-flex items-center space-x-2">
-                <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-violet-500 rounded-full"></div>
-                <span>{t('bom.labels.qtyPerUnit')}</span>
+          <div className="space-y-5">
+            <label className={`block text-sm font-black text-slate-900 uppercase tracking-widest ${isRTL ? 'text-right' : 'text-left'}`}>
+              <span className={`inline-flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className="w-3 h-3 bg-gradient-to-r from-purple-500 via-violet-500 to-purple-600 rounded-full shadow-lg shadow-purple-500/30"></div>
+                <span className={`bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent ${isRTL ? 'mr-4' : 'ml-3'}`}>{t('bom.labels.qtyPerUnit')}</span>
               </span>
             </label>
             <input
-              className="w-full px-6 py-5 border-2 border-slate-200 rounded-3xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-500 bg-gradient-to-r from-white to-slate-50/80 backdrop-blur-sm shadow-lg hover:shadow-xl hover:border-slate-300 group-hover:shadow-purple-500/10 placeholder-slate-400"
+              className={`w-full px-7 py-6 border-2 border-slate-200 rounded-3xl focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-500 bg-gradient-to-r from-white via-slate-50/90 to-white backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-purple-500/20 hover:border-slate-300 group-hover:shadow-purple-500/15 transform group-hover:scale-[1.02] placeholder-slate-400 ${isRTL ? 'text-right' : 'text-left'}`}
               placeholder={t('bom.placeholders.qtyPerUnit')}
               type="number"
               step="0.01"
