@@ -224,111 +224,120 @@ export default function Payroll() {
 
   if (isLoading) {
     return (
-      <div className="text-center py-8">
-        <div className="w-12 h-12 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3"></div>
-        <p className="text-slate-600 font-medium text-sm">{t('common.loading')}</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/50 flex items-center justify-center">
+        <div className="glass-card p-8 rounded-3xl text-center">
+          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600 font-semibold text-lg">{t('common.loading')}</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-8" dir={isRTL ? 'rtl' : 'ltr'}>
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-          <p className="text-red-600 font-medium">{t('payroll.errorLoadingPayroll')}</p>
-          <p className="text-red-500 text-sm mt-1">{error.message}</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/50 flex items-center justify-center" dir={isRTL ? 'rtl' : 'ltr'}>
+        <div className="glass-card p-8 rounded-3xl text-center max-w-md">
+          <div className="w-16 h-16 bg-gradient-to-r from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <p className="text-red-600 font-bold text-lg mb-2">{t('payroll.errorLoadingPayroll')}</p>
+          <p className="text-red-500 text-sm">{error.message}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
-      {/* Success/Error Messages */}
-      <MessageToast
-        showSuccessMessage={showSuccessMessage}
-        showErrorMessage={showErrorMessage}
-        messageContent={messageContent}
-        isRTL={isRTL}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/50 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Success/Error Messages */}
+        <MessageToast
+          showSuccessMessage={showSuccessMessage}
+          showErrorMessage={showErrorMessage}
+          messageContent={messageContent}
+          isRTL={isRTL}
+        />
 
-      {/* Header */}
-      <PayrollHeader 
-        isRTL={isRTL} 
-        onExport={handleExportPayroll} 
-      />
+        {/* Header */}
+        <PayrollHeader 
+          isRTL={isRTL} 
+          onExport={handleExportPayroll} 
+        />
 
-      {/* Filters */}
-      <PayrollFilters
-        selectedPeriod={selectedPeriod}
-        setSelectedPeriod={setSelectedPeriod}
-        showUnpaidFirst={showUnpaidFirst}
-        setShowUnpaidFirst={setShowUnpaidFirst}
-        selectedSchedule={selectedSchedule}
-        setSelectedSchedule={setSelectedSchedule}
-        scheduleOptions={scheduleOptions}
-        isRTL={isRTL}
-        openFilterModal={openFilterModal}
-        appliedWorkerFilter={appliedWorkerFilter}
-        appliedStatusFilter={appliedStatusFilter}
-        users={users}
-        onClearFilters={onClearFilters}
-        onRemoveWorkerFilter={onRemoveWorkerFilter}
-        onRemoveStatusFilter={onRemoveStatusFilter}
-      />
+        {/* Filters */}
+        <PayrollFilters
+          selectedPeriod={selectedPeriod}
+          setSelectedPeriod={setSelectedPeriod}
+          showUnpaidFirst={showUnpaidFirst}
+          setShowUnpaidFirst={setShowUnpaidFirst}
+          selectedSchedule={selectedSchedule}
+          setSelectedSchedule={setSelectedSchedule}
+          scheduleOptions={scheduleOptions}
+          isRTL={isRTL}
+          openFilterModal={openFilterModal}
+          appliedWorkerFilter={appliedWorkerFilter}
+          appliedStatusFilter={appliedStatusFilter}
+          users={users}
+          onClearFilters={onClearFilters}
+          onRemoveWorkerFilter={onRemoveWorkerFilter}
+          onRemoveStatusFilter={onRemoveStatusFilter}
+        />
 
-      {/* Summary Cards */}
-      <PayrollStats
-        totalPayroll={totalPayroll}
-        paidAmount={paidAmount}
-        totalPending={totalPending}
-        isRTL={isRTL}
-      />
-
-      {/* Payroll Table */}
-      <PayrollTable
-        payrollData={payrollData}
-        isRTL={isRTL}
-        onDownloadIndividual={handleDownloadIndividual}
-        onPaymentToggle={handlePaymentToggle}
-        updatePaymentMutation={updatePaymentMutation}
-      />
-
-      {/* Payment Summary and Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <PayrollPaymentSummary
+        {/* Summary Cards */}
+        <PayrollStats
           totalPayroll={totalPayroll}
           paidAmount={paidAmount}
           totalPending={totalPending}
-          paymentRate={paymentRate}
           isRTL={isRTL}
         />
 
-        <PayrollQuickActions
+        {/* Payroll Table */}
+        <PayrollTable
+          payrollData={payrollData}
           isRTL={isRTL}
-          onGeneratePayroll={handleGeneratePayroll}
-          onPayAllPending={handlePayAllPending}
-          onExportPayroll={handleExportPayroll}
-          onCreateNewPeriod={handleCreateNewPeriod}
-          onManageWageRates={handleManageWageRates}
-          generatePayrollMutation={generatePayrollMutation}
-          payAllPendingMutation={payAllPendingMutation}
-          isCreatingPeriod={createPeriodMutation.isPending}
+          onDownloadIndividual={handleDownloadIndividual}
+          onPaymentToggle={handlePaymentToggle}
+          updatePaymentMutation={updatePaymentMutation}
+        />
+
+        {/* Payment Summary and Quick Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <PayrollPaymentSummary
+            totalPayroll={totalPayroll}
+            paidAmount={paidAmount}
+            totalPending={totalPending}
+            paymentRate={paymentRate}
+            isRTL={isRTL}
+          />
+
+          <PayrollQuickActions
+            isRTL={isRTL}
+            onGeneratePayroll={handleGeneratePayroll}
+            onPayAllPending={handlePayAllPending}
+            onExportPayroll={handleExportPayroll}
+            onCreateNewPeriod={handleCreateNewPeriod}
+            onManageWageRates={handleManageWageRates}
+            generatePayrollMutation={generatePayrollMutation}
+            payAllPendingMutation={payAllPendingMutation}
+            isCreatingPeriod={createPeriodMutation.isPending}
+          />
+        </div>
+
+        {/* Filter Modal */}
+        <PayrollFilterModal
+          showFilterModal={showFilterModal}
+          onClose={() => setShowFilterModal(false)}
+          tempWorkerFilter={appliedWorkerFilter}
+          setTempWorkerFilter={setAppliedWorkerFilter}
+          tempStatusFilter={appliedStatusFilter}
+          setTempStatusFilter={setAppliedStatusFilter}
+          users={users}
+          onApplyFilters={() => setShowFilterModal(false)}
+          onClearFilters={onClearFilters}
         />
       </div>
-
-      {/* Filter Modal */}
-      <PayrollFilterModal
-        showFilterModal={showFilterModal}
-        onClose={() => setShowFilterModal(false)}
-        tempWorkerFilter={appliedWorkerFilter}
-        setTempWorkerFilter={setAppliedWorkerFilter}
-        tempStatusFilter={appliedStatusFilter}
-        setTempStatusFilter={setAppliedStatusFilter}
-        users={users}
-        onApplyFilters={() => setShowFilterModal(false)}
-        onClearFilters={onClearFilters}
-      />
     </div>
   );
 }

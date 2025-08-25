@@ -78,14 +78,14 @@ export const PayrollFilters: React.FC<PayrollFiltersProps> = ({
 
         {/* Unpaid Priority Toggle */}
         <div className="space-y-3">
-          <div className="flex items-center space-x-2">
+          <div className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-2' : 'space-x-2'}`}>
             <Clock className="w-5 h-5 text-amber-600" />
-            <label className="text-sm font-semibold text-gray-700">
+            <label className={`text-sm font-semibold text-gray-700 ${isRTL ? 'text-right' : 'text-left'}`}>
               Display Priority
             </label>
           </div>
-          <div className="flex items-center">
-            <label className="relative inline-flex items-center cursor-pointer">
+          <div className={`flex items-center ${isRTL ? 'justify-end' : 'justify-start'}`}>
+            <label className={`relative inline-flex items-center cursor-pointer ${isRTL ? 'flex-row-reverse' : ''}`}>
               <input
                 type="checkbox"
                 checked={showUnpaidFirst}
@@ -96,7 +96,7 @@ export const PayrollFilters: React.FC<PayrollFiltersProps> = ({
                 className="sr-only peer"
               />
               <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              <span className="ml-3 text-sm font-medium text-gray-700">
+              <span className={`text-sm font-medium text-gray-700 ${isRTL ? 'mr-3' : 'ml-3'}`}>
                 {showUnpaidFirst ? 'Enabled' : 'Disabled'}
               </span>
             </label>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { TrendingUp, CheckCircle, Clock, DollarSign } from 'lucide-react';
 
 interface PayrollPaymentSummaryProps {
   totalPayroll: number;
@@ -18,28 +19,56 @@ export const PayrollPaymentSummary: React.FC<PayrollPaymentSummaryProps> = ({
 }) => {
   const { t } = useTranslation();
   
+  const summaryItems = [
+    {
+      label: t('totalPayroll'),
+      value: `${totalPayroll.toLocaleString()} MAD`,
+      icon: DollarSign,
+      color: 'text-blue-600',
+      bgColor: 'from-blue-50 to-cyan-50'
+    },
+    {
+      label: t('paidAmount'),
+      value: `${paidAmount.toLocaleString()} MAD`,
+      icon: CheckCircle,
+      color: 'text-emerald-600',
+      bgColor: 'from-emerald-50 to-teal-50'
+    },
+    {
+      label: t('pendingAmount'),
+      value: `${totalPending.toLocaleString()} MAD`,
+      icon: Clock,
+      color: 'text-amber-600',
+      bgColor: 'from-amber-50 to-orange-50'
+    },
+    {
+      label: t('paymentRate'),
+      value: `${paymentRate.toFixed(1)}%`,
+      icon: TrendingUp,
+      color: 'text-purple-600',
+      bgColor: 'from-purple-50 to-violet-50'
+    }
+  ];
+  
   return (
-    <div className="management-card">
-      <h4 className="text-lg font-bold text-slate-800 mb-4 arabic-heading">
+    <div className="glass-card p-8 rounded-3xl">
+      <h4 className={`text-xl font-black text-slate-800 mb-6 ${isRTL ? 'text-right' : 'text-left'}`}>
         {t('paymentSummary')}
       </h4>
-      <div className="space-y-4">
-        <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-          <span className="text-slate-600 arabic-text">{t('totalPayroll')}</span>
-          <span className="font-bold text-slate-800">{totalPayroll.toLocaleString()} MAD</span>
-        </div>
-        <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-          <span className="text-slate-600 arabic-text">{t('paidAmount')}</span>
-          <span className="font-bold text-emerald-600">{paidAmount.toLocaleString()} MAD</span>
-        </div>
-        <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-          <span className="text-slate-600 arabic-text">{t('pendingAmount')}</span>
-          <span className="font-bold text-amber-600">{totalPending.toLocaleString()} MAD</span>
-        </div>
-        <div className={`flex items-center justify-between pt-4 border-t border-slate-200 ${isRTL ? 'flex-row-reverse' : ''}`}>
-          <span className="text-slate-600 arabic-text">{t('paymentRate')}</span>
-          <span className="font-bold text-blue-600">{paymentRate.toFixed(1)}%</span>
-        </div>
+      <div className="space-y-5">
+        {summaryItems.map((item, index) => (
+          <div key={index} className={`group relative p-4 rounded-2xl bg-gradient-to-r ${item.bgColor} hover:shadow-lg transition-all duration-300 ${index === summaryItems.length - 1 ? 'border-t-2 border-slate-200 pt-6' : ''}`}>
+            <div className={`flex items-center ${isRTL ? 'flex-row-reverse justify-between' : 'justify-between'}`}>
+              <div className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-3' : 'space-x-3'}`}>
+                <div className={`w-10 h-10 bg-gradient-to-r ${item.bgColor} rounded-xl flex items-center justify-center shadow-sm`}>
+                  <item.icon className={`w-5 h-5 ${item.color}`} />
+                </div>
+                <span className="text-slate-600 font-semibold">{item.label}</span>
+              </div>
+              <span className={`font-black text-lg ${item.color}`}>{item.value}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
