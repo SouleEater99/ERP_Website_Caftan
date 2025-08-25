@@ -5,6 +5,7 @@ import {
   LowStockAlert, 
   InventoryTable 
 } from '../features/inventory';
+import { StockAdjustmentModal } from '../features/inventory/components/StockAdjustmentModal';
 import { useStock, useStockMovements } from '../features/inventory';
 import { useAddStockMutation, useConsumeStockMutation } from '../features/inventory';
 import { calculateStockRow, filterLowStockItems, validateQuantity } from '../features/inventory';
@@ -19,20 +20,61 @@ const Inventory: React.FC = () => {
   const addStockMutation = useAddStockMutation();
   const consumeStockMutation = useConsumeStockMutation();
 
+  // Modal state
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: 'add' | 'consume';
+    materialId: string;
+    materialName: string;
+    currentStock: number;
+    unit: string;
+  }>({
+    isOpen: false,
+    type: 'add',
+    materialId: '',
+    materialName: '',
+    currentStock: 0,
+    unit: ''
+  });
+
   const handleAddStock = (id: string) => {
-    const quantity = prompt(t('inventory.enterQuantityToAdd'));
-    if (quantity && validateQuantity(quantity)) {
-      console.log('Handling add stock for ID:', id, 'quantity:', quantity);
-      addStockMutation.mutate({ stockId: id, quantity: Number(quantity) });
+    const material = stock?.find(item => item.id === id);
+    if (material) {
+      setModalState({
+        isOpen: true,
+        type: 'add',
+        materialId: id,
+        materialName: material.material,
+        currentStock: material.current_stock,
+        unit: material.unit
+      });
     }
   };
 
   const handleConsumeStock = (id: string) => {
-    const quantity = prompt(t('inventory.enterQuantityToConsume'));
-    if (quantity && validateQuantity(quantity)) {
-      console.log('Handling consume stock for ID:', id, 'quantity:', quantity);
-      consumeStockMutation.mutate({ stockId: id, quantity: Number(quantity) });
+    const material = stock?.find(item => item.id === id);
+    if (material) {
+      setModalState({
+        isOpen: true,
+        type: 'consume',
+        materialId: id,
+        materialName: material.material,
+        currentStock: material.current_stock,
+        unit: material.unit
+      });
     }
+  };
+
+  const handleConfirmStockAdjustment = (quantity: number) => {
+    if (modalState.type === 'add') {
+      addStockMutation.mutate({ stockId: modalState.materialId, quantity });
+    } else {
+      consumeStockMutation.mutate({ stockId: modalState.materialId, quantity });
+    }
+  };
+
+  const closeModal = () => {
+    setModalState(prev => ({ ...prev, isOpen: false }));
   };
 
   if (isLoading) {
@@ -69,6 +111,18 @@ const Inventory: React.FC = () => {
           consumeMutationPending={consumeStockMutation.isPending}
         />
       </div>
+
+      {/* Stock Adjustment Modal */}
+      <StockAdjustmentModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        onConfirm={handleConfirmStockAdjustment}
+        type={modalState.type}
+        materialName={modalState.materialName}
+        currentStock={modalState.currentStock}
+        unit={modalState.unit}
+        isRTL={isRTL}
+      />
     </div>
   );
 };
