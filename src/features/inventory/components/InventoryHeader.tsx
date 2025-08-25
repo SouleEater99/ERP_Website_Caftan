@@ -23,12 +23,12 @@ export const InventoryHeader: React.FC = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-2xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300">
+          <div className={`flex items-center space-x-3 ${isRTL ? 'space-x-reverse' : ''}`}>
+            <div className={`flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-2xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 ${isRTL ? 'space-x-reverse' : ''}`}>
               <TrendingUp className="w-5 h-5 text-green-300" />
               <span className="text-white font-medium">{t('inventory.totalMaterials')}</span>
             </div>
-            <div className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-2xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className={`flex items-center space-x-2 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-2xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 ${isRTL ? 'space-x-reverse' : ''}`}>
               <AlertTriangle className="w-5 h-5 text-yellow-300" />
               <span className="text-white font-medium">{t('inventory.lowStock')}</span>
             </div>
