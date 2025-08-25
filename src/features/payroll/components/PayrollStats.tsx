@@ -19,7 +19,7 @@ export const PayrollStats: React.FC<PayrollStatsProps> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <StatCard
-        title={t('totalPayroll')}
+        title={t('payroll.totalPayroll')}
         value={`${totalPayroll.toLocaleString()} MAD`}
         icon={DollarSign}
         color="cold-gradient"
@@ -27,7 +27,7 @@ export const PayrollStats: React.FC<PayrollStatsProps> = ({
         isRTL={isRTL}
       />
       <StatCard
-        title={t('paidAmount')}
+        title={t('payroll.paidAmount')}
         value={`${paidAmount.toLocaleString()} MAD`}
         icon={Package}
         color="bg-gradient-to-r from-emerald-500 to-teal-600"
@@ -35,7 +35,7 @@ export const PayrollStats: React.FC<PayrollStatsProps> = ({
         isRTL={isRTL}
       />
       <StatCard
-        title={t('pendingAmount')}
+        title={t('payroll.pendingAmount')}
         value={`${totalPending.toLocaleString()} MAD`}
         icon={Calendar}
         color="bg-gradient-to-r from-amber-500 to-orange-500"

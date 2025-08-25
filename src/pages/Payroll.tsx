@@ -39,12 +39,12 @@ export default function Payroll() {
   const [messageContent, setMessageContent] = useState('');
 
   const scheduleOptions = [
-    { value: 'all', label: t('allSchedules') },
-    { value: 'daily', label: t('daily') },
-    { value: 'weekly', label: t('weekly') },
-    { value: 'bi-weekly', label: t('biWeekly') },
-    { value: 'monthly', label: t('monthly') },
-    { value: 'quarterly', label: t('quarterly') }
+    { value: 'all', label: t('payroll.allSchedules') },
+    { value: 'daily', label: t('payroll.daily') },
+    { value: 'weekly', label: t('payroll.weekly') },
+    { value: 'bi-weekly', label: t('payroll.biWeekly') },
+    { value: 'monthly', label: t('payroll.monthly') },
+    { value: 'quarterly', label: t('payroll.quarterly') }
   ];
 
   const isRTL = i18n.language === 'ar';
@@ -127,7 +127,7 @@ export default function Payroll() {
   // Handler functions
   const handleGeneratePayroll = () => {
     if (workersDueForPayment.length === 0) {
-      setMessageContent(t('noWorkersDueForPayment'));
+      setMessageContent(t('payroll.noWorkersDueForPayment'));
       setShowSuccessMessage(true);
       setTimeout(() => setShowSuccessMessage(false), 3000);
       return;
@@ -147,17 +147,17 @@ export default function Payroll() {
     if (!payrollData || payrollData.length === 0) return;
 
     const headers = [
-      t('workerName'),
-      t('paymentPeriodStart'),
-      t('paymentPeriodEnd'),
-      t('totalEarnings'),
-      t('paymentStatus')
+      t('payroll.workerName'),
+      t('payroll.paymentPeriodStart'),
+      t('payroll.paymentPeriodEnd'),
+      t('payroll.totalEarnings'),
+      t('payroll.paymentStatus')
     ];
 
     const csvRows = payrollData.map((item: PayrollType) => {
       const periodStart = new Date(item.period_start).toLocaleDateString(i18n.language === 'ar' ? 'ar-SA' : 'en-US');
       const periodEnd = new Date(item.period_end).toLocaleDateString(i18n.language === 'ar-SA' ? 'ar-SA' : 'en-US');
-      const status = item.paid_status ? t('paid') : t('pending');
+      const status = item.paid_status ? t('payroll.paid') : t('payroll.pending');
       return `"${item.worker_name}","${periodStart}","${periodEnd}",${item.total_earnings},"${status}"`;
     });
 
@@ -173,8 +173,8 @@ export default function Payroll() {
 
   const handleDownloadIndividual = useCallback((item: PayrollType) => {
     const csvContent = [
-      [t('workerName'), 'Period', t('totalEarnings'), t('paymentStatus')],
-      [item.worker_name, `${item.period_start} - ${item.period_end}`, item.total_earnings, item.paid_status ? t('paid') : t('pending')]
+      [t('payroll.workerName'), t('payroll.period'), t('payroll.totalEarnings'), t('payroll.paymentStatus')],
+      [item.worker_name, `${item.period_start} - ${item.period_end}`, item.total_earnings, item.paid_status ? t('payroll.paid') : t('payroll.pending')]
     ].map(row => row.join(',')).join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -226,7 +226,7 @@ export default function Payroll() {
     return (
       <div className="text-center py-8">
         <div className="w-12 h-12 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-3"></div>
-        <p className="text-slate-600 font-medium text-sm">{t('loading')}</p>
+        <p className="text-slate-600 font-medium text-sm">{t('common.loading')}</p>
       </div>
     );
   }
@@ -235,7 +235,7 @@ export default function Payroll() {
     return (
       <div className="text-center py-8" dir={isRTL ? 'rtl' : 'ltr'}>
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-          <p className="text-red-600 font-medium">{t('errorLoadingPayroll')}</p>
+          <p className="text-red-600 font-medium">{t('payroll.errorLoadingPayroll')}</p>
           <p className="text-red-500 text-sm mt-1">{error.message}</p>
         </div>
       </div>

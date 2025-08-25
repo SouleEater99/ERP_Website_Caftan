@@ -24,10 +24,10 @@ export const PayrollTable: React.FC<PayrollTableProps> = ({
     <div className="management-section">
       <div className="management-header">
         <h3 className="text-xl font-bold text-slate-800 arabic-heading">
-          {t('detailedPayrollRecords')}
+          {t('payroll.detailedPayrollRecords')}
         </h3>
         <div className={`text-sm text-slate-600 arabic-text ${isRTL ? 'text-right' : ''}`}>
-          {t('totalWorkersCount', { count: payrollData.length })}
+          {t('payroll.totalWorkersCount', { count: payrollData.length })}
         </div>
       </div>
 
@@ -35,11 +35,11 @@ export const PayrollTable: React.FC<PayrollTableProps> = ({
         <table className="data-table w-full">
           <thead>
             <tr>
-              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('workerName')}</th>
-              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('paymentPeriod')}</th>
-              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('totalEarnings')}</th>
-              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('paymentStatus')}</th>
-              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('actions')}</th>
+              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('payroll.workerName')}</th>
+              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('payroll.paymentPeriod')}</th>
+              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('payroll.totalEarnings')}</th>
+              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('payroll.paymentStatus')}</th>
+              <th className={`${isRTL ? 'text-right' : 'text-left'} arabic-text`}>{t('payroll.actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -70,7 +70,7 @@ export const PayrollTable: React.FC<PayrollTableProps> = ({
                   <span className={`status-indicator ${
                     item.paid_status ? 'status-active' : 'status-pending'
                   } arabic-text`}>
-                    {item.paid_status ? t('paid') : t('pending')}
+                    {item.paid_status ? t('payroll.paid') : t('payroll.pending')}
                   </span>
                 </td>
                 <td>
@@ -80,7 +80,7 @@ export const PayrollTable: React.FC<PayrollTableProps> = ({
                       className="cold-button-secondary text-sm"
                     >
                       <Download className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
-                      <span className="arabic-text">{t('download')}</span>
+                      <span className="arabic-text">{t('payroll.download')}</span>
                     </button>
                     {!item.paid_status && (
                       <button
@@ -90,7 +90,7 @@ export const PayrollTable: React.FC<PayrollTableProps> = ({
                       >
                         <DollarSign className={`w-4 h-4 ${isRTL ? 'ml-1' : 'mr-1'}`} />
                         <span className="arabic-text">
-                          {updatePaymentMutation.isPending ? t('paying') : t('pay')}
+                          {updatePaymentMutation.isPending ? t('payroll.paying') : t('payroll.pay')}
                         </span>
                       </button>
                     )}
