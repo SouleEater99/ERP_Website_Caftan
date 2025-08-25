@@ -231,7 +231,16 @@
     "paymentSchedule": "Payment Schedule",
     "appliedFilters": "Applied Filters:",
     "clearAll": "Clear All",
-    "advancedFilters": "Advanced Filters"
+    "advancedFilters": "Advanced Filters",
+    "generatingPayroll": "Generating Payroll...",
+    "generatePayrollForDueWorkers": "Generate Payroll for Due Workers",
+    "payingAllPending": "Paying All Pending...",
+    "payAllPendingPayroll": "Pay All Pending Payroll",
+    "exportPayrollRecords": "Export Payroll Records",
+    "creatingPeriod": "Creating Period...",
+    "createNewPayrollPeriod": "Create New Payroll Period",
+    "manageWageRates": "Manage Wage Rates",
+    "paymentRate": "Payment Rate"
   },
   
   "reports": {

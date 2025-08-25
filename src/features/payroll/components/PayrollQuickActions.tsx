@@ -48,8 +48,8 @@ export const PayrollQuickActions: React.FC<PayrollQuickActionsProps> = ({
               <Clock className={`w-5 h-5 ${isRTL ? 'ml-3' : 'mr-3'}`} />
               <span>
                 {generatePayrollMutation.isPending 
-                  ? t('generatingPayroll') 
-                  : t('generatePayrollForDueWorkers')
+                  ? t('payroll.generatingPayroll') 
+                  : t('payroll.generatePayrollForDueWorkers')
                 }
               </span>
             </div>
@@ -64,7 +64,7 @@ export const PayrollQuickActions: React.FC<PayrollQuickActionsProps> = ({
             <div className={`relative flex items-center ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
               <DollarSign className={`w-5 h-5 ${isRTL ? 'ml-3' : 'mr-3'}`} />
               <span>
-                {payAllPendingMutation.isPending ? t('payingAllPending') : t('payAllPendingPayroll')}
+                {payAllPendingMutation.isPending ? t('payroll.payingAllPending') : t('payroll.payAllPendingPayroll')}
               </span>
             </div>
           </button>
@@ -76,7 +76,7 @@ export const PayrollQuickActions: React.FC<PayrollQuickActionsProps> = ({
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             <div className={`relative flex items-center ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
               <Download className={`w-5 h-5 ${isRTL ? 'ml-3' : 'mr-3'}`} />
-              <span>{t('exportPayrollRecords')}</span>
+              <span>{t('payroll.exportPayrollRecords')}</span>
             </div>
           </button>
           
@@ -89,7 +89,7 @@ export const PayrollQuickActions: React.FC<PayrollQuickActionsProps> = ({
             <div className={`relative flex items-center ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
               <Calendar className={`w-5 h-5 ${isRTL ? 'ml-3' : 'mr-3'}`} />
               <span>
-                {isCreatingPeriod ? t('creatingPeriod') : t('createNewPayrollPeriod')}
+                {isCreatingPeriod ? t('payroll.creatingPeriod') : t('payroll.createNewPayrollPeriod')}
               </span>
             </div>
           </button>
@@ -101,7 +101,7 @@ export const PayrollQuickActions: React.FC<PayrollQuickActionsProps> = ({
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             <div className={`relative flex items-center ${isRTL ? 'flex-row-reverse justify-end' : 'justify-start'}`}>
               <Users className={`w-5 h-5 ${isRTL ? 'ml-3' : 'mr-3'}`} />
-              <span>{t('manageWageRates')}</span>
+              <span>{t('payroll.manageWageRates')}</span>
             </div>
           </button>
         </div>

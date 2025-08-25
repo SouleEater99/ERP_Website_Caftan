@@ -239,7 +239,16 @@
     "paymentSchedule": "جدول الدفع",
     "appliedFilters": "الفلاتر المطبقة:",
     "clearAll": "مسح الكل",
-    "advancedFilters": "فلاتر متقدمة"
+    "advancedFilters": "فلاتر متقدمة",
+    "generatingPayroll": "جاري إنشاء الرواتب...",
+    "generatePayrollForDueWorkers": "إنشاء رواتب للعمال المستحقين",
+    "payingAllPending": "جاري دفع جميع المعلق...",
+    "payAllPendingPayroll": "دفع جميع الرواتب المعلقة",
+    "exportPayrollRecords": "تصدير سجلات الرواتب",
+    "creatingPeriod": "جاري إنشاء الفترة...",
+    "createNewPayrollPeriod": "إنشاء فترة راتب جديدة",
+    "manageWageRates": "إدارة معدلات الأجور",
+    "paymentRate": "معدل الدفع"
   },
   "quickActions": "إجراءات سريعة",
   "paymentSummary": "ملخص المدفوعات",

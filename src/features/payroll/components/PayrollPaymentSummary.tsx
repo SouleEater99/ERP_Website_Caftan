@@ -21,28 +21,28 @@ export const PayrollPaymentSummary: React.FC<PayrollPaymentSummaryProps> = ({
   
   const summaryItems = [
     {
-      label: t('totalPayroll'),
+      label: t('payroll.totalPayroll'),
       value: `${totalPayroll.toLocaleString()} MAD`,
       icon: DollarSign,
       color: 'text-blue-600',
       bgColor: 'from-blue-50 to-cyan-50'
     },
     {
-      label: t('paidAmount'),
+      label: t('payroll.paidAmount'),
       value: `${paidAmount.toLocaleString()} MAD`,
       icon: CheckCircle,
       color: 'text-emerald-600',
       bgColor: 'from-emerald-50 to-teal-50'
     },
     {
-      label: t('pendingAmount'),
+      label: t('payroll.pendingAmount'),
       value: `${totalPending.toLocaleString()} MAD`,
       icon: Clock,
       color: 'text-amber-600',
       bgColor: 'from-amber-50 to-orange-50'
     },
     {
-      label: t('paymentRate'),
+      label: t('payroll.paymentRate'),
       value: `${paymentRate.toFixed(1)}%`,
       icon: TrendingUp,
       color: 'text-purple-600',
