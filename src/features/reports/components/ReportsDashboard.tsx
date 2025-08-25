@@ -155,20 +155,26 @@ const ReportsDashboard: React.FC = () => {
   };
 
   const ReportCard = ({ title, value, change, icon: Icon, color, trend }: any) => (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-      <div className={`flex items-center ${isRTL ? 'justify-start' : 'justify-between'} ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <div className={isRTL ? 'text-right' : ''}>
-          <p className="text-orange-600 text-sm font-medium">{title}</p>
-          <p className="text-2xl font-bold text-orange-900 mt-1">{value}</p>
+    <div className="glass-card p-8 rounded-3xl relative overflow-hidden group hover:shadow-2xl transition-all duration-500">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-cyan-600/5 to-blue-700/5"></div>
+      <div className="absolute inset-0 cold-pattern opacity-20"></div>
+      
+      <div className={`relative flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+          <p className="text-slate-600 text-sm font-bold uppercase tracking-wider">{title}</p>
+          <p className="text-3xl font-black text-slate-900 mt-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">{value}</p>
           {change && (
-            <div className={`flex items-center mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-              <TrendingUp className="w-4 h-4 text-emerald-500 mr-1" />
-              <span className="text-emerald-600 text-sm font-medium">{change}</span>
+            <div className={`flex items-center mt-3 ${isRTL ? 'flex-row-reverse space-x-reverse space-x-2' : 'space-x-2'}`}>
+              <div className="w-6 h-6 bg-gradient-to-r from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-emerald-600 text-sm font-bold">{change}</span>
             </div>
           )}
         </div>
-        <div className={`p-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 ${isRTL ? 'ml-4' : ''}`}>
-          <Icon className="w-6 h-6 text-white" />
+        <div className={`w-16 h-16 bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300 ${isRTL ? 'mr-6' : 'ml-6'}`}>
+          <Icon className="w-8 h-8 text-white" />
         </div>
       </div>
     </div>
@@ -249,17 +255,19 @@ const ReportsDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Error Display */}
+        {/* Enhanced Error Display */}
         {hasErrors && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-center">
-              <AlertTriangle className="w-5 h-5 text-red-400 mr-2" />
-              <div>
-                <h3 className="text-sm font-medium text-red-800">{t('reports.someDataFailed')}</h3>
-                <p className="text-sm text-red-700 mt-1">{t('reports.pleaseRefresh')}</p>
+          <div className="glass-card p-8 rounded-3xl border-l-4 border-red-500">
+            <div className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : 'space-x-4'}`}>
+              <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <AlertTriangle className="w-6 h-6 text-white" />
+              </div>
+              <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                <h3 className="text-lg font-bold text-red-800 mb-2">{t('reports.someDataFailed')}</h3>
+                <p className="text-red-700 mb-4">{t('reports.pleaseRefresh')}</p>
                 <button 
                   onClick={handleRefresh}
-                  className="mt-2 px-3 py-1 bg-red-100 text-red-700 rounded text-sm hover:bg-red-200 transition-colors"
+                  className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl hover:from-red-600 hover:to-red-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   {t('reports.retry')}
                 </button>
@@ -268,141 +276,166 @@ const ReportsDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Enhanced Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <ReportCard
             title={t('navigation.totalProduction')}
             value={workLogStats ? formatNumber(workLogStats.total_completed + workLogStats.total_pending) : '0'}
             change="+12.5%"
             icon={Package}
-            color="bg-gradient-to-r from-orange-500 to-red-600"
           />
           <ReportCard
             title={t('navigation.activeWorkers')}
             value={workLogStats ? workLogStats.worker_count.toString() : '0'}
             change="+3.2%"
             icon={Users}
-            color="bg-gradient-to-r from-orange-500 to-red-600"
           />
           <ReportCard
             title={t('navigation.revenue')}
             value={workLogStats ? formatCurrency(workLogStats.total_revenue) : '$0'}
             change="+18.7%"
             icon={DollarSign}
-            color="bg-gradient-to-r from-orange-500 to-red-600"
           />
           <ReportCard
             title={t('navigation.efficiency')}
             value={workLogStats ? formatPercentage(workLogStats.efficiency_rate) : '0%'}
             change="+5.1%"
             icon={TrendingUp}
-            color="bg-gradient-to-r from-orange-500 to-red-600"
           />
         </div>
 
-        {/* Report Navigation */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-orange-200/30">
-          <div className="flex flex-wrap gap-2 p-2">
+        {/* Enhanced Report Navigation */}
+        <div className="glass-card p-8 rounded-3xl">
+          <div className={`flex flex-wrap gap-6 ${isRTL ? 'justify-end' : 'justify-start'}`}>
             {REPORT_TYPES.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setSelectedReport(tab.id)}
-                className={`flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                className={`flex items-center px-8 py-4 rounded-2xl font-bold transition-all duration-300 transform hover:scale-105 ${
                   selectedReport === tab.id
-                    ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg'
-                    : 'text-orange-700 hover:text-orange-900 hover:bg-orange-100'
-                }`}
+                    ? 'bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-600 text-white shadow-xl shadow-blue-500/25'
+                    : 'bg-white/70 text-slate-700 hover:bg-white/90 hover:shadow-lg border border-slate-200'
+                } ${isRTL ? 'flex-row-reverse space-x-reverse space-x-3' : 'space-x-3'}`}
               >
-                {tab.icon === 'BarChart3' && <BarChart3 className="w-4 h-4 mr-2" />}
-                {tab.icon === 'Users' && <Users className="w-4 h-4 mr-2" />}
-                {tab.icon === 'PieChart' && <PieChart className="w-4 h-4 mr-2" />}
-                {tab.icon === 'DollarSign' && <DollarSign className="w-4 h-4 mr-2" />}
+                {tab.icon === 'BarChart3' && <BarChart3 className="w-5 h-5" />}
+                {tab.icon === 'Users' && <Users className="w-5 h-5" />}
+                {tab.icon === 'PieChart' && <PieChart className="w-5 h-5" />}
+                {tab.icon === 'DollarSign' && <DollarSign className="w-5 h-5" />}
                 <span>{t(`dashboard.${tab.label}`)}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Report Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Enhanced Report Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Main Chart */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-8">
             {selectedReport === 'production' && monthlyProduction && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-                <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <h3 className="text-xl font-bold text-orange-900">{t('dashboard.productionTrends')}</h3>
-                  <div className={`flex items-center space-x-2 text-sm text-orange-700 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <Calendar className="w-4 h-4" />
-                    <span>{t('dashboard.lastSixMonths')}</span>
+              <div className="glass-card p-10 rounded-3xl">
+                <div className={`flex items-center justify-between mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <h3 className="text-2xl font-black text-slate-900 mb-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                      {t('dashboard.productionTrends')}
+                    </h3>
+                    <p className="text-slate-600 font-medium">{t('dashboard.monthlyAnalysis')}</p>
+                  </div>
+                  <div className={`flex items-center bg-blue-50 px-4 py-2 rounded-2xl ${isRTL ? 'flex-row-reverse space-x-reverse space-x-3' : 'space-x-3'}`}>
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                      <Calendar className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-blue-700 font-semibold">{t('dashboard.lastSixMonths')}</span>
                   </div>
                 </div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={monthlyProduction}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#fbbf24" />
-                    <XAxis dataKey="month" stroke="#92400e" />
-                    <YAxis stroke="#92400e" />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'white', 
-                        border: '1px solid #fbbf24',
-                        borderRadius: '12px',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-                      }} 
-                    />
-                    <Area type="monotone" dataKey="completed" stackId="1" stroke="#f97316" fill="#f97316" fillOpacity={0.6} />
-                    <Area type="monotone" dataKey="pending" stackId="1" stroke="#dc2626" fill="#dc2626" fillOpacity={0.6} />
-                  </AreaChart>
-                </ResponsiveContainer>
+                <div className="bg-gradient-to-br from-blue-50/50 to-cyan-50/50 rounded-2xl p-6">
+                  <ResponsiveContainer width="100%" height={350}>
+                    <AreaChart data={monthlyProduction}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="month" stroke="#64748b" fontSize={12} fontWeight={500} />
+                      <YAxis stroke="#64748b" fontSize={12} fontWeight={500} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                          border: 'none',
+                          borderRadius: '16px',
+                          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                          backdropFilter: 'blur(10px)'
+                        }} 
+                      />
+                      <Area type="monotone" dataKey="completed" stackId="1" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} strokeWidth={3} />
+                      <Area type="monotone" dataKey="pending" stackId="1" stroke="#06b6d4" fill="#06b6d4" fillOpacity={0.3} strokeWidth={3} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             )}
 
             {selectedReport === 'workers' && workerPerformance && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-                <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <h3 className="text-xl font-bold text-orange-900">{t('dashboard.workerPerformance')}</h3>
-                  <button className="px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors text-sm">
-                    <Eye className="w-4 h-4 mr-1" />
+              <div className="glass-card p-10 rounded-3xl">
+                <div className={`flex items-center justify-between mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <h3 className="text-2xl font-black text-slate-900 mb-2 bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+                      {t('dashboard.workerPerformance')}
+                    </h3>
+                    <p className="text-slate-600 font-medium">{t('dashboard.performanceMetrics')}</p>
+                  </div>
+                  <button className="cold-button">
+                    <Eye className="w-5 h-5" />
                     <span>{t('dashboard.viewDetails')}</span>
                   </button>
                 </div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={workerPerformance}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#fbbf24" />
-                    <XAxis dataKey="worker_name" stroke="#92400e" />
-                    <YAxis stroke="#92400e" />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'white', 
-                        border: '1px solid #fbbf24',
-                        borderRadius: '12px',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-                      }} 
-                    />
-                    <Bar dataKey="tasks_completed" fill="#f97316" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <div className="bg-gradient-to-br from-emerald-50/50 to-green-50/50 rounded-2xl p-6">
+                  <ResponsiveContainer width="100%" height={350}>
+                    <BarChart data={workerPerformance}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="worker_name" stroke="#64748b" fontSize={12} fontWeight={500} />
+                      <YAxis stroke="#64748b" fontSize={12} fontWeight={500} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                          border: 'none',
+                          borderRadius: '16px',
+                          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                          backdropFilter: 'blur(10px)'
+                        }} 
+                      />
+                      <Bar dataKey="tasks_completed" fill="url(#emeraldGradient)" radius={[8, 8, 0, 0]} />
+                      <defs>
+                        <linearGradient id="emeraldGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.9}/>
+                          <stop offset="95%" stopColor="#059669" stopOpacity={0.7}/>
+                        </linearGradient>
+                      </defs>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             )}
 
+            {/* Enhanced Materials Report */}
             {selectedReport === 'materials' && materialUsage && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-                <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <h3 className="text-xl font-bold text-orange-900">{t('dashboard.materialUsageDistribution')}</h3>
-                  <div className="text-sm text-orange-700">{t('dashboard.currentMonth')}</div>
+              <div className="glass-card p-10 rounded-3xl">
+                <div className={`flex items-center justify-between mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <h3 className="text-2xl font-black text-slate-900 mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      {t('dashboard.materialUsageDistribution')}
+                    </h3>
+                    <p className="text-slate-600 font-medium">{t('dashboard.currentMonth')}</p>
+                  </div>
                 </div>
                 
-                {/* Material Usage Chart */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                  {/* Pie Chart */}
-                  <div>
-                    <h4 className="text-lg font-semibold text-orange-800 mb-4">{t('reports.usageDistribution')}</h4>
-                    <ResponsiveContainer width="100%" height={250}>
+                {/* Enhanced Material Usage Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                  {/* Enhanced Pie Chart */}
+                  <div className="bg-gradient-to-br from-purple-50/50 to-pink-50/50 rounded-2xl p-6">
+                    <h4 className="text-lg font-bold text-slate-800 mb-6">{t('reports.usageDistribution')}</h4>
+                    <ResponsiveContainer width="100%" height={300}>
                       <RechartsPieChart>
                         <Pie
                           data={materialUsage}
                           cx="50%"
                           cy="50%"
-                          outerRadius={80}
+                          outerRadius={100}
                           fill="#8884d8"
                           dataKey="percentage"
                           label={({ material_name, percentage }) => `${material_name} ${percentage.toFixed(1)}%`}
@@ -416,25 +449,27 @@ const ReportsDashboard: React.FC = () => {
                     </ResponsiveContainer>
                   </div>
 
-                  {/* Material Details Table */}
-                  <div>
-                    <h4 className="text-lg font-semibold text-orange-800 mb-4">{t('reports.materialDetails')}</h4>
-                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {/* Enhanced Material Details */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-bold text-slate-800">{t('reports.materialDetails')}</h4>
+                    <div className="space-y-3 max-h-80 overflow-y-auto custom-scrollbar">
                       {materialUsage.map((material, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-orange-50/50 rounded-lg">
-                          <div className="flex items-center space-x-3">
-                            <div 
-                              className="w-4 h-4 rounded-full" 
-                              style={{ backgroundColor: material.color }}
-                            ></div>
-                            <span className="font-medium text-orange-900">{material.material_name}</span>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-semibold text-orange-800">
-                              {material.quantity_used} {t('common.unit')}
+                        <div key={index} className={`glass-card p-4 rounded-2xl hover:shadow-lg transition-all duration-300 ${isRTL ? 'text-right' : 'text-left'}`}>
+                          <div className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <div className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-3' : 'space-x-3'}`}>
+                              <div 
+                                className="w-4 h-4 rounded-full shadow-sm" 
+                                style={{ backgroundColor: material.color }}
+                              ></div>
+                              <span className="font-bold text-slate-900">{material.material_name}</span>
                             </div>
-                            <div className="text-xs text-orange-600">
-                              {material.percentage.toFixed(1)}%
+                            <div className={isRTL ? 'text-left' : 'text-right'}>
+                              <div className="text-sm font-bold text-slate-800">
+                                {material.quantity_used} {t('common.unit')}
+                              </div>
+                              <div className="text-xs text-slate-600">
+                                {material.percentage.toFixed(1)}%
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -443,89 +478,28 @@ const ReportsDashboard: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Material Usage Trends */}
-                {materialUsageTrends && materialUsageTrends.length > 0 && (
-                  <div className="mt-6">
-                    <h4 className="text-lg font-semibold text-orange-800 mb-4">{t('reports.usageTrendsOverTime')}</h4>
-                    <ResponsiveContainer width="100%" height={200}>
-                      <BarChart data={materialUsageTrends}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#fbbf24" />
-                        <XAxis dataKey="month" stroke="#92400e" />
-                        <YAxis stroke="#92400e" />
-                        <Tooltip 
-                          contentStyle={{ 
-                            backgroundColor: 'white', 
-                            border: '1px solid #fbbf24',
-                            borderRadius: '12px',
-                            boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-                          }} 
-                        />
-                        {materialUsage.slice(0, 5).map((material, index) => (
-                          <Bar 
-                            key={material.material_name}
-                            dataKey={material.material_name} 
-                            fill={material.color} 
-                            radius={[2, 2, 0, 0]}
-                          />
-                        ))}
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                )}
-
-                {/* Material Cost Analysis */}
-                <div className="mt-6 p-4 bg-orange-50/50 rounded-lg">
-                  <h4 className="text-lg font-semibold text-orange-800 mb-3">{t('reports.costAnalysis')}</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-900">
+                {/* Enhanced Cost Analysis */}
+                <div className="glass-card p-8 rounded-2xl bg-gradient-to-r from-purple-50/50 to-pink-50/50">
+                  <h4 className="text-xl font-bold text-slate-900 mb-6">{t('reports.costAnalysis')}</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className={`text-center p-6 bg-white/70 rounded-2xl ${isRTL ? 'text-right' : 'text-left'}`}>
+                      <div className="text-3xl font-black text-purple-900 mb-2">
                         ${materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0).toLocaleString()}
                       </div>
-                      <div className="text-sm text-orange-600">{t('reports.totalMaterialCost')}</div>
+                      <div className="text-sm text-purple-600 font-semibold">{t('reports.totalMaterialCost')}</div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-900">
+                    <div className={`text-center p-6 bg-white/70 rounded-2xl ${isRTL ? 'text-right' : 'text-left'}`}>
+                      <div className="text-3xl font-black text-purple-900 mb-2">
                         {materialUsage.length}
                       </div>
-                      <div className="text-sm text-orange-600">{t('reports.materialsUsed')}</div>
+                      <div className="text-sm text-purple-600 font-semibold">{t('reports.materialsUsed')}</div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-900">
+                    <div className={`text-center p-6 bg-white/70 rounded-2xl ${isRTL ? 'text-right' : 'text-left'}`}>
+                      <div className="text-3xl font-black text-purple-900 mb-2">
                         ${(materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0) / 
                            materialUsage.reduce((sum, m) => sum + m.quantity_used, 0)).toFixed(2)}
                       </div>
-                      <div className="text-sm text-orange-600">{t('reports.costPerUnit')}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Material Insights - Now below the chart instead of on the right side */}
-                <div className="mt-6 p-4 bg-gradient-to-r from-orange-50 to-red-50/50 rounded-lg border border-orange-200">
-                  <h4 className="text-lg font-bold text-orange-900 mb-4">{t('reports.materialInsights')}</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="text-center p-3 bg-white/70 rounded-lg">
-                      <div className="text-2xl font-bold text-orange-900">
-                        {materialUsage[0]?.material_name || 'N/A'}
-                      </div>
-                      <div className="text-sm text-orange-600">{t('reports.mostUsed')}</div>
-                    </div>
-                    <div className="text-center p-3 bg-white/70 rounded-lg">
-                      <div className="text-2xl font-bold text-orange-900">
-                        {materialUsage.reduce((sum, m) => sum + m.quantity_used, 0).toLocaleString()}
-                      </div>
-                      <div className="text-sm text-orange-600">{t('reports.totalUnits')}</div>
-                    </div>
-                    <div className="text-center p-3 bg-white/70 rounded-lg">
-                      <div className="text-2xl font-bold text-orange-900">
-                        {(materialUsage.reduce((sum, m) => sum + m.quantity_used, 0) / materialUsage.length).toFixed(0)}
-                      </div>
-                      <div className="text-sm text-orange-600">{t('reports.avgUsage')}</div>
-                    </div>
-                    <div className="text-center p-3 bg-white/70 rounded-lg">
-                      <div className="text-lg font-bold text-orange-900">
-                        {materialUsage.slice(0, 3).map(m => m.material_name).join(', ')}
-                      </div>
-                      <div className="text-sm text-orange-600">{t('reports.top3Materials')}</div>
+                      <div className="text-sm text-purple-600 font-semibold">{t('reports.costPerUnit')}</div>
                     </div>
                   </div>
                 </div>
@@ -533,93 +507,123 @@ const ReportsDashboard: React.FC = () => {
             )}
 
             {selectedReport === 'financial' && monthlyProduction && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-                <div className={`flex items-center justify-between mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <h3 className="text-xl font-bold text-orange-900">{t('dashboard.revenueTrends')}</h3>
-                  <div className="text-sm text-orange-700">{t('dashboard.monthlyRevenue')}</div>
+              <div className="glass-card p-10 rounded-3xl">
+                <div className={`flex items-center justify-between mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                    <h3 className="text-2xl font-black text-slate-900 mb-2 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                      {t('dashboard.revenueTrends')}
+                    </h3>
+                    <p className="text-slate-600 font-medium">{t('dashboard.monthlyRevenue')}</p>
+                  </div>
                 </div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={monthlyProduction}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#fbbf24" />
-                    <XAxis dataKey="month" stroke="#92400e" />
-                    <YAxis stroke="#92400e" />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'white', 
-                        border: '1px solid #fbbf24',
-                        borderRadius: '12px',
-                        boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-                      }} 
-                    />
-                    <Line type="monotone" dataKey="revenue" stroke="#f97316" strokeWidth={3} dot={{ fill: '#f97316', strokeWidth: 2, r: 6 }} />
-                  </LineChart>
-                </ResponsiveContainer>
+                <div className="bg-gradient-to-br from-green-50/50 to-emerald-50/50 rounded-2xl p-6">
+                  <ResponsiveContainer width="100%" height={350}>
+                    <LineChart data={monthlyProduction}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis dataKey="month" stroke="#64748b" fontSize={12} fontWeight={500} />
+                      <YAxis stroke="#64748b" fontSize={12} fontWeight={500} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                          border: 'none',
+                          borderRadius: '16px',
+                          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                          backdropFilter: 'blur(10px)'
+                        }} 
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="revenue" 
+                        stroke="#10b981" 
+                        strokeWidth={4} 
+                        dot={{ fill: '#10b981', strokeWidth: 3, r: 8 }}
+                        activeDot={{ r: 10, stroke: '#10b981', strokeWidth: 3, fill: '#ffffff' }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             )}
 
-            {/* Empty State */}
+            {/* Enhanced Empty State */}
             {!monthlyProduction && !workerPerformance && !materialUsage && (
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-12 shadow-lg border border-orange-200/30 text-center">
-                <Package className="w-16 h-16 text-orange-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-orange-900 mb-2">{t('reports.noDataAvailable')}</h3>
-                <p className="text-orange-600">{t('reports.selectDifferentPeriod')}</p>
+              <div className="glass-card p-16 rounded-3xl text-center">
+                <div className="w-24 h-24 bg-gradient-to-r from-slate-200 to-slate-300 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                  <Package className="w-12 h-12 text-slate-500" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{t('reports.noDataAvailable')}</h3>
+                <p className="text-slate-600 mb-6">{t('reports.selectDifferentPeriod')}</p>
+                <button onClick={handleRefresh} className="cold-button">
+                  <RefreshCw className="w-5 h-5" />
+                  <span>{t('common.refresh')}</span>
+                </button>
               </div>
             )}
           </div>
 
-          {/* Side Panel */}
-          <div className="space-y-6">
-            {/* Quick Stats */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-              <h4 className="text-lg font-bold text-orange-900 mb-4">{t('dashboard.quickStats')}</h4>
+          {/* Enhanced Side Panel */}
+          <div className="space-y-8">
+            {/* Enhanced Quick Stats */}
+            <div className="glass-card p-8 rounded-3xl">
+              <h4 className="text-xl font-black text-slate-900 mb-6 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                {t('dashboard.quickStats')}
+              </h4>
               <div className="space-y-4">
                 {quickStats?.map((stat, index) => (
-                  <div key={index} className={`flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <span className="text-orange-700">{t(stat.label)}</span>
-                    <span className={`font-bold ${stat.color}`}>{stat.value}</span>
+                  <div key={index} className={`flex items-center justify-between p-4 bg-blue-50/50 rounded-2xl hover:bg-blue-50 transition-all duration-300 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <span className="text-slate-700 font-semibold">{t(stat.label)}</span>
+                    <span className={`font-black text-lg ${stat.color}`}>{stat.value}</span>
                   </div>
                 )) || (
-                  <div className="text-orange-500 text-sm">{t('common.loading')}</div>
+                  <div className="flex items-center justify-center p-8">
+                    <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Recent Activities */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-              <h4 className="text-lg font-bold text-orange-900 mb-4">{t('dashboard.recentActivities')}</h4>
-              <div className="space-y-3">
+            {/* Enhanced Recent Activities */}
+            <div className="glass-card p-8 rounded-3xl">
+              <h4 className="text-xl font-black text-slate-900 mb-6 bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+                {t('dashboard.recentActivities')}
+              </h4>
+              <div className="space-y-4">
                 {recentActivities?.map((activity) => (
-                  <div key={activity.id} className={`flex items-start space-x-3 p-3 bg-orange-50/50 rounded-lg ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                    <div className={`w-2 h-2 rounded-full mt-2 ${
+                  <div key={activity.id} className={`flex items-start p-4 bg-emerald-50/50 rounded-2xl hover:bg-emerald-50 transition-all duration-300 ${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : 'space-x-4'}`}>
+                    <div className={`w-3 h-3 rounded-full mt-2 shadow-sm ${
                       activity.status === 'success' ? 'bg-emerald-500' :
                       activity.status === 'pending' ? 'bg-amber-500' : 'bg-blue-500'
                     }`}></div>
-                    <div className={`flex-1 ${isRTL ? 'text-right' : ''}`}>
-                      <p className="text-sm font-medium text-orange-900">{t(activity.action)}</p>
-                      <p className="text-xs text-orange-700">{activity.item}</p>
-                      <p className="text-xs text-orange-600 mt-1">{new Date(activity.timestamp).toLocaleDateString()}</p>
+                    <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                      <p className="text-sm font-bold text-slate-900">{t(activity.action)}</p>
+                      <p className="text-xs text-slate-700 mt-1">{activity.item}</p>
+                      <p className="text-xs text-slate-500 mt-2">{new Date(activity.timestamp).toLocaleDateString()}</p>
                     </div>
                   </div>
                 )) || (
-                  <div className="text-orange-500 text-sm">{t('common.loading')}</div>
+                  <div className="flex items-center justify-center p-8">
+                    <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+                  </div>
                 )}
               </div>
             </div>
 
-            {/* Export Options */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200/30">
-              <h4 className="text-lg font-bold text-orange-900 mb-4">{t('dashboard.exportReports')}</h4>
-              <div className="space-y-2">
+            {/* Enhanced Export Options */}
+            <div className="glass-card p-8 rounded-3xl">
+              <h4 className="text-xl font-black text-slate-900 mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                {t('dashboard.exportReports')}
+              </h4>
+              <div className="space-y-4">
                 {EXPORT_OPTIONS.map((option, index) => (
                   <button 
                     key={index}
                     onClick={() => handleExport(option.format)}
                     disabled={exporting}
-                    className={`w-full px-4 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors ${isRTL ? 'text-right' : 'text-left'} disabled:opacity-50`}
+                    className={`w-full flex items-center px-6 py-4 bg-purple-50 text-purple-700 rounded-2xl hover:bg-purple-100 transition-all duration-300 font-semibold shadow-sm hover:shadow-md disabled:opacity-50 ${isRTL ? 'flex-row-reverse space-x-reverse space-x-3' : 'space-x-3'}`}
                   >
-                    {option.icon === 'FileText' && <FileText className="w-4 h-4 mr-2" />}
-                    {option.icon === 'BarChart3' && <BarChart3 className="w-4 h-4 mr-2" />}
-                    {option.icon === 'Activity' && <Activity className="w-4 h-4 mr-2" />}
+                    {option.icon === 'FileText' && <FileText className="w-5 h-5" />}
+                    {option.icon === 'BarChart3' && <BarChart3 className="w-5 h-5" />}
+                    {option.icon === 'Activity' && <Activity className="w-5 h-5" />}
                     <span>{t(`dashboard.${option.label}`)}</span>
                   </button>
                 ))}
