@@ -141,7 +141,7 @@ export const StockAdjustmentModal: React.FC<StockAdjustmentModalProps> = ({
             </div>
 
             {/* Enhanced Action Buttons */}
-            <div className={`flex space-x-4 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+            <div className={`flex ${isRTL ? 'flex-row-reverse space-x-reverse space-x-12' : 'space-x-4'}`}>
               <button
                 type="button"
                 onClick={handleClose}
