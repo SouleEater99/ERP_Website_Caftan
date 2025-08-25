@@ -196,40 +196,53 @@ const ReportsDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-800 mb-2">{t('reports.title')}</h1>
-              <p className="text-slate-600">{t('reports.description')}</p>
+        {/* Enhanced Header - Fully Professional */}
+        <div className="glass-card p-10 rounded-3xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-cyan-600/5 to-blue-700/5"></div>
+          <div className="absolute inset-0 cold-pattern opacity-30"></div>
+          
+          <div className={`relative flex items-center justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className={isRTL ? 'text-right' : 'text-left'}>
+              <h1 className="text-5xl font-black text-slate-900 mb-4 bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700 bg-clip-text text-transparent">
+                {t('reports.title')}
+              </h1>
+              <p className="text-slate-600 text-xl font-medium">{t('reports.description')}</p>
             </div>
-            <div className={`flex items-center space-x-3 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
+            <div className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-6' : 'space-x-6'}`}>
               <button
                 onClick={handleRefresh}
-                className="flex items-center px-4 py-2 bg-white text-slate-700 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+                className="glass-button flex items-center px-8 py-4"
               >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                <span>{t('common.refresh')}</span>
+                <RefreshCw className={`w-5 h-5 ${isRTL ? 'ml-3' : 'mr-3'}`} />
+                <span className="font-bold">{t('common.refresh')}</span>
               </button>
               <button
                 onClick={() => setExporting(!exporting)}
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="cold-button"
               >
-                <Download className="w-4 h-4 mr-2" />
-                <span>{exporting ? t('reports.exporting') : t('common.export')}</span>
+                <Download className={`w-5 h-5 ${isRTL ? 'ml-3' : 'mr-3'}`} />
+                <span className="font-bold">{exporting ? t('reports.exporting') : t('common.export')}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Period and Report Type Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">{t('reports.selectPeriod')}</label>
+        {/* Enhanced Period and Report Selection */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="glass-card p-8 rounded-3xl">
+            <label className={`block text-sm font-black text-slate-900 uppercase tracking-widest mb-6 ${isRTL ? 'text-right' : 'text-left'}`}>
+              <span className={`inline-flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : 'space-x-4'}`}>
+                <div className="w-4 h-4 bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-600 rounded-full shadow-lg shadow-blue-500/30"></div>
+                <span className="bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                  {t('reports.selectPeriod')}
+                </span>
+              </span>
+            </label>
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-6 py-5 bg-white/90 backdrop-blur-sm border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-slate-800 font-semibold shadow-lg hover:shadow-xl text-lg"
+              dir={isRTL ? 'rtl' : 'ltr'}
             >
               {REPORT_PERIODS.map(period => (
                 <option key={period.value} value={period.value}>
@@ -239,12 +252,20 @@ const ReportsDashboard: React.FC = () => {
             </select>
           </div>
           
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">{t('reports.selectReportType')}</label>
+          <div className="glass-card p-8 rounded-3xl">
+            <label className={`block text-sm font-black text-slate-900 uppercase tracking-widest mb-6 ${isRTL ? 'text-right' : 'text-left'}`}>
+              <span className={`inline-flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : 'space-x-4'}`}>
+                <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 rounded-full shadow-lg shadow-emerald-500/30"></div>
+                <span className="bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                  {t('reports.selectReportType')}
+                </span>
+              </span>
+            </label>
             <select
               value={selectedReport}
               onChange={(e) => setSelectedReport(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-6 py-5 bg-white/90 backdrop-blur-sm border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-300 text-slate-800 font-semibold shadow-lg hover:shadow-xl text-lg"
+              dir={isRTL ? 'rtl' : 'ltr'}
             >
               {REPORT_TYPES.map(report => (
                 <option key={report.id} value={report.id}>
@@ -257,17 +278,17 @@ const ReportsDashboard: React.FC = () => {
 
         {/* Enhanced Error Display */}
         {hasErrors && (
-          <div className="glass-card p-8 rounded-3xl border-l-4 border-red-500">
-            <div className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-4' : 'space-x-4'}`}>
-              <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <AlertTriangle className="w-6 h-6 text-white" />
+          <div className="glass-card p-10 rounded-3xl border-l-8 border-red-500 bg-gradient-to-r from-red-50/50 to-red-100/30">
+            <div className={`flex items-center ${isRTL ? 'flex-row-reverse space-x-reverse space-x-6' : 'space-x-6'}`}>
+              <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-3xl flex items-center justify-center shadow-xl shadow-red-500/25">
+                <AlertTriangle className="w-8 h-8 text-white" />
               </div>
               <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
-                <h3 className="text-lg font-bold text-red-800 mb-2">{t('reports.someDataFailed')}</h3>
-                <p className="text-red-700 mb-4">{t('reports.pleaseRefresh')}</p>
+                <h3 className="text-2xl font-black text-red-800 mb-3">{t('reports.someDataFailed')}</h3>
+                <p className="text-red-700 text-lg mb-6">{t('reports.pleaseRefresh')}</p>
                 <button 
                   onClick={handleRefresh}
-                  className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl hover:from-red-600 hover:to-red-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="px-8 py-4 bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white rounded-2xl hover:from-red-600 hover:via-red-700 hover:to-red-800 transition-all duration-300 font-bold shadow-xl hover:shadow-2xl transform hover:scale-105"
                 >
                   {t('reports.retry')}
                 </button>
@@ -358,7 +379,7 @@ const ReportsDashboard: React.FC = () => {
                           backgroundColor: 'rgba(255, 255, 255, 0.95)', 
                           border: 'none',
                           borderRadius: '16px',
-                          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
                           backdropFilter: 'blur(10px)'
                         }} 
                       />
@@ -632,6 +653,150 @@ const ReportsDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Enhanced Material Usage Trends - Previously Missing */}
+      {selectedReport === 'materials' && materialUsageTrends && materialUsageTrends.length > 0 && (
+        <div className="glass-card p-10 rounded-3xl">
+          <div className={`flex items-center justify-between mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
+            <div className={isRTL ? 'text-right' : 'text-left'}>
+              <h4 className="text-2xl font-black text-slate-900 mb-2 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+                {t('reports.usageTrendsOverTime')}
+              </h4>
+              <p className="text-slate-600 font-medium">{t('reports.monthlyTrends')}</p>
+            </div>
+          </div>
+          <div className="bg-gradient-to-br from-orange-50/50 to-amber-50/50 rounded-2xl p-8">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={materialUsageTrends}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="month" stroke="#64748b" fontSize={12} fontWeight={500} />
+                <YAxis stroke="#64748b" fontSize={12} fontWeight={500} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                    border: 'none',
+                    borderRadius: '16px',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(10px)'
+                  }} 
+                />
+                {materialUsage.slice(0, 5).map((material, index) => (
+                  <Bar 
+                    key={material.material_name}
+                    dataKey={material.material_name} 
+                    fill={material.color} 
+                    radius={[6, 6, 0, 0]}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced Material Insights - Previously Missing */}
+      {selectedReport === 'materials' && materialUsage && (
+        <div className="glass-card p-10 rounded-3xl bg-gradient-to-br from-purple-50/30 to-pink-50/30 border border-purple-200/50">
+          <h4 className="text-2xl font-black text-slate-900 mb-8 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            {t('reports.materialInsights')}
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className={`glass-card p-8 rounded-2xl text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Package className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-2xl font-black text-purple-900 mb-2">
+                {materialUsage[0]?.material_name || 'N/A'}
+              </div>
+              <div className="text-sm text-purple-600 font-bold uppercase tracking-wide">{t('reports.mostUsed')}</div>
+            </div>
+            <div className={`glass-card p-8 rounded-2xl text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-2xl font-black text-blue-900 mb-2">
+                {materialUsage.reduce((sum, m) => sum + m.quantity_used, 0).toLocaleString()}
+              </div>
+              <div className="text-sm text-blue-600 font-bold uppercase tracking-wide">{t('reports.totalUnits')}</div>
+            </div>
+            <div className={`glass-card p-8 rounded-2xl text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-green-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-2xl font-black text-emerald-900 mb-2">
+                {(materialUsage.reduce((sum, m) => sum + m.quantity_used, 0) / materialUsage.length).toFixed(0)}
+              </div>
+              <div className="text-sm text-emerald-600 font-bold uppercase tracking-wide">{t('reports.avgUsage')}</div>
+            </div>
+            <div className={`glass-card p-8 rounded-2xl text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Activity className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-lg font-black text-amber-900 mb-2 leading-tight">
+                {materialUsage.slice(0, 3).map(m => m.material_name).join(', ')}
+              </div>
+              <div className="text-sm text-amber-600 font-bold uppercase tracking-wide">{t('reports.top3Materials')}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced Cost Analysis - Better RTL Support */}
+      {selectedReport === 'materials' && materialUsage && (
+        <div className="glass-card p-10 rounded-3xl bg-gradient-to-br from-indigo-50/30 to-purple-50/30 border border-indigo-200/50">
+          <h4 className="text-2xl font-black text-slate-900 mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            {t('reports.costAnalysis')}
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className={`glass-card p-8 rounded-2xl text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-3xl font-black text-indigo-900 mb-3">
+                ${materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0).toLocaleString()}
+              </div>
+              <div className="text-sm text-indigo-600 font-bold uppercase tracking-wide">{t('reports.totalMaterialCost')}</div>
+            </div>
+            <div className={`glass-card p-8 rounded-2xl text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Package className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-3xl font-black text-emerald-900 mb-3">
+                {materialUsage.length}
+              </div>
+              <div className="text-sm text-emerald-600 font-bold uppercase tracking-wide">{t('reports.materialsUsed')}</div>
+            </div>
+            <div className={`glass-card p-8 rounded-2xl text-center ${isRTL ? 'text-right' : 'text-left'}`}>
+              <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-3xl font-black text-orange-900 mb-3">
+                ${(materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0) / 
+                   materialUsage.reduce((sum, m) => sum + m.quantity_used, 0)).toFixed(2)}
+              </div>
+              <div className="text-sm text-orange-600 font-bold uppercase tracking-wide">{t('reports.costPerUnit')}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced Custom Scrollbar CSS */}
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(148, 163, 184, 0.1);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: linear-gradient(to bottom, #3b82f6, #06b6d4);
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: linear-gradient(to bottom, #2563eb, #0891b2);
+        }
+      `}</style>
     </div>
   );
 };
