@@ -141,12 +141,20 @@
   },
   
   "inventory": {
+    "title": "المخزون",
     "material": "المادة",
     "currentStock": "المخزون الحالي",
-    "unit": "الوحدة",
+    "used": "المستخدم",
+    "remaining": "المتبقي",
     "reorderLevel": "مستوى إعادة الطلب",
-    "lastUpdated": "آخر تحديث",
-    "addStock": "إضافة مخزون"
+    "actions": "الإجراءات",
+    "addStock": "إضافة مخزون",
+    "consumeStock": "استهلاك مخزون",
+    "adding": "جاري الإضافة...",
+    "consuming": "جاري الاستهلاك...",
+    "enterQuantityToAdd": "أدخل الكمية المراد إضافتها:",
+    "enterQuantityToConsume": "أدخل الكمية المراد استهلاكها:",
+    "invalidQuantity": "كمية غير صحيحة"
   },
   
   "bom": {

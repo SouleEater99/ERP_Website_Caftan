@@ -133,12 +133,20 @@
   },
   
   "inventory": {
+    "title": "Inventory",
     "material": "Material",
     "currentStock": "Current Stock",
-    "unit": "Unit",
+    "used": "Used",
+    "remaining": "Remaining",
     "reorderLevel": "Reorder Level",
-    "lastUpdated": "Last Updated",
-    "addStock": "Add Stock"
+    "actions": "Actions",
+    "addStock": "Add Stock",
+    "consumeStock": "Consume Stock",
+    "adding": "Adding...",
+    "consuming": "Consuming...",
+    "enterQuantityToAdd": "Enter quantity to add:",
+    "enterQuantityToConsume": "Enter quantity to consume:",
+    "invalidQuantity": "Invalid quantity"
   },
   
   "bom": {

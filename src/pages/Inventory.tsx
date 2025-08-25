@@ -21,7 +21,7 @@ const Inventory: React.FC = () => {
   const consumeStockMutation = useConsumeStockMutation();
 
   const handleAddStock = (id: string) => {
-    const quantity = prompt(INVENTORY_MESSAGES.ENTER_QUANTITY_ADD);
+    const quantity = prompt(t('inventory.enterQuantityToAdd'));
     if (quantity && validateQuantity(quantity)) {
       console.log('Handling add stock for ID:', id, 'quantity:', quantity);
       addStockMutation.mutate({ stockId: id, quantity: Number(quantity) });
@@ -29,7 +29,7 @@ const Inventory: React.FC = () => {
   };
 
   const handleConsumeStock = (id: string) => {
-    const quantity = prompt(INVENTORY_MESSAGES.ENTER_QUANTITY_CONSUME);
+    const quantity = prompt(t('inventory.enterQuantityToConsume'));
     if (quantity && validateQuantity(quantity)) {
       console.log('Handling consume stock for ID:', id, 'quantity:', quantity);
       consumeStockMutation.mutate({ stockId: id, quantity: Number(quantity) });
@@ -37,7 +37,7 @@ const Inventory: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">{t('loading')}</div>;
+    return <div className="text-center py-8">{t('common.loading')}</div>;
   }
 
   // Calculate remaining dynamically and filter low stock items
