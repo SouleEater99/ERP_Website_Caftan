@@ -110,10 +110,10 @@ const ReportsDashboard: React.FC = () => {
       window.URL.revokeObjectURL(url);
       
       // Show success message
-      showToast('Export successful!', 'success');
+      showToast(t('reports.exportSuccessful'), 'success');
     } catch (error) {
       console.error('Export failed:', error);
-      showToast('Export failed. Please try again.', 'error');
+      showToast(t('reports.exportFailed'), 'error');
     } finally {
       setExporting(false);
     }
@@ -352,6 +352,7 @@ const ReportsDashboard: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Main Chart */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Production Report */}
             {selectedReport === 'production' && monthlyProduction && (
               <div className="glass-card p-10 rounded-3xl">
                 <div className={`flex items-center justify-between mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -391,6 +392,7 @@ const ReportsDashboard: React.FC = () => {
               </div>
             )}
 
+            {/* Worker Performance Report */}
             {selectedReport === 'workers' && workerPerformance && (
               <div className="glass-card p-10 rounded-3xl">
                 <div className={`flex items-center justify-between mb-8 ${isRTL ? 'flex-row-reverse' : ''}`}>
@@ -505,7 +507,7 @@ const ReportsDashboard: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className={`text-center p-6 bg-white/70 rounded-2xl ${isRTL ? 'text-right' : 'text-left'}`}>
                       <div className="text-3xl font-black text-purple-900 mb-2">
-                        ${materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0).toLocaleString()}
+                        {formatCurrency(materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0))}
                       </div>
                       <div className="text-sm text-purple-600 font-semibold">{t('reports.totalMaterialCost')}</div>
                     </div>
@@ -517,8 +519,8 @@ const ReportsDashboard: React.FC = () => {
                     </div>
                     <div className={`text-center p-6 bg-white/70 rounded-2xl ${isRTL ? 'text-right' : 'text-left'}`}>
                       <div className="text-3xl font-black text-purple-900 mb-2">
-                        ${(materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0) / 
-                           materialUsage.reduce((sum, m) => sum + m.quantity_used, 0)).toFixed(2)}
+                        {formatCurrency((materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0) / 
+                           materialUsage.reduce((sum, m) => sum + m.quantity_used, 0)).toFixed(2))}
                       </div>
                       <div className="text-sm text-purple-600 font-semibold">{t('reports.costPerUnit')}</div>
                     </div>
@@ -592,7 +594,7 @@ const ReportsDashboard: React.FC = () => {
               <div className="space-y-4">
                 {quickStats?.map((stat, index) => (
                   <div key={index} className={`flex items-center justify-between p-4 bg-blue-50/50 rounded-2xl hover:bg-blue-50 transition-all duration-300 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                    <span className="text-slate-700 font-semibold">{t(stat.label)}</span>
+                    <span className="text-slate-700 font-semibold">{t(stat.labelKey)}</span>
                     <span className={`font-black text-lg ${stat.color}`}>{stat.value}</span>
                   </div>
                 )) || (
@@ -616,7 +618,7 @@ const ReportsDashboard: React.FC = () => {
                       activity.status === 'pending' ? 'bg-amber-500' : 'bg-blue-500'
                     }`}></div>
                     <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
-                      <p className="text-sm font-bold text-slate-900">{t(activity.action)}</p>
+                      <p className="text-sm font-bold text-slate-900">{t(activity.actionKey)}</p>
                       <p className="text-xs text-slate-700 mt-1">{activity.item}</p>
                       <p className="text-xs text-slate-500 mt-2">{new Date(activity.timestamp).toLocaleDateString()}</p>
                     </div>
@@ -706,7 +708,7 @@ const ReportsDashboard: React.FC = () => {
                 <Package className="w-8 h-8 text-white" />
               </div>
               <div className="text-2xl font-black text-purple-900 mb-2">
-                {materialUsage[0]?.material_name || 'N/A'}
+                {materialUsage[0]?.material_name || t('common.notAvailable')}
               </div>
               <div className="text-sm text-purple-600 font-bold uppercase tracking-wide">{t('reports.mostUsed')}</div>
             </div>
@@ -753,7 +755,7 @@ const ReportsDashboard: React.FC = () => {
                 <DollarSign className="w-8 h-8 text-white" />
               </div>
               <div className="text-3xl font-black text-indigo-900 mb-3">
-                ${materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0).toLocaleString()}
+                {formatCurrency(materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0))}
               </div>
               <div className="text-sm text-indigo-600 font-bold uppercase tracking-wide">{t('reports.totalMaterialCost')}</div>
             </div>
@@ -771,8 +773,8 @@ const ReportsDashboard: React.FC = () => {
                 <TrendingUp className="w-8 h-8 text-white" />
               </div>
               <div className="text-3xl font-black text-orange-900 mb-3">
-                ${(materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0) / 
-                   materialUsage.reduce((sum, m) => sum + m.quantity_used, 0)).toFixed(2)}
+                {formatCurrency((materialUsage.reduce((sum, m) => sum + (m.total_cost || 0), 0) / 
+                   materialUsage.reduce((sum, m) => sum + m.quantity_used, 0)).toFixed(2))}
               </div>
               <div className="text-sm text-orange-600 font-bold uppercase tracking-wide">{t('reports.costPerUnit')}</div>
             </div>

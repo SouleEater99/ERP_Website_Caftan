@@ -30,16 +30,17 @@ export interface ReportType {
 }
 
 export interface QuickStat {
-  label: string;
+  labelKey: string;
   value: string;
   color: string;
 }
 
 export interface RecentActivity {
-  action: string;
+  id: string;
+  actionKey: string;
   item: string;
-  time: string;
-  status: 'success' | 'pending' | 'info';
+  timestamp: string;
+  status: 'success' | 'pending' | 'error';
 }
 
 export interface ExportOption {

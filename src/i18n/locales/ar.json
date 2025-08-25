@@ -55,7 +55,12 @@
     "logout": "تسجيل الخروج",
     "lowStockAlerts": "تنبيهات المخزون المنخفض",
     "noRecentActivities": "لا توجد أنشطة حديثة",
-    "allStockAdequate": "جميع مستويات المخزون كافية"
+    "allStockAdequate": "جميع مستويات المخزون كافية",
+    "monthlyAnalysis": "التحليل الشهري",
+    "performanceMetrics": "مقاييس الأداء",
+    "activeOrders": "الطلبات النشطة",
+    "pendingApprovals": "الموافقات المعلقة",
+    "taskStarted": "تم بدء المهمة"
   },
   
   "navigation": {
@@ -273,7 +278,28 @@
     },
     "exportAsPDF": "تصدير كـ PDF",
     "exportAsExcel": "تصدير كـ Excel",
-    "exportAsCSV": "تصدير كـ CSV"
+    "exportAsCSV": "تصدير كـ CSV",
+    "loadingReports": "جاري تحميل التقارير...",
+    "someDataFailed": "فشل في تحميل بعض البيانات",
+    "pleaseRefresh": "يرجى تحديث الصفحة وإعادة المحاولة",
+    "retry": "إعادة المحاولة",
+    "usageDistribution": "توزيع الاستخدام",
+    "materialDetails": "تفاصيل المواد",
+    "costAnalysis": "تحليل التكلفة",
+    "totalMaterialCost": "إجمالي تكلفة المواد",
+    "materialsUsed": "المواد المستخدمة",
+    "costPerUnit": "التكلفة لكل وحدة",
+    "noDataAvailable": "لا توجد بيانات متاحة",
+    "selectDifferentPeriod": "يرجى اختيار فترة مختلفة",
+    "usageTrendsOverTime": "اتجاهات الاستخدام عبر الزمن",
+    "monthlyTrends": "الاتجاهات الشهرية",
+    "materialInsights": "رؤى المواد",
+    "mostUsed": "الأكثر استخداماً",
+    "totalUnits": "إجمالي الوحدات",
+    "avgUsage": "متوسط الاستخدام",
+    "top3Materials": "أفضل 3 مواد",
+    "exportSuccessful": "تم التصدير بنجاح!",
+    "exportFailed": "فشل التصدير. يرجى المحاولة مرة أخرى."
   },
 
   "management": {
@@ -314,5 +340,9 @@
     "monthly": "شهري",
     "emailNotifications": "إشعارات البريد الإلكتروني",
     "lowStockAlerts": "تنبيهات المخزون المنخفض"
+  },
+  "common": {
+    "notAvailable": "غير متوفر",
+    "unit": "وحدة"
   }
 }

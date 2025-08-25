@@ -55,7 +55,13 @@
     "logout": "Logout",
     "lowStockAlerts": "Low Stock Alerts",
     "noRecentActivities": "No recent activities",
-    "allStockAdequate": "All stock levels are adequate"
+    "allStockAdequate": "All stock levels are adequate",
+    "monthlyAnalysis": "Monthly Analysis",
+    "performanceMetrics": "Performance Metrics",
+    "activeOrders": "Active Orders",
+    "pendingApprovals": "Pending Approvals",
+    "productionCompleted": "Production Completed",
+    "taskStarted": "Task Started"
   },
   
   "navigation": {
@@ -263,7 +269,28 @@
     },
     "exportAsPDF": "Export as PDF",
     "exportAsExcel": "Export as Excel",
-    "exportAsCSV": "Export as CSV"
+    "exportAsCSV": "Export as CSV",
+    "loadingReports": "Loading reports...",
+    "someDataFailed": "Some data failed to load",
+    "pleaseRefresh": "Please refresh and try again",
+    "retry": "Retry",
+    "usageDistribution": "Usage Distribution",
+    "materialDetails": "Material Details",
+    "costAnalysis": "Cost Analysis",
+    "totalMaterialCost": "Total Material Cost",
+    "materialsUsed": "Materials Used",
+    "costPerUnit": "Cost Per Unit",
+    "noDataAvailable": "No data available",
+    "selectDifferentPeriod": "Please select a different period",
+    "usageTrendsOverTime": "Usage Trends Over Time",
+    "monthlyTrends": "Monthly Trends",
+    "materialInsights": "Material Insights",
+    "mostUsed": "Most Used",
+    "totalUnits": "Total Units",
+    "avgUsage": "Average Usage",
+    "top3Materials": "Top 3 Materials",
+    "exportSuccessful": "Export successful!",
+    "exportFailed": "Export failed. Please try again."
   },
   
   "common": {
@@ -317,7 +344,9 @@
     "retry": "Retry",
     "yes": "Yes",
     "no": "No",
-    "ok": "OK"
+    "ok": "OK",
+    "notAvailable": "N/A",
+    "unit": "unit"
   },
   
   "validation": {

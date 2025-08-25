@@ -44,10 +44,10 @@ export interface MaterialUsageDetail {
 
 export interface RecentActivity {
   id: string;
-  action: string;
+  actionKey: string; // Changed from 'action' to 'actionKey'
   item: string;
   timestamp: string;
-  status: 'success' | 'pending' | 'info';
+  status: 'success' | 'pending' | 'error';
 }
 
 export interface ExportData {
@@ -401,7 +401,7 @@ export class ReportsService {
 
       return data.map(log => ({
         id: log.id,
-        action: log.completed ? 'productionCompleted' : 'taskStarted',
+        actionKey: log.completed ? 'dashboard.productionCompleted' : 'dashboard.taskStarted',
         item: `${log.product} - ${log.task}`,
         timestamp: log.created_at,
         status: log.completed ? 'success' : 'pending'
@@ -413,7 +413,7 @@ export class ReportsService {
   }
 
   // Get quick stats with period filtering
-  static async getQuickStats(period: string = 'monthly'): Promise<{ label: string; value: string; color: string }[]> {
+  static async getQuickStats(period: string = 'monthly'): Promise<{ labelKey: string; value: string; color: string }[]> {
     try {
       const startDate = this.getStartDate(period);
       const today = new Date();
@@ -442,10 +442,10 @@ export class ReportsService {
       const pendingApprovals = periodLogs?.filter(log => log.completed && !log.approved).length || 0;
 
       return [
-        { label: 'todaysTasks', value: todayTasks.toString(), color: 'text-slate-800' },
-        { label: 'completionRate', value: `${completionRate.toFixed(1)}%`, color: 'text-emerald-600' },
-        { label: 'activeOrders', value: activeOrders.toString(), color: 'text-blue-600' },
-        { label: 'pendingApprovals', value: pendingApprovals.toString(), color: 'text-amber-600' }
+        { labelKey: 'dashboard.todaysTasks', value: todayTasks.toString(), color: 'text-slate-800' },
+        { labelKey: 'dashboard.completionRate', value: `${completionRate.toFixed(1)}%`, color: 'text-emerald-600' },
+        { labelKey: 'dashboard.activeOrders', value: activeOrders.toString(), color: 'text-blue-600' },
+        { labelKey: 'dashboard.pendingApprovals', value: pendingApprovals.toString(), color: 'text-amber-600' }
       ];
     } catch (error) {
       console.error('Error fetching quick stats:', error);
