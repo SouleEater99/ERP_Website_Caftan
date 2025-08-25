@@ -134,6 +134,10 @@
   
   "inventory": {
     "title": "Inventory",
+    "manageMaterials": "Manage Materials",
+    "totalMaterials": "Total Materials",
+    "lowStock": "Low Stock",
+    "materialsList": "Materials List",
     "material": "Material",
     "currentStock": "Current Stock",
     "used": "Used",

@@ -11,7 +11,8 @@ import { calculateStockRow, filterLowStockItems, validateQuantity } from '../fea
 import { StockRow } from '../features/inventory/types/inventory.types';
 
 const Inventory: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   
   const { data: stock, isLoading } = useStock();
   const { data: usedSummary } = useStockMovements();
@@ -35,7 +36,18 @@ const Inventory: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">{t('common.loading')}</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-center py-12">
+            <div className="glass-card p-8 text-center">
+              <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-slate-600">{t('common.loading')}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Calculate remaining dynamically and filter low stock items
@@ -45,18 +57,18 @@ const Inventory: React.FC = () => {
   const lowStockItems = filterLowStockItems(rows);
 
   return (
-    <div className="space-y-6">
-      <InventoryHeader />
-
-      <LowStockAlert lowStockItems={lowStockItems} />
-
-      <InventoryTable 
-        rows={rows}
-        onAddStock={handleAddStock}
-        onConsumeStock={handleConsumeStock}
-        addMutationPending={addStockMutation.isPending}
-        consumeMutationPending={consumeStockMutation.isPending}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/50 p-6" dir={isRTL ? 'rtl' : 'ltr'}>
+      <div className="max-w-7xl mx-auto space-y-6">
+        <InventoryHeader />
+        <LowStockAlert lowStockItems={lowStockItems} />
+        <InventoryTable 
+          rows={rows}
+          onAddStock={handleAddStock}
+          onConsumeStock={handleConsumeStock}
+          addMutationPending={addStockMutation.isPending}
+          consumeMutationPending={consumeStockMutation.isPending}
+        />
+      </div>
     </div>
   );
 };

@@ -142,6 +142,10 @@
   
   "inventory": {
     "title": "المخزون",
+    "manageMaterials": "إدارة المواد",
+    "totalMaterials": "إجمالي المواد",
+    "lowStock": "المخزون المنخفض",
+    "materialsList": "قائمة المواد",
     "material": "المادة",
     "currentStock": "المخزون الحالي",
     "used": "المستخدم",
