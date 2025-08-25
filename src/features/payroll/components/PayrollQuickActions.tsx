@@ -24,6 +24,7 @@ export const PayrollQuickActions: React.FC<PayrollQuickActionsProps> = ({
   generatePayrollMutation,
   payAllPendingMutation,
   isCreatingPeriod
+ 
 }) => {
   const { t } = useTranslation();
   
