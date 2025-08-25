@@ -142,9 +142,7 @@
   
   "inventory": {
     "title": "المخزون",
-    "manageMaterials": "إدارة المواد",
-    "totalMaterials": "إجمالي المواد",
-    "lowStock": "المخزون المنخفض",
+    "manageMaterials": "إدارة مواد الإنتاج ومستويات المخزون",
     "materialsList": "قائمة المواد",
     "material": "المادة",
     "currentStock": "المخزون الحالي",
@@ -156,9 +154,15 @@
     "consumeStock": "استهلاك مخزون",
     "adding": "جاري الإضافة...",
     "consuming": "جاري الاستهلاك...",
-    "enterQuantityToAdd": "أدخل الكمية المراد إضافتها:",
-    "enterQuantityToConsume": "أدخل الكمية المراد استهلاكها:",
-    "invalidQuantity": "كمية غير صحيحة"
+    "enterQuantityToAdd": "أدخل الكمية المراد إضافتها",
+    "enterQuantityToConsume": "أدخل الكمية المراد استهلاكها",
+    "quantity": "الكمية",
+    "addStockDescription": "إضافة مخزون جديد لزيادة مستويات المخزون",
+    "consumeStockDescription": "استهلاك المخزون للإنتاج أو الاستخدام",
+    "enterValidQuantity": "يرجى إدخال كمية صحيحة أكبر من 0",
+    "insufficientStock": "المخزون المتاح غير كافٍ",
+    "totalMaterials": "إجمالي المواد",
+    "lowStock": "مخزون منخفض"
   },
   
   "bom": {

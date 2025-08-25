@@ -134,9 +134,7 @@
   
   "inventory": {
     "title": "Inventory",
-    "manageMaterials": "Manage Materials",
-    "totalMaterials": "Total Materials",
-    "lowStock": "Low Stock",
+    "manageMaterials": "Manage your production materials and stock levels",
     "materialsList": "Materials List",
     "material": "Material",
     "currentStock": "Current Stock",
@@ -148,9 +146,15 @@
     "consumeStock": "Consume Stock",
     "adding": "Adding...",
     "consuming": "Consuming...",
-    "enterQuantityToAdd": "Enter quantity to add:",
-    "enterQuantityToConsume": "Enter quantity to consume:",
-    "invalidQuantity": "Invalid quantity"
+    "enterQuantityToAdd": "Enter quantity to add",
+    "enterQuantityToConsume": "Enter quantity to consume",
+    "quantity": "Quantity",
+    "addStockDescription": "Add new stock to increase inventory levels",
+    "consumeStockDescription": "Consume stock for production or usage",
+    "enterValidQuantity": "Please enter a valid quantity greater than 0",
+    "insufficientStock": "Insufficient stock available",
+    "totalMaterials": "Total Materials",
+    "lowStock": "Low Stock"
   },
   
   "bom": {
