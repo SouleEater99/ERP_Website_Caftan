@@ -161,7 +161,7 @@ const ReportsDashboard: React.FC = () => {
       <div className="absolute inset-0 cold-pattern opacity-20"></div>
       
       <div className={`relative flex items-center ${isRTL ? 'flex-row-reverse' : ''}`}>
-        <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+        <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : 'text-left'}`}>
           <p className="text-slate-600 text-sm font-bold uppercase tracking-wider">{title}</p>
           <p className="text-3xl font-black text-slate-900 mt-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">{value}</p>
           {change && (
@@ -173,7 +173,7 @@ const ReportsDashboard: React.FC = () => {
             </div>
           )}
         </div>
-        <div className={`w-16 h-16 bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300 ${isRTL ? 'mr-6' : 'ml-6'}`}>
+        <div className={`w-16 h-16 bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300 ${isRTL ? 'mr-6' : 'ml-6'} flex-shrink-0`}>
           <Icon className="w-8 h-8 text-white" />
         </div>
       </div>
