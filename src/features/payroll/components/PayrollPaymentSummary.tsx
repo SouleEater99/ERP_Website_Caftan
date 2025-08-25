@@ -51,10 +51,11 @@ export const PayrollPaymentSummary: React.FC<PayrollPaymentSummaryProps> = ({
   ];
   
   return (
-    <div className="glass-card p-8 rounded-3xl">
-      <h4 className={`text-xl font-black text-slate-800 mb-6 ${isRTL ? 'text-right' : 'text-left'}`}>
-        {t('paymentSummary')}
-      </h4>
+    <div className="glass-card rounded-2xl overflow-hidden">
+      <div className="bg-gradient-to-r from-slate-600 via-slate-700 to-slate-800 px-6 py-4">
+        <h3 className="text-white font-semibold text-lg">{t('paymentSummary')}</h3>
+      </div>
+      
       <div className="space-y-5">
         {summaryItems.map((item, index) => (
           <div key={index} className={`group relative p-4 rounded-2xl bg-gradient-to-r ${item.bgColor} hover:shadow-lg transition-all duration-300 ${index === summaryItems.length - 1 ? 'border-t-2 border-slate-200 pt-6' : ''}`}>

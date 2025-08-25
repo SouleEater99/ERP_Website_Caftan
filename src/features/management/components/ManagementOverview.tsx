@@ -285,8 +285,8 @@ ${t('messages.info.userCanLogin')}`;
                 {QUICK_ACTIONS.map((action, index) => (
                   <QuickActionCard
                     key={index}
-                    title={action.title}
-                    description={action.description}
+                    title={t(`management.${action.title}`)}
+                    description={t(`management.${action.description}`)}
                     icon={action.icon === 'UserPlus' ? UserPlus : 
                           action.icon === 'Plus' ? Plus :
                           action.icon === 'Download' ? Download :
@@ -396,7 +396,7 @@ ${t('messages.info.userCanLogin')}`;
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="worker">👷 {t('management.worker')}</option>
-                  <option value="supervisor">👨‍💼 {t('management.supervisor')}</option>
+                  <option value="supervisor">��‍💼 {t('management.supervisor')}</option>
                   <option value="admin">👑 {t('management.admin')}</option>
                 </select>
               </div>
