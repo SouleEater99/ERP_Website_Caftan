@@ -60,6 +60,7 @@
   
   "navigation": {
     "dashboard": "لوحة التحكم",
+    "approvals": "الموافقات",
     "logWork": "تسجيل العمل",
     "inventory": "المخزون",
     "bom": "قائمة المواد",

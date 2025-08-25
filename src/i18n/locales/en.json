@@ -60,20 +60,13 @@
   
   "navigation": {
     "dashboard": "Dashboard",
-    "logWork": "Log Work",
+    "approvals": "Approvals",
     "inventory": "Inventory",
-    "bom": "Bill of Materials",
+    "logWork": "Log Work",
+    "bom": "BOM",
     "payroll": "Payroll",
     "reports": "Reports",
-    "reportsAnalytics": "Reports & Analytics",
-    "comprehensiveInsights": "Comprehensive insights into production performance and metrics",
-    "totalProduction": "Total Production",
-    "activeWorkers": "Active Workers",
-    "revenue": "Revenue",
-    "efficiency": "Efficiency",
-    "management": "Management",
-    "managementPanel": "Management Panel",
-    "centralizedControl": "Centralized control panel for system management"
+    "management": "Management"
   },
   
   "authentication": {

@@ -60,14 +60,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   const navigation = [
     { name: t('navigation.dashboard'), href: '/', icon: Home, roles: ['worker', 'supervisor', 'admin'], gradient: 'from-orange-500 to-red-500' },
-    { name: t('approvals'), href: '/approvals', icon: CheckCircle, roles: ['supervisor', 'admin'], gradient: 'from-teal-500 to-emerald-500' },
+    { name: t('navigation.approvals'), href: '/approvals', icon: CheckCircle, roles: ['supervisor', 'admin'], gradient: 'from-teal-500 to-emerald-500' },
     { name: t('navigation.inventory'), href: '/inventory', icon: Package, roles: ['supervisor', 'admin'], gradient: 'from-blue-500 to-cyan-500' },
     { name: t('navigation.logWork'), href: '/log-work', icon: ClipboardList, roles: ['worker'], gradient: 'from-green-500 to-emerald-500' },
-    { name: t('navigation.bom'), href: '/bom', icon: FileText, roles: ['admin'], gradient: 'from-purple-500 to-pink-500' },
-    { name: t('navigation.payroll'), href: '/payroll', icon: DollarSign, roles: ['supervisor', 'admin'], gradient: 'from-yellow-500 to-orange-500' },
+    { name: t('navigation.bom'), href: '/bom', icon: FileText, roles: ['supervisor', 'admin'], gradient: 'from-purple-500 to-pink-500' },
+    { name: t('navigation.payroll'), href: '/payroll', icon: DollarSign, roles: ['admin'], gradient: 'from-yellow-500 to-orange-500' },
     { name: t('navigation.reports'), href: '/reports', icon: BarChart3, roles: ['supervisor', 'admin'], gradient: 'from-indigo-500 to-purple-500' },
-    { name: t('navigation.management'), href: '/management', icon: Settings, roles: ['admin'], gradient: 'from-slate-500 to-gray-500' }
-  ]
+    { name: t('navigation.management'), href: '/management', icon: Settings, roles: ['admin'], gradient: 'from-gray-500 to-slate-500' }
+  ];
   
   const filteredNavigation = navigation.filter(item => 
     user && item.roles.includes(user.role)

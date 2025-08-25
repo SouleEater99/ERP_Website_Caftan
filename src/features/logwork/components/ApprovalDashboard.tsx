@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePendingApprovals } from '../hooks/useLogWork';
 import { CheckCircle, XCircle, Clock, Package, User, Calendar, Eye, AlertTriangle } from 'lucide-react';
@@ -13,8 +13,9 @@ const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal, isRT
   const { t, i18n } = useTranslation();
   const { data: pendingLogs, isLoading, error } = usePendingApprovals();
   
-  // Remove this line since isRTL is now passed as prop
-  // const isRTL = i18n.language === 'ar';
+  // Debug: Log the RTL prop
+  console.log('ApprovalDashboard isRTL:', isRTL);
+  console.log('Current language:', i18n.language);
 
   if (isLoading) {
     return (
@@ -79,7 +80,13 @@ const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal, isRT
       <div className="divide-y divide-slate-200/50">
         {pendingLogs.map((log, index) => (
           <div key={log.id} className="p-6 hover:bg-slate-50/50 transition-all duration-200 group">
-            <div className={`flex items-start justify-between ${isRTL ? 'flex-row-reverse' : ''}`}>
+            {/* Debug: Show RTL status */}
+            <div className="text-xs text-gray-500 mb-2">
+              Debug: RTL = {isRTL ? 'true' : 'false'}, Language = {i18n.language}
+            </div>
+            
+            <div className={`flex items-start ${isRTL ? 'flex-row-reverse' : ''}`}>
+              {/* Content Area */}
               <div className={`flex-1 ${isRTL ? 'text-right' : 'text-left'}`}>
                 <div className={`flex items-center space-x-3 mb-4 ${isRTL ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className="w-3 h-3 bg-gradient-to-r from-orange-400 to-orange-500 rounded-full shadow-sm"></div>
@@ -132,8 +139,8 @@ const ApprovalDashboard: React.FC<ApprovalDashboardProps> = ({ onOpenModal, isRT
                 )}
               </div>
               
-              {/* Action Button */}
-              <div className={isRTL ? 'mr-4' : 'ml-4'}>
+              {/* Action Button - Fixed margins for RTL */}
+              <div className={`${isRTL ? 'ml-4' : 'ml-4'} flex-shrink-0`}>
                 <button
                   onClick={() => onOpenModal(log)}
                   className="cold-button"
